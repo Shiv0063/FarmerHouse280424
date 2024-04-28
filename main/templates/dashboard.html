@@ -1,0 +1,46 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <!-- Start Simple Pie Chart -->
+    <div class="row align-items-stretch">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Monthly Report</h4>
+            <div id="chart-pie-simple"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Start Dinut Pie Chart -->
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Analisis</h4>
+            <form>
+              <div class="form-group mb-4">
+                <select class="form-select mr-sm-2" id="inlineFormCustomSelect">
+                  <option selected disabled>Choose Report</option>
+                  <option value="1">Daily Report</option>
+                  <option value="2">Weekly Report</option>
+                  <option value="3">Monthly Report</option>
+                  <option value="3">Anualy Report</option>
+                </select>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- End Dinut Pie Chart -->
+    </div>
+    <!-- End Simple Pie Chart -->
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+<script src="{% static 'assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+<script src="{% static 'assets/js/apex-chart/apex.pie.init.js' %}"></script>
+{% endblock script %}

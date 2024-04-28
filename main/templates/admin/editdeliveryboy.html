@@ -1,0 +1,122 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="card card-body py-3">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <div class="d-flex align-items-center justify-space-between">
+            <nav aria-label="breadcrumb" class="">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item d-flex align-items-center">
+                  <a class="text-muted text-decoration-none d-flex" href="/">
+                    <iconify-icon icon="solar:home-2-line-duotone" class="fs-6"></iconify-icon>
+                  </a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page">
+                  <a href="/DeliveryBoy">
+                  <span class="badge fw-medium fs-2 bg-primary-subtle text-primary">
+                    Delivery Boy
+                  </span></a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page">
+                  <span class="badge fw-medium fs-2 bg-primary-subtle text-primary">
+                    Edit Delivery Boy
+                  </span>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Edit Delivery Boy</h4>
+          </div>
+          <form class="card-body p-4"  enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="exampleInputName" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="exampleInputName" name="Name" value="{{data.Name}}">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="exampleInputnumber" class="form-label">Phone Namber</label>
+                  <input type="text" class="form-control" id="exampleInputnumber" name="Number" value="{{data.Number}}">
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="mb-4">
+                  <label class="form-label">Address</label>
+                  <textarea class="form-control p-7" name="Address" id="" cols="20" rows="1">{{data.Address}}</textarea>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="exampleInputemail" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="exampleInputemail" name="Email" value="{{data.Email}}">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="exampleInputpassword" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="exampleInputpassword" name="Password" value="{{data.PassWord}}">
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">Old Licence Photo</label>
+                  <img src="/{{data.Licence}}" width="50%" class="img-fluid border border-black" alt="">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">Licence Photo</label>
+                  <input class="form-control" type="file" name="Licence" id="formFile">
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">Old AdharCard Photo</label>
+                  <img src="/{{data.AdharCard}}" width="50%" class="img-fluid border border-black" alt="">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">AdharCard Photo</label>
+                  <input class="form-control" type="file" name="AdharCard" id="formFile">
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">Old PanCard Photo</label>
+                  <img src="/{{data.PanCard}}" width="50%" class="img-fluid border border-black" alt="">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">PanCard Photo</label>
+                  <input class="form-control" type="file" name="PanCard" id="formFile">
+                </div>
+              </div>
+              <div class="col-12 ">
+                <div class="d-flex justify-content-end gap-3">
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                  <a class="btn bg-danger-subtle text-danger" href="/DeliveryBoy">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

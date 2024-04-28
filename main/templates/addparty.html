@@ -1,0 +1,93 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      {% for message in messages %}
+      {% if message.tags == 'success' %}
+      <div class="row justify-content-center">
+        <div class="col-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="col-12">
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Add Party</h4>
+          </div>
+          <form class="card-body p-4" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type Of Party</label>
+                  <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1"
+                    required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="B2B">B2B</option>
+                    <option value="B2C">B2C</option>
+                    <option value="Vendor">Vendor</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-4">
+                  <label for="exampleInputPartyName" class="form-label">Party Name</label>
+                  <input type="text" class="form-control" id="exampleInputPartyName" name="PartyName"
+                    placeholder="Party Name" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-4">
+                  <label for="exampleInputnumber" class="form-label">Phone Namber</label>
+                  <input type="text" class="form-control" id="exampleInputnumber" name="Number"
+                    placeholder="1234567890" required>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="mb-4">
+                  <label class="form-label">Address</label>
+                  <textarea class="form-control p-7" name="Address" id="" cols="20" rows="1" placeholder="" required></textarea>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputGSTNo" class="form-label">GST No.</label>
+                  <input type="text" class="form-control" id="exampleInputGSTNo" name="GSTNo" placeholder="GST No." required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputGmail" class="form-label" >Email</label>
+                  <input type="email" class="form-control" id="exampleInputGmail" name="Email"
+                    placeholder="xyz@gmail.com" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputcity" class="form-label">City</label>
+                  <select id="inputState" class="form-select" name="City" required>
+                    <option selected>Choose...</option>
+                    {% include "city.html" %}
+                  </select>
+                  <!-- <input type="text" class="form-control" id="exampleInputcity" placeholder="City"> -->
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-3">
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                  <a class="btn bg-danger-subtle text-danger" href="/Party">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

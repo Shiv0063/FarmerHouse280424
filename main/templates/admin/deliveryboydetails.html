@@ -1,0 +1,147 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="card card-body py-3">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <div class="d-flex align-items-center justify-space-between">
+            <nav aria-label="breadcrumb" class="">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item d-flex align-items-center">
+                  <a class="text-muted text-decoration-none d-flex" href="/">
+                    <iconify-icon icon="solar:home-2-line-duotone" class="fs-6"></iconify-icon>
+                  </a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page">
+                  <span class="badge fw-medium fs-2 bg-primary-subtle text-primary">
+                    Delivery Boy
+                  </span>
+                </li>
+                <li class="breadcrumb-item" aria-current="page">
+                  <span class="badge fw-medium fs-2 bg-primary-subtle text-primary">
+                    Delivery Boy Details
+                  </span>
+                </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- start -->
+    <div class="card">
+      <div class="card-header text-bg-primary">
+        <h5 class="mb-0 text-white">Delivery Boy Details</h5>
+      </div>
+      <form class="form-horizontal">
+        <div class="form-body">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Name:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">{{data.Name}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Phone Number:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">{{data.Number}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+            </div>
+            <!--/row-->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Address:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">
+                      {{data.Address}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Email:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">{{data.Email}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">PassWord:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">{{data.PassWord}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+            </div>
+            <div class="row">
+              <div class="col-md-6 mt-2">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Licence Photo:</label><br>
+                  <div class="col-md-9">
+                    <img src="/{{data.Licence}}" width="100%" class="img-fluid border border-black" alt="">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 mt-2">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">AdharCard Photo:</label>
+                  <div class="col-md-9">
+                    <img src="/{{data.AdharCard}}" width="100%" class="img-fluid border border-black" alt="">
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+              <div class="col-md-6 mt-2">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">PanCard Photo:</label>
+                  <div class="col-md-9">
+                    <img src="/{{data.PanCard}}" width="100%" class="img-fluid border border-black" alt="">
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+            </div>
+          </div>
+          <div class="form-actions border-top">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col d-flex justify-content-end">
+                      <a href="/EditDeliveryBoy/{{data.id}}" class="btn btn-primary">
+                        <i class="ti ti-edit fs-5"></i>
+                        Edit
+                      </a>
+                      <a class="btn bg-danger-subtle text-danger ms-6" href="/DeliveryBoy">
+                        Cancel
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- start -->
+  </div>
+</div>
+{% endblock content %}

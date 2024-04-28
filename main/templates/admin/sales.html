@@ -1,0 +1,134 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="card card-body py-3">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <div class="d-flex align-items-center justify-space-between">
+            <nav aria-label="breadcrumb" class="">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item d-flex align-items-center">
+                  <a class="text-muted text-decoration-none d-flex" href="/">
+                    <iconify-icon icon="solar:home-2-line-duotone" class="fs-6"></iconify-icon>
+                  </a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page">
+                  <span class="badge fw-medium fs-2 bg-primary-subtle text-primary">
+                    Sales
+                  </span>
+                </li>
+              </ol>
+            </nav>
+            <nav aria-label="breadcrumb" class="ms-auto">
+              <ol class="breadcrumb">
+                <a href="AddSalesEntry" class="btn btn-success">Add Sales Entry</a>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="datatables">
+      <!-- start File export -->
+      <div class="card">
+        <div class="px-4 py-3 border-bottom">
+          <h4 class="card-title mb-0">Sales Register</h4>
+        </div>
+        <form class="card-body p-4 pb-0 mb-0" enctype="multipart/form-data" method="post">
+          {% csrf_token %}
+          <div class="row mb-0">
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInputtype" class="form-label">Delivery Boy Name</label>
+                <select class="form-select form-control-sm" id="exampleInputtype" name="DeliveryBoyName" tabindex="1">
+                  <option value="" selected>-- Selet --</option>
+                  {% for i in DB %}
+                    <option value="{{i.Name}}">{{i.Name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInputtype" class="form-label">Type Of Business</label>
+                <select class="form-select form-control-sm" id="exampleInputtype" name="TypeOfBusiness" tabindex="1">
+                  <option value="" selected>-- Selet --</option>
+                  <option value="B2B">B2B</option>
+                  <option value="B2C">B2C</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInputBillno" class="form-label">Delivery Time</label>
+                <input type="time" class="form-control " id="exampleInputBillno" name="DeliveryTime" placeholder="">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
+                <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" placeholder="">
+                <input type="hidden" name="ProductId" value="{{ProductId}}">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label for="exampleInputtype" class="form-label">Party Name</label>
+              <div class="mb-4">
+                <select class="select2 form-control  custom-select" name="PartyName">
+                  <option>Select</option>
+                  <optgroup label="">
+                    {% for i in Party %}
+                    <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                    {% endfor %}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+          </div>
+        </form>
+        <hr>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+              <thead>
+                <!-- start row -->
+                <tr>
+                  <th>Date</th>
+                  <th>Party Name</th>
+                  <th>Invoice No.</th>
+                  <th>Type Of Business</th>
+                  <th>Delivery Time</th>
+                  <th>Delivery Boy Name</th>
+                  <th>Amount</th>
+                  <th></th>
+                </tr>
+                <!-- end row -->
+              </thead>
+              <tbody>
+                {% for i in sales %}
+                <tr>
+                  <td>{{i.date}}</td>
+                  <td>{{i.PartyName}}</td>
+                  <td>{{i.InvoiceNo}}</td>
+                  <td>{{i.TypeOfBusiness}}</td>
+                  <td>{{i.DeliveryTime}}</td>
+                  <td>{{i.DeliveryBoyName}}</td>
+                  <td>{{i.Amount}}</td>
+                  <td></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- end File export -->
+    </div>
+  </div>
+</div>
+{% endblock content %}

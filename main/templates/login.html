@@ -1,0 +1,90 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/logo.png' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+  <title>MatDash Bootstrap Admin</title>
+</head>
+
+<body>
+  <!-- Preloader -->
+  <div class="preloader">
+    <img src="{% static 'assets/images/logos/logo.png' %}" alt="loader" class="lds-ripple img-fluid">
+  </div>
+  <div id="main-wrapper">
+    <div class="position-relative overflow-hidden auth-bg min-vh-100 w-100 d-flex align-items-center justify-content-center">
+      <div class="d-flex align-items-center justify-content-center w-100">
+        <div class="row justify-content-center w-100 my-5 my-xl-0">
+          <div class="col-md-9 d-flex flex-column justify-content-center">
+            <div class="card mb-0 bg-body auth-login m-auto w-100">
+              <div class="row gx-0">
+                <!-- ------------------------------------------------- -->
+                <!-- Part 1 -->
+                <!-- ------------------------------------------------- -->
+                <div class="col-12">
+                  <div class="row justify-content-center py-4">
+                    <div class="col-md-6 border">
+                      <div class="card-body">
+                        <a href="/" class="text-nowrap logo-img d-block w-100">
+                          <center>
+                            <img src="{% static 'assets/images/logos/logo.png' %}" width="120px" class="dark-logo" alt="Logo-Dark">
+                          </center>
+                           </a>
+                        <h2 class="lh-base mb-4">Let's get you signed in</h2>
+                        <form method="post">
+                          {% csrf_token %}
+                          <div class="mb-3">
+                            <label for="exampleInputEmail1" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1" name="Username" placeholder="Enter your Username">
+                          </div>
+                          <div class="mb-4">
+                            <div class="d-flex align-items-center justify-content-between">
+                              <label for="exampleInputPassword1" class="form-label">Password</label>
+                              <!-- <a class="text-primary link-dark fs-2" href="authentication-forgot-password2.html">Forgot
+                                Password ?</a> -->
+                            </div>
+                            <input type="password" class="form-control" id="exampleInputPassword1" name="Password" placeholder="Enter your password">
+                          </div>
+                          <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div class="form-check">
+                              <input class="form-check-input primary" type="checkbox" value="" id="flexCheckChecked" checked="">
+                              <label class="form-check-label text-dark" for="flexCheckChecked">
+                                Keep me logged in
+                              </label>
+                            </div>
+                          </div>
+                          <button type="submit" class="btn btn-dark w-100 py-8 mb-4 rounded-1">Sign In</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dark-transparent sidebartoggler"></div>
+  <!-- Import Js Files -->
+  <script src="{% static 'assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/libs/simplebar/dist/simplebar.min.js' %}"></script>
+  <script src="{% static 'assets/js/theme/app.horizontal.init.js' %}"></script>
+  <script src="{% static 'assets/js/theme/theme.js' %}"></script>
+  <script src="{% static 'assets/js/theme/app.min.js' %}"></script>
+  <script src="{% static 'assets/js/theme/sidebarmenu.js' %}"></script>
+
+  <!-- solar icons -->
+  <script src="{% static 'assets/libs/iconify-icon%401.0.8/dist/iconify-icon.min.js' %}"></script>
+</body>
+
+</html>

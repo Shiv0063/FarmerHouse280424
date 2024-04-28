@@ -1,0 +1,63 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      {% for message in messages %}
+      {% if message.tags == 'success' %}
+      <div class="row justify-content-center">
+        <div class="col-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="col-12">
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Add User</h4>
+          </div>
+          <form class="card-body p-4" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="exampleInputName" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="exampleInputName" name="Username" value="{{data.username}}">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="exampleInputnumber" class="form-label">Phone Number</label>
+                  <input type="text" class="form-control" id="exampleInputnumber" name="Number" value="{{data.phone}}">
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="mb-4">
+                  <label class="form-label">Address</label>
+                  <textarea class="form-control p-7" name="Address" id="" cols="20" rows="1">{{data.Address}}</textarea>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="exampleInputemail" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="exampleInputemail" name="emailaddress" value="{{data.email}}">
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-3">
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                  <a class="btn bg-info text-white" href="/PassWordChange">Change PassWord</a>
+                  <a class="btn bg-danger-subtle text-danger" href="/UserAccount">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
