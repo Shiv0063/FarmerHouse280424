@@ -37,8 +37,8 @@
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputBillno" class="form-label">Bill No</label>
-                  <input type="text" class="form-control " id="exampleInputBillno" name="BillNo" value="{{BiilNo}}"
-                    disabled>
+                  <input type="text" class="form-control " id="exampleInputBillno" name="BillNo2" value="{{BiilNo}}" disabled>
+                  <input type="hidden" name="BillNo" value="{{BiilNo}}">
                   <input type="hidden" name="Amount" value="{{tamonut}}">
                 </div>
               </div>
@@ -76,7 +76,7 @@
                   </select>
                 </div>
               </div>
-              <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-primary btn-lg"><i
+              <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
                     class='ti ti-plus'></i></a></div>
               <hr>
               <div class="col-12">
@@ -89,7 +89,7 @@
                       {% endfor %}
                     </select>
                   </div>
-                  <div class="col-1 d-flex align-items-center"><a href="AddProduct" class="btn btn-primary btn-lg"><i
+                  <div class="col-1 d-flex align-items-center"><a href="AddProduct" class="btn btn-success btn-lg"><i
                         class='ti ti-plus'></i></a>
                   </div>
                 </div>
@@ -109,17 +109,18 @@
                   </thead>
                   <tbody id="tbody">
                     {% for i in stock %}
-                    <form method="post" id="fgh{{forloop.counter}}">
                       <tr>
-                        <td class="mt-5">{{i.ProductName}} <input type="hidden" name="id" id="id{{forloop.counter}}" value="{{i.id}}"></td>
-                        <td><input type="text" class="form-control text-center" name="Quantity" id="Quantity{{i.id}}"
-                            value="{{i.Quantity}}"></td>
-                        <td><input type="text" class="form-control text-center " name="PurchasePrice"
+                        <td class="mt-5">{{i.ProductName}}</td>
+                        <td><input type="text" class="form-control text-center"
+                            onkeydown="onstocks('Quantity','{{i.id}}');" onkeyup="onstocks('Quantity','{{i.id}}');"
+                            name="Quantity" id="Quantity{{i.id}}" value="{{i.Quantity}}"></td>
+                        <td><input type="text" class="form-control text-center"
+                            onkeydown="onstocks('PurchasePrice','{{i.id}}');"
+                            onkeyup="onstocks('PurchasePrice','{{i.id}}');" name="PurchasePrice"
                             id="PurchasePrice{{i.id}}" value="{{i.PurchasePrice}}"></td>
-                        <td><input type="text" class="form-control text-center " name="Tax" id="Tax{{i.id}}"
-                            value="{{i.Tax}} %" disabled></td>
-                        <td><input type="text" class="form-control text-center" name="PurchaseIncTax"
-                            id="PurchaseIncTax{{i.id}}" value="{{i.PurchaseIncTax}}"></td>
+                        <td><input type="text" class="form-control text-center " value="{{i.Tax}} %" disabled></td>
+                        <td><input type="text" class="form-control text-center" id="PurchaseIncTax{{i.id}}" value="{{i.PurchaseIncTax}}" disabled>
+                        </td>
                         <td><input type="text" class="form-control text-center " name="Amount" id="Amount{{i.id}}"
                             value="{{i.Amount}}"></td>
                         <td>
@@ -127,7 +128,6 @@
                               class='ti ti-trash'></i></a>
                         </td>
                       </tr>
-                    </form>
                     {% endfor %}
                   </tbody>
                   <tfoot>
@@ -144,8 +144,8 @@
               </div>
               <div class="col-12">
                 <div class="gap-3">
-                  <button class="btn btn-primary" type="submit">Save</button>
-                  <button class="btn btn-primary" type="submit">Save & Print</button>
+                  <button class="btn btn-success" type="submit">Save</button>
+                  <button class="btn btn-success" type="submit">Save & Print</button>
                   <a class="btn bg-danger-subtle text-danger" href="/DeliveryBoy">Cancel</a>
                 </div>
               </div>
@@ -160,48 +160,7 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
-  // {% for i in stock %}
-
-  // var $id = $('#id'+'{{forloop.counter}}');
-  // {% endfor %}
-  var $id = $("#fgh+'{{forloop.counter}}' input[name='id']");
-  var id = $id.val();
-  var $Quantity = $('#Quantity'+id);
-  $Quantity.on("keydown keyup", function () {
-    var num1 = $Quantity.val();
-    if (num1 != '') {
-      $.ajax({
-        url: '/ProductE/Quantity/'+id+"/" + num1+'/Purchase',
-        type: 'GET',
-        success: function (resp) {
-          x = resp.Sc
-          output = ''
-          for (i = 0; i < x.length; i++) {
-            ontput += "<tr><td class='mt-5'>" + x[i].ProductName + "<input type='hidden' name='id' id='id' value='" + x[i].id + "'></td><td><input type='text' class='form-control text-center' name='Quantity' id='Quantity" + x[i].id + "' value='" + x[i].Quantity + "'></td> td><input type='text' class='form-control text-center ' name='PurchasePrice' id='PurchasePrice" + x[i].id + "' value='" + x[i].PurchasePrice + "'></td><td><input type='text' class='form-control text-center ' name='Tax' id='Tax" + x[i].id + "' value='" + x[i].Tax + " %' disabled></td> <td><input type='text' class='form-control text-center' name='PurchaseIncTax' id='PurchaseIncTax" + x[i].id + "' value='" + x[i].PurchaseIncTax + "'></td><td><input type='text' class='form-control text-center ' name='Amount' id='Amount" + x[i].id + "' value='" + x[i].Amount + "'></td><td><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a> </td></tr>"
-          };
-          $('#tbody').html(output);
-          var tamount2 = document.getElementById("tamount2");
-          tamount2.innerText = resp.tamonut;
-        },
-        error: function (resp) {
-          console.log('Something went wrong');
-        }
-      });
-    } else {
-      console.log('Something went wrong');
-    }
-    });
-   
-  // $('#Quantity').on('change', function() {
-  //   // var $val= $(this).val();
-  //   //   console.log(val);
-  //     console.log("work");
-  // });
-  // $("#Quantity").bind("keydown", function() {  
-  //   var $Productid = $("input[name='Quantity']").val();
-  //   console.log($Productid);
-  // });
-  $("#Prodectselect2 select[name='Product2']").on('change', function () {
+    $("#Prodectselect2 select[name='Product2']").on('change', function () {
     var $Productname = $(this);
     var $Productid = $("input[name='Productid']").val();
     if ($Productname.val() != '') {
@@ -212,7 +171,13 @@
           x = resp.Sc
           output = ''
           for (i = 0; i < x.length; i++) {
-            output += "<tr><td class=''>" + x[i].ProductName + "</td><td><input type='text' class='form-control text-center' id='Quantity" + x[i].id + "' value='" + x[i].Quantity + "'></td><td><input type=' text' class='form-control text-center' id='MRP" + x[i].id + "' value='" + x[i].MRP + "'></td><td><a type=' button' class='btn btn-success bg-success btn-edit' data-sid=" + x[i].id + "><i class='ti ti-check'></i></a><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid=" + x[i].id + "><i class='ti ti-trash'></i></a></td>"
+            output += "<tr><td class='mt-5'>" + x[i].ProductName + "</td>";
+            output +="<td><input type='text' class='form-control text-center' onkeydown=onstocks('Quantity','"+x[i].id+"'); onkeyup=onstocks('Quantity','"+x[i].id+"'); name='Quantity' id='Quantity"+x[i].id+"' value='"+x[i].Quantity+ "'></td>";
+            output +="<td><input type='text' class='form-control text-center' onkeydown=onstocks('PurchasePrice','"+x[i].id+"'); onkeyup=onstocks('PurchasePrice','"+x[i].id+"'); name='PurchasePrice' id='PurchasePrice"+x[i].id +"' value='"+x[i].PurchasePrice+"'></td>";
+            output +="<td><input type='text' class='form-control text-center' value='"+x[i].Tax+" %' disabled></td>";
+            output +="<td><input type='text' class='form-control text-center' id='PurchaseIncTax"+x[i].id+"' value='"+x[i].PurchaseIncTax+"' disabled></td>";
+            output +="<td><input type='text' class='form-control text-center' name='Amount' id='Amount"+x[i].id+"' value='"+x[i].Amount+"'></td>";
+            output +="<td><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='"+x[i].id+"'><i class='ti ti-trash'></i></a></td></tr>"
           };
           $('#tbody').html(output);
           var tamount2 = document.getElementById("tamount2");
@@ -226,6 +191,33 @@
       console.log('Something went wrong');
     }
   });
+  function onstocks(name, id) {
+    let val = '#' + name + id;
+    let va = $(val).val();
+    mydata = { name: name, id: id, val: va, type: 'Purchase' };
+    $.ajax({
+      type: "POST",
+      url: '/ProductE',
+      data: mydata,
+      success: function (resp) {
+        x = resp.Sc;
+        let value = 0;
+        for (i = 0; i < x.length; i++) {
+          var $PIT = $('#PurchaseIncTax'+x[i].id);
+          $PIT.val(parseFloat(x[i].PurchaseIncTax).toFixed(2));
+          var $PIT = $('#Amount'+x[i].id);
+          $PIT.val(parseFloat(x[i].Amount).toFixed(2));
+          let nm= x[i].Amount;
+          value += parseInt(nm);
+        }
+        var $tamount2 = document.getElementById("tamount2");
+        $tamount2.innerText = value;
+      },
+      error: function (resp) {
+        console.log('Something went wrong');
+      }
+    });
+  }
   // delete data
   $("tbody").on('click', '.btn-del', function () {
     // console.log('delete btn clicked');
@@ -269,4 +261,3 @@
   });
 </script>
 {% endblock script %}
-

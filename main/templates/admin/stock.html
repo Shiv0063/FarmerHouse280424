@@ -1,0 +1,51 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="datatables">
+      <!-- start File export -->
+      <div class="card">
+        <div class="px-4 py-3 border-bottom">
+          <h4 class="card-title mb-0">Stock Report</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+              <thead>
+                <!-- start row -->
+                <tr>
+                  <th>No</th>
+                  <th>Product Name</th>
+                  <th>Category</th>
+                  <th>Tax</th>
+                  <th>Unit</th>
+                  <th>Quantity</th>
+                  <th>Purchase Inc. Tax <br>( Per. Unit)</th>
+                  <th>Amount</th>
+                </tr>
+                <!-- end row -->
+              </thead>
+              <tbody>
+                {% for i in stock %}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  <td>{{i.ProductName}}</td>
+                  <td>{{i.Category}}</td>
+                  <td>{{i.Tax}}</td>
+                  <td>{{i.Unit}}</td>
+                  <td>{{i.Quantity}}</td>
+                  <td>{{i.PurchaseIncTax}}</td>
+                  <td>{{i.Amount}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- end File export -->
+    </div>
+  </div>
+</div>
+{% endblock content %}

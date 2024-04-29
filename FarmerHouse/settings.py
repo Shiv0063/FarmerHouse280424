@@ -26,7 +26,7 @@ MEDIA_ROOT=os.path.join(BASE_DIR,'main/media')
 SECRET_KEY = 'django-insecure-6^fu+dhr22zj!=%-pvkn^lgervj*xjo45-m@m6e8($z8#$+nlk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -77,26 +77,26 @@ WSGI_APPLICATION = 'FarmerHouse.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
-import dj_database_url
-
-RENDER_EXTERNAL_HOSTNAME = "postgres://farmerhouse_user:uSaDPO4PiEpUpoTTEVLVVJOtkiGIqEON@dpg-con3c8sf7o1s73fcpqdg-a.oregon-postgres.render.com/farmerhouse"
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-
 DATABASES = {
-    'default': dj_database_url.config(
-        # Feel free to alter this value to suit your needs.
-        default='postgres://farmerhouse_user:uSaDPO4PiEpUpoTTEVLVVJOtkiGIqEON@dpg-con3c8sf7o1s73fcpqdg-a.oregon-postgres.render.com/farmerhouse',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
+
+# import dj_database_url
+
+# RENDER_EXTERNAL_HOSTNAME = "postgres://farmerhouse_user:uSaDPO4PiEpUpoTTEVLVVJOtkiGIqEON@dpg-con3c8sf7o1s73fcpqdg-a.oregon-postgres.render.com/farmerhouse"
+# if RENDER_EXTERNAL_HOSTNAME:
+#     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         # Feel free to alter this value to suit your needs.
+#         default='postgres://farmerhouse_user:uSaDPO4PiEpUpoTTEVLVVJOtkiGIqEON@dpg-con3c8sf7o1s73fcpqdg-a.oregon-postgres.render.com/farmerhouse',
+#         conn_max_age=600
+#     )
+# }
 
 
 # Password validation
@@ -133,7 +133,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'main/static')]
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"

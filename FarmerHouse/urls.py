@@ -55,10 +55,12 @@ urlpatterns = [
     path('Purchase',views.Purchase,name="purchase"),
     path('AddPurchaseEntry',views.AddPurchaseEntry,name="Add Purchase Entry"),
     path('SProducts/<str:PN>/<int:id>/<str:type>',views.SProducts,name='SProducts'),
-    path('ProductE/<str:idn>/<int:id>/<int:val>/<str:type>',views.ProductE,name='ProductE'),
+    path('ProductE',views.ProductE,name='ProductE'),
+    path('ProductsDelete',views.ProductsDelete,name='ProductsDelete'),
     path('SalesEntry',views.SalesEntry,name="Sales Entry"),
     path('Sales',views.Sales,name="Sales"),
     path('AddSalesEntry',views.AddSalesEntry,name="Add Sales Entry"),
+    path('StockReport',views.StockReport,name='Stock Report'),
     path('AllDelete',views.AllDelete,name="AllDelete"),
     # path('AddPurchaseReturnEntry',views.AddPurchaseReturnEntry,name="Add Purchase Return Entry"),
 

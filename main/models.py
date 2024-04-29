@@ -88,3 +88,35 @@ class StockModel(models.Model):
     Quantity = models.CharField(max_length=100,blank=True)
     Amount = models.CharField(max_length=100,null=True, blank=True)
     sid = models.CharField(max_length=100,null=True, blank=True)
+
+class PurchaseEntryModel(models.Model):
+    user = models.CharField(max_length=100,null=True, blank=True)
+    TypeofPurchase = models.CharField(max_length=100)
+    BillNo = models.CharField(max_length=100)
+    InvoiceNo = models.CharField(max_length=100)
+    DateTime = models.DateTimeField(default=datetime.now())
+    TypeofPayment = models.CharField(max_length=100)
+    PartyName = models.CharField(max_length=100)
+    ProductId = models.CharField(max_length=100)
+    Type = models.CharField(max_length=100)
+    Amount = models.CharField(max_length=100)
+
+    def date(self):
+        return self.DateTime.strftime('%B %d %Y')
+    
+class MainStockModel(models.Model):
+    OldProductId = models.CharField(max_length=100,null=True,blank=True)
+    ProductId = models.CharField(max_length=100,null=True,blank=True)
+    user = models.CharField(max_length=100,null=True, blank=True)
+    type = models.CharField(max_length=100,null=True, blank=True)
+    ProductName = models.CharField(max_length=100,null=True, blank=True)
+    Category = models.CharField(max_length=100,null=True, blank=True)
+    Tax = models.CharField(max_length=100,null=True, blank=True)
+    Unit = models.CharField(max_length=100,null=True, blank=True)
+    PurchasePrice = models.CharField(max_length=100,null=True, blank=True)
+    PurchaseIncTax = models.CharField(max_length=100,null=True, blank=True)
+    MinQty = models.CharField(max_length=100,blank=True)
+    MaxQty = models.CharField(max_length=100,blank=True)
+    BarcodeNo = models.CharField(max_length=100,blank=True)
+    Quantity = models.CharField(max_length=100,blank=True)
+    Amount = models.CharField(max_length=100,null=True, blank=True)
