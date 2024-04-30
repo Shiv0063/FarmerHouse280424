@@ -100,6 +100,11 @@ class PurchaseEntryModel(models.Model):
     ProductId = models.CharField(max_length=100)
     Type = models.CharField(max_length=100)
     Amount = models.CharField(max_length=100)
+    DueDate = models.DateField(null=True, blank=True)
+    ExpiryDate = models.DateField(null=True, blank=True)
+    TQuantity = models.CharField(max_length=100,null=True, blank=True)
+    TPurchasePrice = models.CharField(max_length=100,null=True, blank=True)
+    TPurchaseIncTax = models.CharField(max_length=100,null=True, blank=True)
 
     def date(self):
         return self.DateTime.strftime('%B %d %Y')
@@ -120,3 +125,38 @@ class MainStockModel(models.Model):
     BarcodeNo = models.CharField(max_length=100,blank=True)
     Quantity = models.CharField(max_length=100,blank=True)
     Amount = models.CharField(max_length=100,null=True, blank=True)
+
+class SalesStockModel(models.Model):
+    ProductId = models.CharField(max_length=100,null=True,blank=True)
+    user = models.CharField(max_length=100,null=True, blank=True)
+    type = models.CharField(max_length=100,null=True, blank=True)
+    ProductName = models.CharField(max_length=100,null=True, blank=True)
+    Category = models.CharField(max_length=100,null=True, blank=True)
+    Tax = models.CharField(max_length=100,null=True, blank=True)
+    Unit = models.CharField(max_length=100,null=True, blank=True)
+    PurchaseIncTax = models.CharField(max_length=100,null=True, blank=True)
+    BarcodeNo = models.CharField(max_length=100,blank=True)
+    Quantity = models.CharField(max_length=100,blank=True)
+    Amount = models.CharField(max_length=100,null=True, blank=True)
+    sid = models.CharField(max_length=100,null=True, blank=True)
+    ProfitMargin = models.CharField(max_length=100,null=True, blank=True)
+    BasicSalesPrice = models.CharField(max_length=100,null=True, blank=True)
+    Discount = models.CharField(max_length=100,null=True, blank=True)
+    SalesPriceAfterDiscount = models.CharField(max_length=100,null=True, blank=True)
+    IncSalesPrice = models.CharField(max_length=100,null=True, blank=True)
+    TotalSales = models.CharField(max_length=100,null=True, blank=True)
+
+class SalesEntryModel(models.Model):
+    user = models.CharField(max_length=100,null=True, blank=True)
+    DeliveryBoyName = models.CharField(max_length=100,null=True, blank=True)
+    TypeOfBusiness = models.CharField(max_length=100,null=True, blank=True)
+    DeliveryTime = models.TimeField()
+    InvoiceNo = models.CharField(max_length=100,null=True, blank=True)
+    DateTime = models.DateTimeField(default=datetime.now())
+    PartyName = models.CharField(max_length=100,null=True, blank=True)
+    ProductId = models.CharField(max_length=100,null=True, blank=True)
+    Type = models.CharField(max_length=100,null=True, blank=True)
+    Amount = models.CharField(max_length=100,null=True, blank=True)
+
+    def date(self):
+        return self.DateTime.strftime('%B %d %Y')

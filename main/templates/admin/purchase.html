@@ -106,8 +106,8 @@
                   <th>Party Name</th>
                   <th>Invoice No.</th>
                   <th>Bill No.</th>
-                  <th>Type of Purchase</th>
-                  <th>Type of Payment</th>
+                  <th>Type of <br> Purchase</th>
+                  <th>Type of <br> Payment</th>
                   <th>Amount</th>
                   <th></th>
                 </tr>
@@ -123,7 +123,9 @@
                   <td>{{i.TypeofPurchase}}</td>
                   <td>{{i.TypeofPayment}}</td>
                   <td>{{i.Amount}}</td>
-                  <td></td>
+                  <td>
+                    <a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;">Details</a>
+                  </td>
                 </tr>
                 {% endfor %}
               </tbody>

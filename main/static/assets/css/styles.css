@@ -20228,11 +20228,12 @@ progress {
 }
 
 .table-bordered>:not(caption)>* {
-    border-width: var(--bs-border-width) 0
+    /* border-width: var(--bs-border-width) 0; */
+    /* border-color: #000; */
 }
 
 .table-bordered>:not(caption)>*>* {
-    border-width: 0 var(--bs-border-width)
+    /* border-width: 0 var(--bs-border-width) */
 }
 
 .table-borderless>:not(caption)>*>* {

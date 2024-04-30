@@ -1,0 +1,161 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header text-bg-success">
+        <h5 class="mb-0 text-white">Sales Details</h5>
+      </div>
+      <form class="form-horizontal">
+        <div class="form-body">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-4">Party Name :</label>
+                  <div class="col-md-8">
+                    <p class="form-control-static">{{data.PartyName}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-4">Invoice No. :</label>
+                  <div class="col-md-8">
+                    <p class="form-control-static">{{data.InvoiceNo}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+            </div>
+            <!--/row-->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-4">Delivery Boy Name :</label>
+                  <div class="col-md-8">
+                    <p class="form-control-static">
+                      {{data.DeliveryBoyName}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-4">Type Of Business:</label>
+                  <div class="col-md-8">
+                    <p class="form-control-static">{{data.TypeOfBusiness}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-4">Delivery Time :</label>
+                  <div class="col-md-8">
+                    <p class="form-control-static">{{data.DeliveryTime}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-4">Amount :</label>
+                  <div class="col-md-8">
+                    <p class="form-control-static">{{data.Amount}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-4">Sales Date :</label>
+                  <div class="col-md-8">
+                    <p class="form-control-static">{{data.date}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+            </div>
+            <div class="row justify-content-center">
+              <div class="col-11">
+                <table class="table table-striped table-bordered display text-nowrap" id="thad">
+                  <thead>
+                    <tr class="p-0">
+                      <th class="p-2">Prodect <br> Name</th>
+                      <th class="p-2">Quantity</th>
+                      <th class="p-2">Purchase <br>Inc. <br> Tax Price</th>
+                      <th class="p-2">Profit <br> Margin <br>( % )</th>
+                      <th class="p-2">Basic Sales <br> Price <br> ( Per. Unit )</th>
+                      <th class="p-2">Discount <br> ( % )</th>
+                      <th class="p-2">Sales price <br> After Discount <br> ( Per. Unit )</th>
+                      <th class="p-2">Tax <br> ( % )</th>
+                      <th class="p-2">Inc. Sales <br> Price</th>
+                      <th class="p-2">Total Sales</th>
+                      <th class="p-2">MRP</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody">
+                    {% for i in stock %}
+                      <tr>
+                        <td>{{i.ProductName}}</td>
+                        <td>{{i.Quantity}}</td>
+                        <td>{{i.PurchaseIncTax}}</td>
+                        <td>{{i.ProfitMargin}}</td>
+                        <td>{{i.BasicSalesPrice}}</td>
+                        <td>{{i.Discount}}</td>
+                        <td>{{i.SalesPriceAfterDiscount}}</td>
+                        <td>{{i.Tax}}</td>
+                        <td>{{i.IncSalesPrice}}</td>
+                        <td>{{i.TotalSales}}</td>
+                        <td>{{i.Amount}}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="">Total :</th>
+                      <th>{{quantity}}</th>
+                      <th>{{purchaseprice}}</th>
+                      <th></th>
+                      <th>{{bsp}}</th>
+                      <th></th>
+                      <th>{{sp}}</th>
+                      <th></th>
+                      <th>{{isp}}</th>
+                      <th colspan="1">
+                        <span id="tamount2">{{tamonut}}</span>
+                      </th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions border-top">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col d-flex justify-content-end">
+                      <a href="/EditDeliveryBoy/{{data.id}}" class="btn btn-success">
+                        <i class="ti ti-edit fs-5"></i>
+                        Edit
+                      </a>
+                      <a class="btn bg-danger-subtle text-danger ms-6" href="/Purchase">
+                        Cancel
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- start -->
+  </div>
+</div>
+{% endblock content %}
