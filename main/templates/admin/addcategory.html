@@ -1,0 +1,45 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        {% for message in messages %}
+          {% if message.tags == 'success' %}
+          <div class="row justify-content-center">
+            <div class="col-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+              <strong>{{message}}</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Add Category</h4>
+          </div>
+          <form class="card-body p-4" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="exampleInputCategoryName" class="form-label">Category Name</label>
+                  <input type="text" class="form-control" id="exampleInputCategoryName" name="Category"
+                    placeholder="Category Name" required>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-3">
+                  <button class="btn btn-success" type="submit">Submit</button>
+                  <a class="btn bg-danger-subtle text-danger" href="/Category">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

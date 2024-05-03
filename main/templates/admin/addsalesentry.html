@@ -1,0 +1,317 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      {% for message in messages %}
+      {% if message.tags == 'success' %}
+      <div class="row justify-content-center">
+        <div class="col-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="col-12">
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Add Sales Entery</h4>
+          </div>
+          <form class="card-body p-4" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Delivery Boy Name</label>
+                  <select class="form-select form-control-sm" id="exampleInputtype" name="DeliveryBoyName" tabindex="1"
+                    required>
+                    <option value="" selected>-- Selet --</option>
+                    {% for i in DB %}
+                    <option value="{{i.Name}}">{{i.Name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type Of Business</label>
+                  <select class="form-select form-control-sm" id="exampleInputtype" name="TypeOfBusiness" tabindex="1"
+                    required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="B2B">B2B</option>
+                    <option value="B2C">B2C</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputBillno" class="form-label">Delivery Time</label>
+                  <input type="time" class="form-control " id="exampleInputBillno" name="DeliveryTime" placeholder=""
+                    required>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" placeholder=""
+                    required>
+                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label for="exampleInputtype" class="form-label">Party Name</label>
+                <div class="mb-4">
+                  <select class="select2 form-control  custom-select" name="PartyName" required>
+                    <option>Select</option>
+                    <optgroup label="">
+                      {% for i in Party %}
+                      {% if i.Type == 'Customer' or i.Type == 'Hotel & Restaurant' %}
+                      <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                      {% endif %}
+                      {% endfor %}
+                    </optgroup>
+                  </select>
+                </div>
+              </div>
+              <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
+                    class='ti ti-plus'></i></a></div>
+              <hr>
+              <div class="col-12">
+                <div class="mb-2 row" id="Prodectselect2">
+                  <div class="col-4">
+                    <select class="select form-control" name="Product">
+                      <option>Product Name</option>
+                      {% for i in productns %}
+                      <option value="{{i}}">{{i}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-4">
+                    <select class="select form-control" name="Product2">
+                      <option class="after" value="">Products</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <table class="table table-striped table-bordered display text-nowrap" id="thad">
+                  <thead>
+                    <tr class="p-0">
+                      <th class="p-2">Prodect <br> Name</th>
+                      <th class="p-2">Quantity</th>
+                      <th class="p-2">Purchase <br>Inc. <br> Tax Price</th>
+                      <th class="p-2">Profit <br> Margin <br>( % )</th>
+                      <th class="p-2">Basic Sales <br> Price <br> ( Per. Unit )</th>
+                      <th class="p-2">Discount <br> ( % )</th>
+                      <th class="p-2">Sales price <br> After Discount <br> ( Per. Unit )</th>
+                      <th class="p-2">Tax <br> ( % )</th>
+                      <th class="p-2">Inc. Sales <br> Price</th>
+                      <th class="p-2">Total Sales</th>
+                      <th class="p-2">MRP</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody">
+                    {% for i in stock %}
+                    <tr>
+                      <td class="p-2">
+                        <div class="mt-2">{{i.ProductName}}</div>
+                      </td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="Quantity"
+                          id="Quantity{{i.id}}" onkeydown="onstocks('Quantity','{{i.id}}');"
+                          onkeyup="onstocks('Quantity','{{i.id}}');" value="{{i.Quantity}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="PurchaseIncTax"
+                          id="PurchaseIncTax{{i.id}}" value="{{i.PurchaseIncTax}}" disabled></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" id="ProfitMargin{{i.id}}"
+                          onkeydown="onstocks('ProfitMargin','{{i.id}}');"
+                          onkeyup="onstocks('ProfitMargin','{{i.id}}');" value="{{i.ProfitMargin}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="BasicSalesPrice"
+                          id="BasicSalesPrice{{i.id}}" value="{{i.BasicSalesPrice}}" disabled></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="Discount"
+                          id="Discount{{i.id}}" onkeydown="onstocks('Discount','{{i.id}}');"
+                          onkeyup="onstocks('Discount','{{i.id}}');" value="{{i.Discount}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="SalesPriceAfterDiscount"
+                          id="SalesPriceAfterDiscount{{i.id}}" value="{{i.SalesPriceAfterDiscount}}" disabled></td>
+                      <td class="p-2">
+                        <div class="mt-2">{{i.Tax}}</div>
+                      </td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="IncSalesPrice"
+                          id="IncSalesPrice{{i.id}}" value="{{i.IncSalesPrice}}" disabled></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="TotalSales"
+                          id="TotalSales{{i.id}}" value="{{i.TotalSales}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="Amount"
+                          id="Amount{{i.id}}" onkeydown="onstocks('Amount','{{i.id}}');"
+                          onkeyup="onstocks('Amount','{{i.id}}');" value="{{i.Amount}}"></td>
+                      <td class="p-2">
+                        <div class="mt-1"><a type='button' class='btn btn-danger bg-danger btn-del ms-2'
+                            data-sid='{{i.id}}'><i class='ti ti-trash'></i></a></div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                  <tbody class="bg-white">
+                    <tr class="bg-white">
+                      <td colspan="12" class="bg-white"><span>
+                          <center><b id="mes" class="text-danger"></b></center>
+                        </span></td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="9">
+                        total Amount :
+                      </th>
+                      <th colspan="3">
+                        <span id="tamount2">{{tamonut}}</span>
+                      </th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <div class="col-12">
+                <div class="gap-3">
+                  <button class="btn btn-success" type="submit">Save</button>
+                  <button class="btn btn-success" type="submit">Save & Print</button>
+                  <a class="btn bg-danger-subtle text-danger" href="/SalesCancel/{{ProductId}}">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
+<script>
+  $("#Prodectselect2 select[name='Product']").on('change', function(){
+    var $this = $(this);
+    if($this.val() !=''){
+        $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+        $.ajax({
+            url: '/StockDetails/'+$this.val(),
+            type: 'GET',
+            success: function(resp){
+                x = resp.Ms
+                output = ''
+                for (i = 0; i < x.length; i++) {
+                  output+="<option value=";
+                  output+=x[i].ProductName;
+                  output+="/";
+                  output+=x[i].OldProductId+"/"+x[i].id+'>'+"Price: "+ x[i].Amount +"  Quantity :"+x[i].Quantity +'</option>';
+                };
+                $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
+            }, 
+            error: function(resp){
+                console.log('Something went wrong');
+            }
+        });
+    }else{
+        $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+    }
+   });
+  $("#Prodectselect2 select[name='Product2']").on('change', function () {
+    var $Productname = $(this);
+    var $Productid = $("input[name='Productid']").val();
+    if ($Productname.val() != '') {
+      $.ajax({
+        url: '/Stockswork/' + $Productname.val() + '/Sales',
+        type: 'GET',
+        success: function (resp) {
+          x = resp.Sc
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<tr><td class='p-2'><div class='mt-2'>" + x[i].ProductName + "</div></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Quantity' id='Quantity" + x[i].id + "' onkeydown=onstocks('Quantity','" + x[i].id + "'); onkeyup=onstocks('Quantity','" + x[i].id + "'); value='" + x[i].Quantity + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='PurchaseIncTax' id='PurchaseIncTax" + x[i].id + "' value='" + x[i].PurchaseIncTax + "' disabled></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' id='ProfitMargin" + x[i].id + "' onkeydown=onstocks('ProfitMargin','" + x[i].id + "'); onkeyup=onstocks('ProfitMargin','" + x[i].id + "'); value='" + x[i].ProfitMargin + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='BasicSalesPrice' id='BasicSalesPrice" + x[i].id + "'  value='" + x[i].BasicSalesPrice + "' disabled></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Discount' id='Discount" + x[i].id + "' onkeydown=onstocks('Discount','" + x[i].id + "'); onkeyup=onstocks('Discount','" + x[i].id + "'); value='" + x[i].Discount + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='SalesPriceAfterDiscount' id='SalesPriceAfterDiscount" + x[i].id + "' value='" + x[i].SalesPriceAfterDiscount + "' disabled></td>";
+            output += "<td class='p-2'><div class='mt-2'>" + x[i].Tax + "</div></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='IncSalesPrice' id='IncSalesPrice" + x[i].id + "' value='" + x[i].IncSalesPrice + "' disabled></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='TotalSales' id='TotalSales" + x[i].id + "' value='" + x[i].TotalSales + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' onkeydown=onstocks('Amount','" + x[i].id + "'); onkeyup=onstocks('Amount','" + x[i].id + "'); value='" + x[i].Amount + "'></td>";
+            output += "<td class='p-2'><div class='mt-1'><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></div></td></tr>";
+          };
+          $('#tbody').html(output);
+          var tamount2 = document.getElementById("tamount2");
+          tamount2.innerText = resp.tamonut;
+          var tamount3 = document.getElementById("mes");
+          tamount3.innerText = '';
+        },
+        error: function (resp) {
+          console.log('Something went wrong');
+        }
+      });
+    } else {
+      console.log('Something went wrong');
+    }
+  });
+  function onstocks(name, id) {
+    let val = '#' + name + id;
+    let va = $(val).val();
+    mydata = { name: name, id: id, val: va, type: 'Sales' };
+    $.ajax({
+      type: "POST",
+      url: '/ProductE2',
+      data: mydata,
+      success: function (resp) {
+        if (resp.msg) {
+          var tamount2 = document.getElementById("mes");
+          tamount2.innerText = resp.msg;
+        }
+        else {
+          x = resp.Sc;
+          let value = 0;
+          for (i = 0; i < x.length; i++) {
+            var $PIT = $('#BasicSalesPrice' + x[i].id);
+            $PIT.val(x[i].BasicSalesPrice);
+            var $PIT2 = $('#SalesPriceAfterDiscount' + x[i].id);
+            $PIT2.val(x[i].SalesPriceAfterDiscount);
+            var $PIT3 = $('#IncSalesPrice' + x[i].id);
+            $PIT3.val(x[i].IncSalesPrice);
+            var $PIT3 = $('#TotalSales' + x[i].id);
+            $PIT3.val(x[i].TotalSales);
+            let nm = x[i].TotalSales;
+            value += parseFloat(x[i].TotalSales);
+          }
+          var $tamount2 = document.getElementById("tamount2");
+          $tamount2.innerText = value;
+          var tamount2 = document.getElementById("mes");
+          tamount2.innerText = '';
+        };
+      },
+      error: function (resp) {
+        console.log('Something went wrong');
+      }
+    });
+  }
+  // delete data
+  $("tbody").on('click', '.btn-del', function () {
+    // console.log('delete btn clicked');
+    let id = $(this).attr('data-sid');
+    // console.log(id);
+    mydata = { sid: id, type: 'Sales' };
+    mythis = this;
+    $.ajax({
+      type: "POST",
+      url: '/StockPDelete',
+      data: mydata,
+      success: function (data) {
+        if (data.status == 1) {
+          $(mythis).closest("tr").fadeOut();
+        }
+        var tamount2 = document.getElementById("tamount2");
+        tamount2.innerText = data.tamonut;
+        var tamount3 = document.getElementById("mes");
+        tamount3.innerText = '';
+      }
+    });
+  });
+</script>
+{% endblock script %}

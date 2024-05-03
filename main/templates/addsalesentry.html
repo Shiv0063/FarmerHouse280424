@@ -67,7 +67,9 @@
                     <option>Select</option>
                     <optgroup label="">
                       {% for i in Party %}
+                      {% if i.Type == 'Customer' or i.Type == 'Hotel & Restaurant' %}
                       <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                      {% endif %}
                       {% endfor %}
                     </optgroup>
                   </select>
@@ -79,12 +81,16 @@
               <div class="col-12">
                 <div class="mb-2 row" id="Prodectselect2">
                   <div class="col-4">
-                    <select class="select form-control" name="Product2">
+                    <select class="select form-control" name="Product">
                       <option>Product Name</option>
-                      {% for i in stokes %}
-                      <option value="{{i.ProductName}}/{{i.OldProductId}}/{{i.id}}">{{i.ProductName}} <b> MRP :
-                        </b>{{i.MRP}} Quantity : {{i.Quantity}}</option>
+                      {% for i in productns %}
+                      <option value="{{i}}">{{i}}</option>
                       {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-4">
+                    <select class="select form-control" name="Product2">
+                      <option class="after" value="">Products</option>
                     </select>
                   </div>
                 </div>
@@ -182,6 +188,32 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
+  $("#Prodectselect2 select[name='Product']").on('change', function(){
+    var $this = $(this);
+    if($this.val() !=''){
+        $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+        $.ajax({
+            url: '/StockDetails/'+$this.val(),
+            type: 'GET',
+            success: function(resp){
+                x = resp.Ms
+                output = ''
+                for (i = 0; i < x.length; i++) {
+                  output+="<option value=";
+                  output+=x[i].ProductName;
+                  output+="/";
+                  output+=x[i].OldProductId+"/"+x[i].id+'>'+"Price: "+ x[i].Amount +"  Quantity :"+x[i].Quantity +'</option>';
+                };
+                $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
+            }, 
+            error: function(resp){
+                console.log('Something went wrong');
+            }
+        });
+    }else{
+        $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+    }
+   });
   $("#Prodectselect2 select[name='Product2']").on('change', function () {
     var $Productname = $(this);
     var $Productid = $("input[name='Productid']").val();
@@ -246,7 +278,7 @@
             var $PIT3 = $('#TotalSales' + x[i].id);
             $PIT3.val(x[i].TotalSales);
             let nm = x[i].TotalSales;
-            value += parseInt(x[i].TotalSales);
+            value += parseFloat(x[i].TotalSales);
           }
           var $tamount2 = document.getElementById("tamount2");
           $tamount2.innerText = value;

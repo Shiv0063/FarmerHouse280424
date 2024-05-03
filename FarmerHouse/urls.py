@@ -67,9 +67,22 @@ urlpatterns = [
     path('StockPDelete',views.StockPDelete,name='Products Delete'),
     path('SalesCancel/<int:id>',views.SalesCancel,name='Sales Cancel'),
     path('SalesDetails/<int:id>',views.SalesDetails,name='Products Details'),
+    path('StockDetails/<str:name>',views.StockDetails,name='Products Details'),
+    path('PurchaseReturn',views.PurchaseReturn,name='Purchase Return'),
+    path('AddPurchaseReturnEntry',views.AddPurchaseReturnEntry,name='Add Purchase Return Entry'),
+    path('PRStock/<str:PN>/<int:id>/<int:id2>/<str:type>',views.PRStock,name='PRStock'),
     path('StockReport',views.StockReport,name='Stock Report'),
+    path('PRSDelete',views.PRSDelete,name='PRSDelete'),
+    path('PRDetails/<int:id>',views.PRDetails,name='PR Details'),
+    path('SalesReturn',views.SalesReturn,name='Sales Return'),
+    path('AddSalesReturnEntry',views.AddSalesReturnEntry,name="Add Sales Return Entry"),
+    path('SRStocks/<str:PN>/<int:id>/<str:type>',views.SRStocks,name='SRStocks'),
+    path('SRDelete',views.SRDelete,name='SRDelete'),
+    path('SRSEdit',views.SRSEdit,name='SRSEdit'),
+    path('SRDetails/<int:id>',views.SRDetails,name='SRDetails'),
     path('AllDelete',views.AllDelete,name="AllDelete"),
-    # path('AddPurchaseReturnEntry',views.AddPurchaseReturnEntry,name="Add Purchase Return Entry"),
+    path('SRCancel/<int:id>',views.SRCancel,name='Sales Cancel'),
+
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

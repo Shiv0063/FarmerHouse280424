@@ -1,4 +1,4 @@
-﻿{% extends 'admin/main.html' %}
+﻿{% extends 'main.html' %}
 {% load static %}
 {% block content %}
 <div class="body-wrapper">
@@ -23,7 +23,7 @@
             </nav>
             <nav aria-label="breadcrumb" class="ms-auto">
               <ol class="breadcrumb">
-                <a href="AddSalesEntry" class="btn btn-success">Add Purchase Entry</a>
+                <a href="AddPurchaseEntry" class="btn btn-success">Add Purchase Entry</a>
               </ol>
             </nav>
           </div>
@@ -33,7 +33,7 @@
     <div class="datatables">
       <!-- start File export -->
       <div class="card">
-        <div class="px-4 py-3 border-bottom">
+        <!-- <div class="px-4 py-3 border-bottom">
           <h4 class="card-title mb-0">Purchase Register</h4>
         </div>
         <form class="card-body p-4 pb-0 mb-0" enctype="multipart/form-data" method="post">
@@ -95,7 +95,7 @@
             </div>
           </div>
         </form>
-        <hr>
+        <hr> -->
         <div class="card-body">
           <div class="table-responsive">
             <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
@@ -106,8 +106,8 @@
                   <th>Party Name</th>
                   <th>Invoice No.</th>
                   <th>Bill No.</th>
-                  <th>Type of Purchase</th>
-                  <th>Type of Payment</th>
+                  <th>Source of <br> Purchase</th>
+                  <th>Type of <br> Payment</th>
                   <th>Amount</th>
                   <th></th>
                 </tr>
@@ -124,11 +124,7 @@
                   <td>{{i.TypeofPayment}}</td>
                   <td>{{i.Amount}}</td>
                   <td>
-                    <div class="row">
-                      <div class="col d-flex justify-content-end">
-                        <a class="btn btn-warning mr-3" href="/DeliveryBoyDetails/{{i.id}}" style="margin-left: 5px;">Details</a><a class="btn btn-success mr-3" href="/EditDeliveryBoy/{{i.id}}" style="margin-left: 5px;">Edit</a><a href="DeleteDeliveryBoy/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger">Delete</a>
-                      </div>
-                    </div>
+                    <a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;">Details</a>
                   </td>
                 </tr>
                 {% endfor %}

@@ -101,7 +101,6 @@ class PurchaseEntryModel(models.Model):
     Type = models.CharField(max_length=100)
     Amount = models.CharField(max_length=100)
     DueDate = models.DateField(null=True, blank=True)
-    ExpiryDate = models.DateField(null=True, blank=True)
     TQuantity = models.CharField(max_length=100,null=True, blank=True)
     TPurchasePrice = models.CharField(max_length=100,null=True, blank=True)
     TPurchaseIncTax = models.CharField(max_length=100,null=True, blank=True)
