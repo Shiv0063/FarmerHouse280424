@@ -1,4 +1,4 @@
-﻿{% extends 'admin/main.html' %}
+﻿{% extends 'main.html' %}
 {% load static %}
 {% block content %}
 <div class="body-wrapper">
@@ -22,6 +22,12 @@
           <form class="card-body p-4" enctype="multipart/form-data" method="post">
             {% csrf_token %}
             <div class="row">
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control " name="Date" id="Date" required>
+                </div>
+              </div>
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputtype" class="form-label">Delivery Boy Name</label>
@@ -60,27 +66,30 @@
                   <input type="hidden" name="ProductId" value="{{ProductId}}">
                 </div>
               </div>
-              <div class="col-md-2">
-                <label for="exampleInputtype" class="form-label">Party Name</label>
-                <div class="mb-4">
-                  <select class="select2 form-control  custom-select" name="PartyName" required>
-                    <option>Select</option>
-                    <optgroup label="">
-                      {% for i in Party %}
-                      {% if i.Type == 'Customer' or i.Type == 'Hotel & Restaurant' %}
-                      <option value="{{i.PartyName}}">{{i.PartyName}}</option>
-                      {% endif %}
-                      {% endfor %}
-                    </optgroup>
-                  </select>
+              <div class="col-md-4">
+                <div class="row">
+                  <div class="col-9">
+                    <label for="exampleInputtype" class="form-label">Party Name</label>
+                    <div class="mb-4">
+                      <select class="select2 form-control  custom-select" name="PartyName" required>
+                        <option>Select</option>
+                        <optgroup label="">
+                          {% for i in Party %}
+                          {% if i.Type == 'Customer' or i.Type == 'Hotel & Restaurant' %}
+                          <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
+                    class='ti ti-plus'></i></a></div>
                 </div>
               </div>
-              <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
-                    class='ti ti-plus'></i></a></div>
-              <hr>
-              <div class="col-12">
+              <div class="col-md-4">
                 <div class="mb-2 row" id="Prodectselect2">
-                  <div class="col-4">
+                  <div class="col-9">
                     <label class="form-label">Product Name</label>
                     <select class="select form-control" name="Product2">
                       <option>Product Name</option>
@@ -89,8 +98,8 @@
                       {% endfor %}
                     </select>
                   </div>
-                  <div class="col-1 d-flex align-items-center mt-4"><a href="AddProduct" class="btn btn-success btn-lg"><i
-                        class='ti ti-plus'></i></a>
+                  <div class="col-1 d-flex align-items-center mt-4"><a href="AddProduct"
+                      class="btn btn-success btn-lg"><i class='ti ti-plus'></i></a>
                   </div>
                 </div>
               </div>
@@ -188,6 +197,9 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
+  DF = new Date()
+  document.getElementById("Date").value = DF.toJSON().slice(0, 10);
+
   $("#Prodectselect2 select[name='Product2']").on('change', function () {
     var $Productname = $(this);
     var $Productid = $("input[name='Productid']").val();

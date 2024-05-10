@@ -12,25 +12,33 @@
   <title>Farmer House</title>
   <link rel="stylesheet" href="{% static 'assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/js/buttons/2.4.2/css/buttons.dataTables.min.css' %}">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.35.0/iconfont/tabler-icons.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.35.0/iconfont/tabler-icons.min.css"
+    rel="stylesheet">
   <style>
-    input{
+    input {
       background: #E8F0FE !important;
     }
-    select{
+
+    select {
       background: #E8F0FE !important;
     }
-    textarea{
+
+    textarea {
       background: #E8F0FE !important;
     }
-    .table-bordered{
-      border : 1px solid #353535 !important; 
+
+    .table-bordered {
+      border: 1px solid #353535 !important;
     }
-    th{
-      border : 1px solid #353535 !important; 
+
+    th {
+      border: 1px solid #353535 !important;
+      padding: 8px !important;
     }
-    td{
-      border : 1px solid #353535 !important; 
+
+    td {
+      border: 1px solid #353535 !important;
+      padding: 8px !important;
     }
   </style>
 </head>
@@ -1650,7 +1658,8 @@
               </li>
               <li class="nav-item d-none d-xl-flex align-items-center">
                 <a href="/" class="text-nowrap nav-link">
-                  <img src="{% static 'assets/images/logos/logo.png' %}" width="85px" class="img-fluid" alt="matdash-img">
+                  <img src="{% static 'assets/images/logos/logo.png' %}" width="85px" class="img-fluid"
+                    alt="matdash-img">
                 </a>
               </li>
               <li class="nav-item d-none d-xl-flex align-items-center nav-icon-hover-bg rounded-circle">
@@ -2005,42 +2014,48 @@
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Party</span>
                     </a>
-                    <li class="sidebar-item">
-                      <a href="/Product" class="sidebar-link">
-                        <i class="ti ti-circle"></i>
-                        <span class="hide-menu">Product</span>
-                      </a>
-                    </li>
-                    <!-- <li class="sidebar-item">
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/Product" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Product</span>
+                    </a>
+                  </li>
+                  <!-- <li class="sidebar-item">
                       <a href="/Unit" class="sidebar-link">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Unit</span>
                       </a>
                     </li> -->
-                    <li class="sidebar-item">
-                      <a href="/DeliveryBoy" class="sidebar-link">
-                        <i class="ti ti-circle"></i>
-                        <span class="hide-menu">Delivery Boy</span>
-                      </a>
-                    </li>
-                    <li class="sidebar-item">
-                      <a href="/UserAccount" class="sidebar-link">
-                        <i class="ti ti-circle"></i>
-                        <span class="hide-menu">User Account</span>
-                      </a>
-                    </li>
-                    <li class="sidebar-item">
-                      <a href="/Category" class="sidebar-link">
-                        <i class="ti ti-circle"></i>
-                        <span class="hide-menu">Category</span>
-                      </a>
-                    </li>
-                    <li class="sidebar-item">
-                      <a href="/Expanse" class="sidebar-link">
-                        <i class="ti ti-circle"></i>
-                        <span class="hide-menu">Expanse</span>
-                      </a>
-                    </li>
+                  <li class="sidebar-item">
+                    <a href="/DeliveryBoy" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Delivery Boy</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/UserAccount" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">User Account</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/Category" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Category</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/Expanse" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Expanse</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/Charges" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Charges</span>
+                    </a>
                   </li>
                 </ul>
               </li>
@@ -2073,25 +2088,31 @@
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Purchase Entry</span>
                     </a>
-                  </li>  
+                  </li>
                   <li class="sidebar-item">
                     <a href="/PurchaseReturn" class="sidebar-link">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Purchase Return Entry</span>
                     </a>
-                  </li> 
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/ExpensesEntry" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Expenses Entry</span>
+                    </a>
+                  </li>
                   <li class="sidebar-item">
                     <a href="#" class="sidebar-link">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Debit Note</span>
                     </a>
-                  </li> 
+                  </li>
                   <li class="sidebar-item">
                     <a href="#" class="sidebar-link">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Credit Note</span>
                     </a>
-                  </li> 
+                  </li>
                 </ul>
               </li>
               <li class="nav-small-cap">
@@ -2107,9 +2128,15 @@
                 </a>
                 <ul aria-expanded="false" class="collapse first-level">
                   <li class="sidebar-item">
-                    <a href="StockReport" class="sidebar-link">
+                    <a href="/StockReport" class="sidebar-link">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Stock Report</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/SalesStockReport" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Sales Stock Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
@@ -2250,9 +2277,9 @@
 
   </div>
   <div class="dark-transparent sidebartoggler"></div>
- <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
   {% block script %}
-{% endblock script %}
+  {% endblock script %}
   <script>
     let PathNameObj = {
       "": 'Dashboard',
@@ -2324,7 +2351,7 @@
   <script src="{% static 'assets/js/buttons/2.4.2/js/buttons.print.min.js' %}"></script>
 
   <script src="{% static 'assets/js/datatable/datatable-advanced.init.js' %}"></script>
- 
+
 </body>
 
 </html>

@@ -45,34 +45,38 @@
       <div class="card">
         <div class="card-body">
           <div class="table-responsive">
-            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+            <table id="file_export" style="width: 100%;overflow:auto;" class="table table-striped table-bordered display text-nowrap">
               <thead>
                 <!-- start row -->
                 <tr>
-                  <th>No</th>
-                  <th>Product Name</th>
-                  <th>Category</th>
-                  <th>Tax</th>
-                  <th>Unit</th>
-                  <th>MinQty</th>
-                  <th>MaxQty</th>
-                  <th>MRP</th>
-                  <th></th>
+                  <th class="p-2">No</th>
+                  <th class="p-2">MFG Date</th>
+                  <th class="p-2">Expiry <br> Date</th>
+                  <th class="p-2">Product <br> Name</th>
+                  <th class="p-2">Category</th>
+                  <th class="p-2">Tax</th>
+                  <th class="p-2">Unit</th>
+                  <th class="p-2">MinQty</th>
+                  <th class="p-2">MaxQty</th>
+                  <th class="p-2">MRP</th>
+                  <th class="p-2"></th>
                 </tr>
                 <!-- end row -->
               </thead>
               <tbody>
                 {% for i in data %}
                 <tr>
-                  <td>{{forloop.counter}}</td>
-                  <td>{{i.ProductName}}</td>
-                  <td>{{i.Category}}</td>
-                  <td>{{i.Tax}}</td>
-                  <td>{{i.Unit}}</td>
-                  <td>{{i.MinQty}}</td>
-                  <td>{{i.MaxQty}}</td>
-                  <td>{{i.MRP}}</td>
-                  <td>
+                  <td class="p-2">{{forloop.counter}}</td>
+                  <td class="p-2">{{i.MFGDate}}</td>
+                  <td class="p-2">{{i.ExpiryDate}}</td>
+                  <td class="p-2">{{i.ProductName}}</td>
+                  <td class="p-2">{{i.Category}}</td>
+                  <td class="p-2">{{i.Tax}}</td>
+                  <td class="p-2">{{i.Unit}}</td>
+                  <td class="p-2">{{i.MinQty}}</td>
+                  <td class="p-2">{{i.MaxQty}}</td>
+                  <td class="p-2">{{i.MRP}}</td>
+                  <td class="p-2">
                     <a class="btn btn-success mr-3" href="/EditProduct/{{i.id}}" style="margin-left: 5px;">Edit</a><a href="/DeleteProduct/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger">Delete</a>
                   </td>
                 </tr>

@@ -24,6 +24,12 @@
             <div class="row">
               <div class="col-md-2">
                 <div class="mb-4">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control " name="Date" id="Date" required>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
                   <label for="exampleInputtype" class="form-label">Source of Purchase</label>
                   <select class="form-select form-control-sm" id="exampleInputtype" name="TypeofPurchase" tabindex="1"
                     required>
@@ -37,7 +43,8 @@
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputBillno" class="form-label">Bill No</label>
-                  <input type="text" class="form-control " id="exampleInputBillno" name="BillNo2" value="{{BiilNo}}" disabled>
+                  <input type="text" class="form-control " id="exampleInputBillno" name="BillNo2" value="{{BiilNo}}"
+                    disabled>
                   <input type="hidden" name="BillNo" value="{{BiilNo}}">
                   <input type="hidden" name="Amount" value="{{tamonut}}">
                 </div>
@@ -63,27 +70,31 @@
                   </select>
                 </div>
               </div>
-              <div class="col-md-2">
-                <label for="exampleInputtype" class="form-label">Party Name</label>
-                <div class="mb-4">
-                  <select class="select2 form-control  custom-select" name="PartyName" required>
-                    <option>Select</option>
-                    <optgroup label="">
-                      {% for i in Party %}
-                      {% if i.Type != 'Customer' and i.Type != 'Hotel & Restaurant' %}
-                      <option value="{{i.PartyName}}">{{i.PartyName}}</option>
-                      {% endif %}
-                      {% endfor %}
-                    </optgroup>
-                  </select>
+              <div class="col-md-3">
+                <div class="row">
+                  <div class="col-9">
+                    <label for="exampleInputtype" class="form-label">Party Name</label>
+                    <div class="mb-4">
+                      <select class="select2 form-control  custom-select" name="PartyName" required>
+                        <option>Select</option>
+                        <optgroup label="">
+                          {% for i in Party %}
+                          {% if i.Type != 'Customer' and i.Type != 'Hotel & Restaurant' %}
+                          <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
+                    class='ti ti-plus'></i></a></div>
                 </div>
               </div>
-              <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
-                    class='ti ti-plus'></i></a></div>
-              <hr>
-              <div class="col-12">
+              <div class="col-md-8">
                 <div class="mb-2 row" id="Prodectselect2">
-                  <div class="col-4">
+                  <div class="col-md-4 mb-4">
+                    <label class="form-label">Product Name</label>
                     <select class="select form-control" name="Product">
                       <option>Product Name</option>
                       {% for i in productns %}
@@ -91,7 +102,8 @@
                       {% endfor %}
                     </select>
                   </div>
-                  <div class="col-4">
+                  <div class="col-md-4 mb-4">
+                    <label class="form-label">Product List</label>
                     <select class="select form-control" name="Product2">
                       <option class="after" value="">Products</option>
                     </select>
@@ -114,31 +126,32 @@
                   </thead>
                   <tbody id="tbody">
                     {% for i in stock %}
-                      <tr>
-                        <td class="mt-5">{{i.ProductName}}</td>
-                        <td><input type="text" class="form-control text-center"
-                            onkeydown="onstocks('Quantity','{{i.id}}');" onkeyup="onstocks('Quantity','{{i.id}}');"
-                            name="Quantity" id="Quantity{{i.id}}" value="{{i.Quantity}}"></td>
-                        <td><input type="text" class="form-control text-center"
-                            onkeydown="onstocks('PurchasePrice','{{i.id}}');"
-                            onkeyup="onstocks('PurchasePrice','{{i.id}}');" name="PurchasePrice"
-                            id="PurchasePrice{{i.id}}" value="{{i.PurchasePrice}}"  disabled></td>
-                        <td><input type="text" class="form-control text-center " value="{{i.Tax}} %" disabled></td>
-                        <td><input type="text" class="form-control text-center" id="PurchaseIncTax{{i.id}}" value="{{i.PurchaseIncTax}}" disabled>
-                        </td>
-                        <td><input type="text" class="form-control text-center " name="Amount" id="Amount{{i.id}}"
-                            value="{{i.Amount}}"></td>
-                        <td>
-                          <a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='{{i.id}}'><i
-                              class='ti ti-trash'></i></a>
-                        </td>
-                      </tr>
+                    <tr>
+                      <td class="mt-5">{{i.ProductName}}</td>
+                      <td><input type="text" class="form-control text-center"
+                          onkeydown="onstocks('Quantity','{{i.id}}');" onkeyup="onstocks('Quantity','{{i.id}}');"
+                          name="Quantity" id="Quantity{{i.id}}" value="{{i.Quantity}}"></td>
+                      <td><input type="text" class="form-control text-center"
+                          onkeydown="onstocks('PurchasePrice','{{i.id}}');"
+                          onkeyup="onstocks('PurchasePrice','{{i.id}}');" name="PurchasePrice"
+                          id="PurchasePrice{{i.id}}" value="{{i.PurchasePrice}}" disabled></td>
+                      <td><input type="text" class="form-control text-center " value="{{i.Tax}} %" disabled></td>
+                      <td><input type="text" class="form-control text-center" id="PurchaseIncTax{{i.id}}"
+                          value="{{i.PurchaseIncTax}}" disabled>
+                      </td>
+                      <td><input type="text" class="form-control text-center " name="Amount" id="Amount{{i.id}}"
+                          value="{{i.Amount}}"></td>
+                      <td>
+                        <a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='{{i.id}}'><i
+                            class='ti ti-trash'></i></a>
+                      </td>
+                    </tr>
                     {% endfor %}
                   </tbody>
                   <tfoot>
                     <tr>
                       <th colspan="5">
-                        total Amount :
+                        Total Amount :
                       </th>
                       <th colspan="2">
                         <span id="tamount2">{{tamonut}}</span>
@@ -165,33 +178,36 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
-  $("#Prodectselect2 select[name='Product']").on('change', function(){
+  DF = new Date()
+  document.getElementById("Date").value = DF.toJSON().slice(0, 10);
+
+  $("#Prodectselect2 select[name='Product']").on('change', function () {
     var $this = $(this);
-    if($this.val() !=''){
-        $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
-        $.ajax({
-            url: '/StockDetails/'+$this.val(),
-            type: 'GET',
-            success: function(resp){
-                x = resp.Ms
-                output = ''
-                for (i = 0; i < x.length; i++) {
-                  output+="<option value=";
-                  output+=x[i].ProductName;
-                  output+="/";
-                  output+=x[i].OldProductId+"/"+x[i].id+'>'+"Price: "+ x[i].Amount +"  Quantity :"+x[i].Quantity +'</option>';
-                };
-                $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
-            }, 
-            error: function(resp){
-                console.log('Something went wrong');
-            }
-        });
-    }else{
-        $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+    if ($this.val() != '') {
+      $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+      $.ajax({
+        url: '/StockDetails/' + $this.val(),
+        type: 'GET',
+        success: function (resp) {
+          x = resp.Ms
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<option value=";
+            output += x[i].ProductName;
+            output += "/";
+            output += x[i].OldProductId + "/" + x[i].id + '>' + "Price: " + x[i].PurchaseIncTax + "  Quantity :" + x[i].Quantity + '</option>';
+          };
+          $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
+        },
+        error: function (resp) {
+          console.log('Something went wrong');
+        }
+      });
+    } else {
+      $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
     }
-   });
-    $("#Prodectselect2 select[name='Product2']").on('change', function () {
+  });
+  $("#Prodectselect2 select[name='Product2']").on('change', function () {
     var $Productname = $(this);
     var $Productid = $("input[name='Productid']").val();
     if ($Productname.val() != '') {
@@ -203,12 +219,12 @@
           output = ''
           for (i = 0; i < x.length; i++) {
             output += "<tr><td class='mt-5'>" + x[i].ProductName + "</td>";
-            output +="<td><input type='text' class='form-control text-center' onkeydown=onstocks('Quantity','"+x[i].id+"'); onkeyup=onstocks('Quantity','"+x[i].id+"'); name='Quantity' id='Quantity"+x[i].id+"' value='"+x[i].Quantity+ "'></td>";
-            output +="<td><input type='text' class='form-control text-center' onkeydown=onstocks('PurchasePrice','"+x[i].id+"'); onkeyup=onstocks('PurchasePrice','"+x[i].id+"'); name='PurchasePrice' id='PurchasePrice"+x[i].id +"' value='"+x[i].PurchasePrice+"' disabled></td>";
-            output +="<td><input type='text' class='form-control text-center' value='"+x[i].Tax+" %' disabled></td>";
-            output +="<td><input type='text' class='form-control text-center' id='PurchaseIncTax"+x[i].id+"' value='"+x[i].PurchaseIncTax+"' disabled></td>";
-            output +="<td><input type='text' class='form-control text-center' name='Amount' id='Amount"+x[i].id+"' value='"+x[i].Amount+"'></td>";
-            output +="<td><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='"+x[i].id+"'><i class='ti ti-trash'></i></a></td></tr>"
+            output += "<td><input type='text' class='form-control text-center' onkeydown=onstocks('Quantity','" + x[i].id + "'); onkeyup=onstocks('Quantity','" + x[i].id + "'); name='Quantity' id='Quantity" + x[i].id + "' value='" + x[i].Quantity + "'></td>";
+            output += "<td><input type='text' class='form-control text-center' onkeydown=onstocks('PurchasePrice','" + x[i].id + "'); onkeyup=onstocks('PurchasePrice','" + x[i].id + "'); name='PurchasePrice' id='PurchasePrice" + x[i].id + "' value='" + x[i].PurchasePrice + "' disabled></td>";
+            output += "<td><input type='text' class='form-control text-center' value='" + x[i].Tax + " %' disabled></td>";
+            output += "<td><input type='text' class='form-control text-center' id='PurchaseIncTax" + x[i].id + "' value='" + x[i].PurchaseIncTax + "' disabled></td>";
+            output += "<td><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' value='" + x[i].Amount + "'></td>";
+            output += "<td><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></td></tr>"
           };
           $('#tbody').html(output);
           var tamount2 = document.getElementById("tamount2");
@@ -233,9 +249,9 @@
       success: function (resp) {
         x = resp.Sc;
         for (i = 0; i < x.length; i++) {
-          var $PIT = $('#PurchaseIncTax'+x[i].id);
+          var $PIT = $('#PurchaseIncTax' + x[i].id);
           $PIT.val(parseFloat(x[i].PurchaseIncTax).toFixed(2));
-          var $PIT = $('#Amount'+x[i].id);
+          var $PIT = $('#Amount' + x[i].id);
           $PIT.val(parseFloat(x[i].Amount).toFixed(2));
         }
         var $tamount2 = document.getElementById("tamount2");

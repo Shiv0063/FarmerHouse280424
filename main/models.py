@@ -35,6 +35,9 @@ class ProductModel(models.Model):
     BarcodeNo = models.CharField(max_length=100,blank=True)
     HSNCode = models.CharField(max_length=100,blank=True)
     MRP = models.CharField(max_length=100,blank=True)
+    MFGDate = models.DateField(null=True, blank=True)
+    ExpiryDate = models.DateField(null=True, blank=True)
+
 
 class DeliveryBoyModel(models.Model):
     user = models.CharField(max_length=100,null=True, blank=True)
@@ -60,7 +63,7 @@ class CategoryModel(models.Model):
 class ExpanseModel(models.Model):
     user = models.CharField(max_length=100,null=True, blank=True)
     Expanse = models.CharField(max_length=100,null=True,blank=True)
-    Amount = models.CharField(max_length=100,null=True, blank=True)
+    Type = models.CharField(max_length=100,null=True, blank=True)
 
 class NMModel(models.Model):
     ProductId = models.CharField(max_length=100,null=True,blank=True)
@@ -101,9 +104,11 @@ class PurchaseEntryModel(models.Model):
     Type = models.CharField(max_length=100)
     Amount = models.CharField(max_length=100)
     DueDate = models.DateField(null=True, blank=True)
+    Date = models.DateField(null=True, blank=True)
     TQuantity = models.CharField(max_length=100,null=True, blank=True)
     TPurchasePrice = models.CharField(max_length=100,null=True, blank=True)
     TPurchaseIncTax = models.CharField(max_length=100,null=True, blank=True)
+    TChargesAmount = models.CharField(max_length=100,null=True, blank=True)
 
     def date(self):
         return self.DateTime.strftime('%B %d %Y')
@@ -156,6 +161,43 @@ class SalesEntryModel(models.Model):
     ProductId = models.CharField(max_length=100,null=True, blank=True)
     Type = models.CharField(max_length=100,null=True, blank=True)
     Amount = models.CharField(max_length=100,null=True, blank=True)
+    Date = models.DateField(null=True, blank=True)
+    TChargesAmount = models.CharField(max_length=100,null=True, blank=True)
+    def date(self):
+        return self.DateTime.strftime('%B %d %Y')
+    
+class ExpanseListModel(models.Model):
+    ProductId = models.CharField(max_length=100,null=True, blank=True)
+    user = models.CharField(max_length=100,null=True, blank=True)
+    Expanse = models.CharField(max_length=100,null=True,blank=True)
+    Amount = models.CharField(max_length=100,null=True, blank=True)
+
+class ExpanseEntryModel(models.Model):
+    user = models.CharField(max_length=100,null=True, blank=True)
+    TypeofPayment = models.CharField(max_length=100,null=True, blank=True)
+    DateTime = models.DateTimeField(default=datetime.now())
+    PartyName = models.CharField(max_length=100,null=True, blank=True)
+    ProductId = models.CharField(max_length=100,null=True, blank=True)
+    Amount = models.CharField(max_length=100,null=True, blank=True)
+    Date = models.DateField(null=True, blank=True)
 
     def date(self):
         return self.DateTime.strftime('%B %d %Y')
+    
+class ChargesModel(models.Model):
+    user = models.CharField(max_length=100,null=True, blank=True)
+    Charges = models.CharField(max_length=100,null=True,blank=True)
+
+class ChargesListModel(models.Model):
+    user = models.CharField(max_length=100,null=True, blank=True)
+    Charges = models.CharField(max_length=100,null=True,blank=True)
+    ProductId = models.CharField(max_length=100,null=True, blank=True)
+    Amount = models.CharField(max_length=100,null=True, blank=True)
+    Tax = models.CharField(max_length=100,null=True, blank=True)
+    TotalAmount = models.CharField(max_length=100,null=True, blank=True)
+    type = models.CharField(max_length=100,null=True, blank=True)
+
+class InvoiceNoModel(models.Model):
+    InvoiceNo = models.CharField(max_length=100,null=True,blank=True)
+    user = models.CharField(max_length=100,null=True, blank=True)
+    type = models.CharField(max_length=100,null=True, blank=True)

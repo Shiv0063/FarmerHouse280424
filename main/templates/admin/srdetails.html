@@ -89,7 +89,9 @@
                       <th class="p-2">Basic Sales <br> Price <br> ( Per. Unit )</th>
                       <th class="p-2">Discount <br> ( % )</th>
                       <th class="p-2">Sales price <br> After Discount <br> ( Per. Unit )</th>
-                      <th class="p-2">Tax <br> ( % )</th>
+                      <th class="p-2">SGST</th>
+                      <th class="p-2">CGST</th>
+                      <th class="p-2">IGST</th>
                       <th class="p-2">Inc. Sales <br> Price</th>
                       <th class="p-2">Total Sales</th>
                       <th class="p-2">MRP</th>
@@ -98,32 +100,55 @@
                   <tbody id="tbody">
                     {% for i in stock %}
                       <tr>
-                        <td>{{i.ProductName}}</td>
-                        <td>{{i.Quantity}}</td>
-                        <td>{{i.PurchaseIncTax}}</td>
-                        <td>{{i.ProfitMargin}}</td>
-                        <td>{{i.BasicSalesPrice}}</td>
-                        <td>{{i.Discount}}</td>
-                        <td>{{i.SalesPriceAfterDiscount}}</td>
-                        <td>{{i.Tax}}</td>
-                        <td>{{i.IncSalesPrice}}</td>
-                        <td>{{i.TotalSales}}</td>
-                        <td>{{i.Amount}}</td>
+                        <td class="p-2">{{i.ProductName}}</td>
+                        <td class="p-2">{{i.Quantity}}</td>
+                        <td class="p-2">{{i.PurchaseIncTax}}</td>
+                        <td class="p-2">{{i.ProfitMargin}}</td>
+                        <td class="p-2">{{i.BasicSalesPrice}}</td>
+                        <td class="p-2">{{i.Discount}}</td>
+                        <td class="p-2">{{i.SalesPriceAfterDiscount}}</td>
+                        {% if i.Tax == '5' %}
+                        <td class="p-2">2.5 %</td>
+                        <td class="p-2">2.5 %</td>
+                        {% endif %}
+                        {% if i.Tax == '12' %}
+                        <td class="p-2">6 %</td>
+                        <td class="p-2">6 %</td>
+                        {% endif %}
+                        {% if i.Tax == '18' %}
+                        <td class="p-2">9 %</td>
+                        <td class="p-2">9 %</td>
+                        {% endif %}
+                        {% if i.Tax == '28' %}
+                        <td class="p-2">14 %</td>
+                        <td class="p-2">14 %</td>
+                        {% endif %}
+                        {% if i.Tax == 'TaxFree'  %}
+                        <td class="p-2">0</td>
+                        <td class="p-2">0</td>
+                        {% endif %}
+                        <td class="p-2">0</td>
+
+                        <td class="p-2">{{i.IncSalesPrice}}</td>
+                        <td class="p-2">{{i.TotalSales}}</td>
+                        <td class="p-2">{{i.Amount}}</td>
                       </tr>
                     {% endfor %}
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th colspan="">Total :</th>
-                      <th>{{quantity}}</th>
-                      <th>{{purchaseprice}}</th>
-                      <th></th>
-                      <th>{{bsp}}</th>
-                      <th></th>
-                      <th>{{sp}}</th>
-                      <th></th>
-                      <th>{{isp}}</th>
-                      <th colspan="1">
+                      <th class="p-2">Total :</th>
+                      <th class="p-2">{{quantity}}</th>
+                      <th class="p-2">{{purchaseprice}}</th>
+                      <th class="p-2"></th>
+                      <th class="p-2">{{bsp}}</th>
+                      <th class="p-2"></th>
+                      <th class="p-2">{{sp}}</th>
+                      <th class="p-2"></th>
+                      <th class="p-2"></th>
+                      <th class="p-2"></th>
+                      <th class="p-2">{{isp}}</th>
+                      <th class="p-2">
                         <span id="tamount2">{{tamonut}}</span>
                       </th>
                     </tr>

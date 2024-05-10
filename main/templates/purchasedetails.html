@@ -83,18 +83,11 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-group row">
-                  <label class="form-label text-md-end col-md-4">Expiry Date :</label>
-                  <div class="col-md-8">
-                    <p class="form-control-static">{{data.ExpiryDate}}</p>
-                  </div>
-                </div>
-              </div>
               <!--/span-->
             </div>
             <div class="row justify-content-center">
               <div class="col-11">
+                <h4 class="text-center mb-3">Products</h4>
                 <table class="table table-striped table-bordered display text-nowrap" id="thad">
                   <thead>
                     <tr>
@@ -133,6 +126,41 @@
                 </table>
               </div>
             </div>
+            <div class="row justify-content-center">
+              <div class="col-11">
+                <h4 class="text-center mb-3">Charges</h4>
+                <table class="table table-striped table-bordered display text-nowrap" id="thad">
+                  <thead>
+                    <tr class="p-0">
+                      <th class="p-2">Charge Name</th>
+                      <th class="p-2">Amount</th>
+                      <th class="p-2">Tax</th>
+                      <th class="p-2">Total Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody">
+                    {% for i in Charges %}
+                      <tr>
+                        <td>{{i.Charges}}</td>
+                        <td>{{i.Amount}}</td>
+                        <td>{{i.Tax}}</td>
+                        <td>{{i.TotalAmount}}</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="">Total :</th>
+                      <th>{{CA}}</th>
+                      <th></th>
+                      <th colspan="1">
+                        {{TCA}}
+                      </th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
           </div>
           <div class="form-actions border-top">
             <div class="card-body">
@@ -140,6 +168,10 @@
                 <div class="col-md-12">
                   <div class="row">
                     <div class="col d-flex justify-content-end">
+                      <a href="/EditDeliveryBoy/{{data.id}}" class="btn btn-success">
+                        <i class="ti ti-edit fs-5"></i>
+                        Edit
+                      </a>
                       <a class="btn bg-danger-subtle text-danger ms-6" href="/Purchase">
                         Cancel
                       </a>

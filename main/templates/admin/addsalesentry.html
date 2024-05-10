@@ -24,6 +24,12 @@
             <div class="row">
               <div class="col-md-2">
                 <div class="mb-4">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control " name="Date" id="Date" required>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
                   <label for="exampleInputtype" class="form-label">Delivery Boy Name</label>
                   <select class="form-select form-control-sm" id="exampleInputtype" name="DeliveryBoyName" tabindex="1"
                     required>
@@ -55,43 +61,64 @@
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
-                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" placeholder=""
-                    required>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" value="{{Invoice}}" disabled>
                   <input type="hidden" name="ProductId" value="{{ProductId}}">
                 </div>
               </div>
               <div class="col-md-2">
-                <label for="exampleInputtype" class="form-label">Party Name</label>
                 <div class="mb-4">
-                  <select class="select2 form-control  custom-select" name="PartyName" required>
-                    <option>Select</option>
-                    <optgroup label="">
-                      {% for i in Party %}
-                      {% if i.Type == 'Customer' or i.Type == 'Hotel & Restaurant' %}
-                      <option value="{{i.PartyName}}">{{i.PartyName}}</option>
-                      {% endif %}
-                      {% endfor %}
-                    </optgroup>
+                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
+                  <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Case">Case</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Gpay">Gpay</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Net banking">Net banking</option>
                   </select>
                 </div>
               </div>
-              <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
+              <div class="col-md-3">
+                <div class="row">
+                  <div class="col-9">
+                    <label for="exampleInputtype" class="form-label">Party Name</label>
+                    <div class="mb-4">
+                      <select class="select2 form-control  custom-select" name="PartyName" required>
+                        <option>Select</option>
+                        <optgroup label="">
+                          {% for i in Party %}
+                          {% if i.Type == 'Customer' or i.Type == 'Hotel & Restaurant' %}
+                          <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
                     class='ti ti-plus'></i></a></div>
-              <hr>
-              <div class="col-12">
+                </div>
+              </div>
+              <div class="col-md-8">
                 <div class="mb-2 row" id="Prodectselect2">
-                  <div class="col-4">
+                  <div class="col-md-4">
+                    <div class="mb-4">
+                      <label for="exampleInputtype" class="form-label">Product Name</label>
                     <select class="select form-control" name="Product">
                       <option>Product Name</option>
                       {% for i in productns %}
                       <option value="{{i}}">{{i}}</option>
                       {% endfor %}
                     </select>
+                    </div>
                   </div>
-                  <div class="col-4">
+                  <div class="col-md-4">
+                    <div class="mb-4">
+                      <label for="exampleInputtype" class="form-label">Product List</label>
                     <select class="select form-control" name="Product2">
                       <option class="after" value="">Products</option>
                     </select>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -142,8 +169,7 @@
                       <td class="p-2"><input type="text" class="form-control text-center" name="TotalSales"
                           id="TotalSales{{i.id}}" value="{{i.TotalSales}}"></td>
                       <td class="p-2"><input type="text" class="form-control text-center" name="Amount"
-                          id="Amount{{i.id}}" onkeydown="onstocks('Amount','{{i.id}}');"
-                          onkeyup="onstocks('Amount','{{i.id}}');" value="{{i.Amount}}"></td>
+                          id="Amount{{i.id}}" value="{{i.Amount}}" disabled></td>
                       <td class="p-2">
                         <div class="mt-1"><a type='button' class='btn btn-danger bg-danger btn-del ms-2'
                             data-sid='{{i.id}}'><i class='ti ti-trash'></i></a></div>
@@ -153,18 +179,83 @@
                   </tbody>
                   <tbody class="bg-white">
                     <tr class="bg-white">
-                      <td colspan="12" class="bg-white"><span>
+                      <td class="p-2" colspan="12" class="bg-white"><span>
                           <center><b id="mes" class="text-danger"></b></center>
                         </span></td>
                     </tr>
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th colspan="9">
+                      <th class="p-2" colspan="9">
                         total Amount :
                       </th>
-                      <th colspan="3">
+                      <th class="p-2" colspan="3">
                         <span id="tamount2">{{tamonut}}</span>
+                      </th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <div class="col-12 mt-2">
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="row" id="Chargesselect2">
+                      <div class="col-9 mb-4">
+                        <label class="form-label">Charges</label>
+                        <select class="select form-control" name="Charges">
+                          <option>Charges</option>
+                          {% for i in Charges %}
+                          <option value="{{i.id}}">{{i.Charges}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="col-1 d-flex align-items-center"><a href="AddCharges" class=" btn btn-success btn-lg"><i
+                            class='ti ti-plus'></i></a></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <table class="table table-striped table-bordered display text-nowrap" id="thad">
+                  <thead>
+                    <tr>
+                      <th class="p-2">Charge Name</th>
+                      <th class="p-2">Amount</th>
+                      <th class="p-2">Tax</th>
+                      <th class="p-2">Total Amount</th>
+                      <th class="p-2"></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody2">
+                    {% for i in ChargesList %}
+                    <tr>
+                      <td class="mt-5 p-2">{{ i.Charges }}</td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="Amount" id="Amount{{i.id}}" onkeydown="onCharges('Amount','{{i.id}}');"
+                        onkeyup="onCharges('Amount','{{i.id}}');" value="{{i.Amount}}"></td>
+                      <td class="p-2"><select class="form-select" name="Tax" onchange="onCharges('Tax','{{i.id}}');" id="Tax{{i.id}}" aria-label="Default select example" required>
+                        <option selected>--select--</option>
+                        <option value="5" {% if i.Tax == '5' %} selected {% endif %}>5%</option>
+                        <option value="12" {% if i.Tax == '12' %} selected {% endif %}>12%</option>
+                        <option value="18" {% if i.Tax == '18' %} selected {% endif %}>18%</option>
+                        <option value="28" {% if i.Tax == '28' %} selected {% endif %}>28%</option>
+                        <option value="TaxFree" {% if i.Tax == 'TaxFree' %} selected {% endif %}>Tax Free</option>
+                      </select></td>
+                      <td class="p-2"><input type="text" class="form-control text-center " name="TotalAmount" id="TotalAmount{{i.id}}"
+                          value="{{i.TotalAmount}}"></td>
+                      <td class="p-2">
+                        <a type='button' class='btn btn-danger bg-danger btn-delete ms-2' data-sid='{{i.id}}'><i
+                            class='ti ti-trash'></i></a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th class="p-2" colspan="3">
+                        Total Amount :
+                      </th>
+                      <th class="p-2" colspan="2">
+                        <span id="tamount3">{{TCA}}</span>
                       </th>
                     </tr>
                   </tfoot>
@@ -188,32 +279,35 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
-  $("#Prodectselect2 select[name='Product']").on('change', function(){
+  DF = new Date()
+  document.getElementById("Date").value = DF.toJSON().slice(0, 10);
+
+  $("#Prodectselect2 select[name='Product']").on('change', function () {
     var $this = $(this);
-    if($this.val() !=''){
-        $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
-        $.ajax({
-            url: '/StockDetails/'+$this.val(),
-            type: 'GET',
-            success: function(resp){
-                x = resp.Ms
-                output = ''
-                for (i = 0; i < x.length; i++) {
-                  output+="<option value=";
-                  output+=x[i].ProductName;
-                  output+="/";
-                  output+=x[i].OldProductId+"/"+x[i].id+'>'+"Price: "+ x[i].Amount +"  Quantity :"+x[i].Quantity +'</option>';
-                };
-                $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
-            }, 
-            error: function(resp){
-                console.log('Something went wrong');
-            }
-        });
-    }else{
-        $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+    if ($this.val() != '') {
+      $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+      $.ajax({
+        url: '/StockDetails/' + $this.val(),
+        type: 'GET',
+        success: function (resp) {
+          x = resp.Ms
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<option value=";
+            output += x[i].ProductName;
+            output += "/";
+            output += x[i].OldProductId + "/" + x[i].id + '>' + "Price: " + x[i].PurchaseIncTax + "  Quantity :" + x[i].Quantity + '</option>';
+          };
+          $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
+        },
+        error: function (resp) {
+          console.log('Something went wrong');
+        }
+      });
+    } else {
+      $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
     }
-   });
+  });
   $("#Prodectselect2 select[name='Product2']").on('change', function () {
     var $Productname = $(this);
     var $Productid = $("input[name='Productid']").val();
@@ -235,7 +329,7 @@
             output += "<td class='p-2'><div class='mt-2'>" + x[i].Tax + "</div></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='IncSalesPrice' id='IncSalesPrice" + x[i].id + "' value='" + x[i].IncSalesPrice + "' disabled></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='TotalSales' id='TotalSales" + x[i].id + "' value='" + x[i].TotalSales + "'></td>";
-            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' onkeydown=onstocks('Amount','" + x[i].id + "'); onkeyup=onstocks('Amount','" + x[i].id + "'); value='" + x[i].Amount + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' value='" + x[i].Amount + "' disabled></td>";
             output += "<td class='p-2'><div class='mt-1'><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></div></td></tr>";
           };
           $('#tbody').html(output);
@@ -313,5 +407,77 @@
       }
     });
   });
+  $("#Chargesselect2 select[name='Charges']").on('change', function () {
+    var ChargesID = $(this).val();
+    mydata = { ChargesID :ChargesID ,type: 'Sales'};
+    $.ajax({
+      type: "POST",
+      url: '/CreateCharges',
+      data: mydata,
+      success: function (resp) {
+        x = resp.Sc
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<tr><td class='mt-5 p-2'>"+ x[i].Charges + "</td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount"+ x[i].id +"' onkeydown=onCharges('Amount','"+ x[i].id +"'); onkeyup=onCharges('Amount','"+ x[i].id +"'); value='"+x[i].Amount+"'></td>";
+            output += "<td class='p-2'><select class='form-select' name='Tax' onchange=onCharges('Tax','"+ x[i].id +"'); id='Tax"+ x[i].id +"' aria-label='Default select example' required>";
+            if(x[i].Tax == ''){output += "<option selected>--select--</option>";}
+            else{output += "<option selected>"+x[i].Tax+"%</option>";}
+            output += "<option value='5'>5%</option>";
+            output += "<option value='12'>12%</option>";
+            output += "<option value='18'>18%</option>";
+            output += "<option value='28'>28%</option>";
+            output += "<option value='TaxFree'>Tax Free</option></select></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center ' name='TotalAmount' id='TotalAmount"+ x[i].id +"' value='"+x[i].TotalAmount+"'></td>";
+            output += "<td class='p-2'><a type='button' class='btn btn-danger bg-danger btn-delete ms-2' data-sid='"+ x[i].id +"'><i class='ti ti-trash'></i></a></td></tr>";
+            };
+          $('#tbody2').html(output);
+          var tamount2 = document.getElementById("tamount3");
+          tamount2.innerText = resp.tamonut;
+      }
+    });
+  });
+  $("#tbody2").on('click', '.btn-delete', function () {
+    let id = $(this).attr('data-sid');
+    mydata = { sid: id, type: 'Sales' };
+    mythis = this;
+    $.ajax({
+      type: "POST",
+      url: '/ChargesDelete',
+      data: mydata,
+      success: function (data) {
+        if (data.status == 1) {
+          $(mythis).closest("tr").fadeOut();
+        }
+        var tamount2 = document.getElementById("tamount3");
+        tamount2.innerText = data.tamonut;
+      }
+    });
+  });
+  function onCharges(name, id) {
+    let val = '#' + name + id;
+    let va = $(val).val();
+    mydata = { name: name, id: id, val: va, type: 'Sales' };
+    $.ajax({
+      type: "POST",
+      url: '/CharegesEdit',
+      data: mydata,
+      success: function (resp) {
+        x = resp.Sc;
+        let value = 0;
+        for (i = 0; i < x.length; i++) {
+          var $PIT = $('#TotalAmount' + x[i].id);
+          $PIT.val(x[i].TotalAmount);
+        var $tamount2 = document.getElementById("tamount3");
+        $tamount2.innerText = resp.rt;
+        var tamount2 = document.getElementById("mes");
+        tamount2.innerText = '';
+        };
+      },
+      error: function (resp) {
+        console.log('Something went wrong');
+      }
+    });
+  }
 </script>
 {% endblock script %}

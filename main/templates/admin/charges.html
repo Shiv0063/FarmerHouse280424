@@ -1,0 +1,78 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="card card-body py-3">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <div class="d-flex align-items-center justify-space-between">
+            <nav aria-label="breadcrumb" class="">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item d-flex align-items-center">
+                  <a class="text-muted text-decoration-none d-flex" href="/">
+                    <iconify-icon icon="solar:home-2-line-duotone" class="fs-6"></iconify-icon>
+                  </a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page">
+                  <span class="badge fw-medium fs-2 bg-primary-subtle text-primary">
+                    Charges
+                  </span>
+                </li>
+              </ol>
+            </nav>
+            <nav aria-label="breadcrumb" class="ms-auto">
+              <ol class="breadcrumb">
+                <a href="AddCharges" class="btn btn-success">Add Charge</a>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+      <div class="row justify-content-center">
+        <div class="col-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    <div class="datatables">
+      <!-- start File export -->
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+              <thead>
+                <!-- start row -->
+                <tr>
+                  <th>N0.</th>
+                  <th>Charge Name</th>
+                  <th></th>
+                </tr>
+                <!-- end row -->
+              </thead>
+              <tbody>
+                {% for i in data %}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  <td>{{i.Charges}}</td>
+                  <td>
+                    <a class="btn btn-success mr-3" href="/EditCharges/{{i.id}}" style="margin-left: 5px;">Edit</a><a href="DeleteCharges/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger">Delete</a>
+                  </td>
+                </tr>
+                {% endfor %}
+                
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- end File export -->
+    </div>
+  </div>
+</div>
+{% endblock content %}

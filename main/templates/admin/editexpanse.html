@@ -28,10 +28,15 @@
                   <input type="text" class="form-control" name="Expanse" value="{{data.Expanse}}">
                 </div>
               </div>
-              <div class="col-lg-6">
+              <div class="col-md-4">
                 <div class="mb-4">
-                  <label class="form-label">Amount</label>
-                  <input type="number" class="form-control" name="Amount" value="{{data.Amount}}">
+                  <label for="exampleInputtype" class="form-label">Type Of Expanse</label>
+                  <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1"
+                    required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Direct" {% if data.Type == 'Direct' %} selected {% endif %}>Direct</option>
+                    <option value="Indirect" {% if data.Type == 'Indirect' %} selected {% endif %}>Indirect</option>
+                  </select>
                 </div>
               </div>
               <div class="col-12">

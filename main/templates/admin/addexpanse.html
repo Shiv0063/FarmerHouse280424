@@ -22,16 +22,21 @@
           <form class="card-body p-4" method="post">
             {% csrf_token %}
             <div class="row">
-              <div class="col-lg-6">
+              <div class="col-lg-4">
                 <div class="mb-4">
-                  <label class="form-label">Expanse</label>
+                  <label class="form-label">Expanse Name</label>
                   <input type="text" class="form-control" name="Expanse" placeholder="Expanse">
                 </div>
               </div>
-              <div class="col-lg-6">
+              <div class="col-md-4">
                 <div class="mb-4">
-                  <label class="form-label">Amount</label>
-                  <input type="number" class="form-control" name="Amount" placeholder="Amount">
+                  <label for="exampleInputtype" class="form-label">Type Of Expanse</label>
+                  <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1"
+                    required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Direct">Direct</option>
+                    <option value="Indirect">Indirect</option>
+                  </select>
                 </div>
               </div>
               <div class="col-12">

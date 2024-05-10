@@ -9,7 +9,7 @@
         <div class="px-4 py-3 border-bottom">
           <h4 class="card-title mb-0">Purchase Register</h4>
         </div>
-        <form class="card-body p-4 pb-0 mb-0" enctype="multipart/form-data" method="post">
+        <!-- <form class="card-body p-4 pb-0 mb-0" enctype="multipart/form-data" method="post">
           {% csrf_token %}
           <div class="row mb-0">
             <div class="col-md-2">
@@ -68,7 +68,7 @@
             </div>
           </div>
         </form>
-        <hr>
+        <hr> -->
         <div class="card-body">
           <div class="table-responsive">
             <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
@@ -96,11 +96,7 @@
                   <td>{{i.TypeofPurchase}}</td>
                   <td>{{i.TypeofPayment}}</td>
                   <td>{{i.Amount}}</td>
-                  <td><div class="row">
-                    <div class="col d-flex justify-content-end">
-                      <a class="btn btn-warning mr-3" href="/DeliveryBoyDetails/{{i.id}}" style="margin-left: 5px;">Details</a><a class="btn btn-success mr-3" href="/EditDeliveryBoy/{{i.id}}" style="margin-left: 5px;">Edit</a><a href="DeleteDeliveryBoy/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger">Delete</a>
-                    </div>
-                  </div></td>
+                  <td><a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;">Details</a></div></td>
                 </tr>
                 {% endfor %}
               </tbody>

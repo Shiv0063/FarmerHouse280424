@@ -9,51 +9,23 @@
         <div class="px-4 py-3 border-bottom">
           <h4 class="card-title mb-0">Sales Register</h4>
         </div>
-        <form class="card-body p-4 pb-0 mb-0" enctype="multipart/form-data" method="post">
+        <form class="card-body p-4 pb-0 mb-0" method="post">
           {% csrf_token %}
           <div class="row mb-0">
             <div class="col-md-2">
               <div class="mb-4">
-                <label for="exampleInputtype" class="form-label">Delivery Boy Name</label>
-                <select class="form-select form-control-sm" id="exampleInputtype" name="DeliveryBoyName" tabindex="1">
-                  <option value="" selected>-- Selet --</option>
-                  {% for i in DB %}
-                    <option value="{{i.Name}}">{{i.Name}}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="mb-4">
-                <label for="exampleInputtype" class="form-label">Type Of Business</label>
-                <select class="form-select form-control-sm" id="exampleInputtype" name="TypeOfBusiness" tabindex="1">
-                  <option value="" selected>-- Selet --</option>
-                  <option value="B2B">B2B</option>
-                  <option value="B2C">B2C</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="mb-4">
-                <label for="exampleInputBillno" class="form-label">Delivery Time</label>
-                <input type="time" class="form-control " id="exampleInputBillno" name="DeliveryTime" placeholder="">
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="mb-4">
                 <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
-                <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" placeholder="">
-                <input type="hidden" name="ProductId" value="{{ProductId}}">
+                <input type="text" class="form-control" name="InvoiceNo" id="InvoiceNo" onkeydown="calcVal();" onkeyup="calcVal();">
               </div>
             </div>
             <div class="col-md-2">
               <label for="exampleInputtype" class="form-label">Party Name</label>
               <div class="mb-4">
                 <select class="select2 form-control  custom-select" name="PartyName">
-                  <option>Select</option>
+                  <option selected>Select</option>
                   <optgroup label="">
-                    {% for i in Party %}
-                    <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                    {% for i in sp %}
+                    <option value="{{i}}">{{i}}</option>
                     {% endfor %}
                   </optgroup>
                 </select>
@@ -71,30 +43,37 @@
               <thead>
                 <!-- start row -->
                 <tr>
-                  <th>Date</th>
-                  <th>Party Name</th>
-                  <th>Invoice No.</th>
-                  <th>Type Of Business</th>
-                  <th>Delivery Time</th>
-                  <th>Delivery Boy Name</th>
-                  <th>Amount</th>
-                  <th></th>
+                  <th class="p-2">Date</th>
+                  <th class="p-2">Party Name</th>
+                  <th class="p-2">Invoice No.</th>
+                  <th class="p-2">Type Of Business</th>
+                  <th class="p-2">Delivery Time</th>
+                  <th class="p-2">Delivery Boy Name</th>
+                  <th class="p-2">Amount</th>
+                  <th class="p-2"></th>
                 </tr>
                 <!-- end row -->
               </thead>
-              <tbody>
+              <tbody id="tbody">
                 {% for i in sales %}
                 <tr>
-                  <td>{{i.date}}</td>
-                  <td>{{i.PartyName}}</td>
-                  <td>{{i.InvoiceNo}}</td>
-                  <td>{{i.TypeOfBusiness}}</td>
-                  <td>{{i.DeliveryTime}}</td>
-                  <td>{{i.DeliveryBoyName}}</td>
-                  <td>{{i.Amount}}</td>
-                  <td></td>
+                  <td class="p-2">{{i.date}}</td>
+                  <td class="p-2">{{i.PartyName}}</td>
+                  <td class="p-2">{{i.InvoiceNo}}</td>
+                  <td class="p-2">{{i.TypeOfBusiness}}</td>
+                  <td class="p-2">{{i.DeliveryTime}}</td>
+                  <td class="p-2">{{i.DeliveryBoyName}}</td>
+                  <td class="p-2">{{i.Amount}}</td>
+                  <td class="p-2"><a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;">Details</a></td>
                 </tr>
                 {% endfor %}
+              </tbody>
+              <tbody class="bg-white">
+                <tr class="bg-white">
+                  <td class="p-2" colspan="8" class="bg-white"><span>
+                      <center><b id="mes" class="text-danger"></b></center>
+                    </span></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -105,3 +84,50 @@
   </div>
 </div>
 {% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
+<script>
+  
+  var $InvoiceNo = $('#InvoiceNo');
+  function calcVal() {
+    var IN = $InvoiceNo.val();
+    if ($InvoiceNo.val() != '') {
+      $.ajax({
+        url: '/InvoiceNo/' + $InvoiceNo.val() + '/Sales',
+        type: 'GET',
+        success: function (resp) {
+          if(resp.mgs != 0){
+            var tamount3 = document.getElementById("mes");
+            tamount3.innerText = resp.mgs;
+            output = '';
+            $('#tbody').html(output);
+          }
+          else{
+            x = resp.Sc
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<tr><td class='p-2'>"+ x[i].date +"</td>";
+            output += "<td class='p-2'>"+ x[i].PartyName +"</td>";
+            output += "<td class='p-2'>"+ x[i].InvoiceNo +"</td>";
+            output += "<td class='p-2'>"+ x[i].TypeOfBusiness +"</td>";
+            output += "<td class='p-2'>"+ x[i].DeliveryTime +"</td>";
+            output += "<td class='p-2'>"+ x[i].DeliveryBoyName +"</td>";
+            output += "<td class='p-2'>"+ x[i].Amount +"</td>";
+            output += "<td class='p-2'><a class='btn btn-warning mr-3' href='/SalesDetails/"+ x[i].id +"' style='margin-left: 5px;'>Details</a></td></tr>";  
+          };
+          $('#tbody').html(output);
+          var tamount3 = document.getElementById("mes");
+            tamount3.innerText = '';
+          }
+          
+        },
+        error: function (resp) {
+          console.log('Something went wrong');
+        }
+      });
+    } else {
+      console.log('Something went wrong');
+    }
+  }
+</script>
+{% endblock script %}

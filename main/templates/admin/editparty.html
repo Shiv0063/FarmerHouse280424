@@ -28,9 +28,12 @@
                   <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1"
                     required>
                     <option value="" selected>-- Selet --</option>
-                    <option value="B2B" {% if data.Type == 'B2B' %} selected {% endif %}>B2B</option>
-                    <option value="B2C" {% if data.Type == 'B2C' %} selected {% endif %}>B2C</option>
+                    <option value="Market Yard" {% if data.Type == 'Market Yard' %} selected {% endif %}>Market Yard</option>
+                    <option value="Local Market" {% if data.Type == 'Local Market' %} selected {% endif %}>Local Market</option>
                     <option value="Vendor" {% if data.Type == 'Vendor' %} selected {% endif %}>Vendor</option>
+                    <option value="Hotel & Restaurant" {% if data.Type == 'Hotel & Restaurant' %} selected {% endif %}>Hotel & Restaurant</option>
+                    <option value="Customer" {% if data.Type == 'Customer' %} selected {% endif %}>Customer</option>
+                    
                   </select>
                 </div>
               </div>

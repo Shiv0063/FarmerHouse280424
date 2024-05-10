@@ -1,0 +1,210 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      {% for message in messages %}
+      {% if message.tags == 'success' %}
+      <div class="row justify-content-center">
+        <div class="col-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="col-12">
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Add Expenses Entry</h4>
+          </div>
+          <form class="card-body p-4" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control " name="Date" id="Date" required>
+                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
+                  <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Case">Case</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Gpay">Gpay</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Net banking">Net banking</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="row">
+                  <div class="col-9">
+                    <label for="exampleInputtype" class="form-label">Party Name</label>
+                    <div class="mb-4">
+                      <select class="select2 form-control  custom-select" name="PartyName" required>
+                        <option>Select</option>
+                        <optgroup label="">
+                          {% for i in Party %}
+                          {% if i.Type == 'Expanse' %}
+                          <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                          {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-center">
+                    <a href="AddParty" class="btn btn-success btn-lg">
+                      <i class='ti ti-plus'></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3" id="Prodectselect2">
+                <div class="row">
+                  <div class="col-9">
+                    <label class="form-label">Expenses Name</label>
+                    <div class="mb-4">
+                      <select class="select form-control" name="Expanse">
+                        <option>Expenses Name</option>
+                        {% for i in Expens %}
+                        <option value="{{i.id}}">{{i.Expanse}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-center">
+                    <a href="AddExpanse" class="btn btn-success btn-lg">
+                      <i class='ti ti-plus'></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <table class="table table-striped table-bordered display text-nowrap" id="thad">
+                <thead>
+                  <tr>
+                    <th>Expanse Name</th>
+                    <th>Amount</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                  {% for i in ELM %}
+                  <tr>
+                    <td class="mt-5">{{i.Expanse}}</td>
+                    <td><input type="text" class="form-control text-center" onkeydown="onAmount('Amount','{{i.id}}');"
+                        onkeyup="onAmount('Amount','{{i.id}}');" name="Amount" id="Amount{{i.id}}"
+                        value="{{i.Amount}}"></td>
+                    <td><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='{{i.id}}'><i
+                          class='ti ti-trash'></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th colspan="1">
+                      Total Amount :
+                    </th>
+                    <th colspan="2">
+                      <span id="tamount2">{{tamonut}}</span>
+                    </th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <div class="col-12">
+              <div class="gap-3">
+                <button class="btn btn-success" type="submit">Save</button>
+                <button class="btn btn-success" type="submit">Save & Print</button>
+                <a class="btn bg-danger-subtle text-danger" href="/PurchaseCancel/{{ProductId}}">Cancel</a>
+              </div>
+            </div>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
+<script>
+  DF = new Date()
+  document.getElementById("Date").value = DF.toJSON().slice(0, 10);
+
+  $("#Prodectselect2 select[name='Expanse']").on('change', function () {
+    var $Productname = $(this);
+    var $Productid = $("input[name='Expanse']").val();
+    if ($Productname.val() != '') {
+      $.ajax({
+        url: '/ExpanseList/' + $Productname.val(),
+        type: 'GET',
+        success: function (resp) {
+          x = resp.Sc
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<tr><td class='mt-5'>" + x[i].Expanse + "</td>";
+            output += "<td><input type='text' class='form-control text-center' onkeydown=onAmount('Amount','" + x[i].id + "'); onkeyup=onAmount('Amount','" + x[i].id + "'); name='Amount' id='Amount" + x[i].id + "' value='" + x[i].Amount + "'></td>";
+            output += "<td><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></td></tr>"
+          };
+          $('#tbody').html(output);
+          var tamount2 = document.getElementById("tamount2");
+          tamount2.innerText = resp.tamonut;
+        },
+        error: function (resp) {
+          console.log('Something went wrong');
+        }
+      });
+    } else {
+      console.log('Something went wrong');
+    }
+  });
+  function onAmount(name, id) {
+    let val = '#' + name + id;
+    let va = $(val).val();
+    mydata = {id: id, val: va};
+    $.ajax({
+      type: "POST",
+      url: '/EAmount',
+      data: mydata,
+      success: function (resp) {
+        var $tamount2 = document.getElementById("tamount2");
+        $tamount2.innerText = resp.tamonut;
+      },
+      error: function (resp) {
+        console.log('Something went wrong');
+      }
+    });
+  }
+  // delete data
+  $("tbody").on('click', '.btn-del', function () {
+    // console.log('delete btn clicked');
+    let id = $(this).attr('data-sid');
+    // console.log(id);
+    mydata = { sid: id};
+    mythis = this;
+    $.ajax({
+      type: "POST",
+      url: '/EXDelete',
+      data: mydata,
+      success: function (data) {
+        if (data.status == 1) {
+          $(mythis).closest("tr").fadeOut();
+        }
+        var tamount2 = document.getElementById("tamount2");
+        tamount2.innerText = data.tamonut;
+      }
+    });
+  });
+</script>
+{% endblock script %}
