@@ -86,14 +86,14 @@ WSGI_APPLICATION = 'FarmerHouse.wsgi.application'
 
 import dj_database_url
 
-RENDER_EXTERNAL_HOSTNAME = "postgres://farmerhouse_user:uSaDPO4PiEpUpoTTEVLVVJOtkiGIqEON@dpg-con3c8sf7o1s73fcpqdg-a.oregon-postgres.render.com/farmerhouse"
+RENDER_EXTERNAL_HOSTNAME = "postgres://farmerhouse_upf2_user:8KRrWy2Dd0maEh6dLtsFt1wzFYO9t9jW@dpg-cov1ks821fec73c0q5eg-a.oregon-postgres.render.com/farmerhouse_upf2"
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 DATABASES = {
     'default': dj_database_url.config(
         # Feel free to alter this value to suit your needs.
-        default='postgres://farmerhouse_user:uSaDPO4PiEpUpoTTEVLVVJOtkiGIqEON@dpg-con3c8sf7o1s73fcpqdg-a.oregon-postgres.render.com/farmerhouse',
+        default='postgres://farmerhouse_upf2_user:8KRrWy2Dd0maEh6dLtsFt1wzFYO9t9jW@dpg-cov1ks821fec73c0q5eg-a.oregon-postgres.render.com/farmerhouse_upf2',
         conn_max_age=600
     )
 }
