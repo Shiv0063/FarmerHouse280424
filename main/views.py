@@ -796,11 +796,11 @@ def AddSalesEntry(request):
         wtAmount=0
         for i in stock:
             dt=MainStockModel.objects.get(id=i.sid)
-            newQuantity = int(dt.Quantity) - int(i.Quantity)
+            newQuantity = float(dt.Quantity) - float(i.Quantity)
             if newQuantity == 0:
                 dt.delete()
             else:
-                wtAmount += float(dt.PurchaseIncTax) * int(newQuantity)
+                wtAmount += float(dt.PurchaseIncTax) * float(newQuantity)
                 dt.Quantity = str(newQuantity)
                 dt.Amount = str(wtAmount)
                 dt.save()
