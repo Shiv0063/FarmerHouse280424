@@ -543,7 +543,7 @@ def AddPurchaseEntry(request):
         purchaseinctax = 0
         for i in stock:
             tamonut+=float(i.Amount)
-            quantity+=int(i.Quantity)
+            quantity+=float(i.Quantity)
             purchaseprice+=float(i.PurchasePrice)
             purchaseinctax+=float(i.PurchaseIncTax)
         tamonut= str(tamonut)
@@ -694,7 +694,7 @@ def PurchaseDetails(request,id):
     purchaseinctax = 0
     for i in stock:
         tamonut+=float(i.Amount)
-        quantity+=int(i.Quantity)
+        quantity+=float(i.Quantity)
         purchaseprice+=float(i.PurchasePrice)
         purchaseinctax+=float(i.PurchaseIncTax)
     tamonut= str(tamonut)
@@ -952,7 +952,7 @@ def SalesDetails(request,id):
     isp = 0
     for i in stock:
         tamonut+=float(i.TotalSales)
-        quantity+=int(i.Quantity)
+        quantity+=float(i.Quantity)
         purchaseprice+=float(i.PurchaseIncTax)
         bps +=float(i.BasicSalesPrice)
         sp+= float(i.SalesPriceAfterDiscount)
@@ -1050,7 +1050,7 @@ def AddPurchaseReturnEntry(request):
         purchaseinctax = 0
         for i in stock:
             tamonut+=float(i.Amount)
-            quantity+=int(i.Quantity)
+            quantity+=float(i.Quantity)
             purchaseprice+=float(i.PurchasePrice)
             purchaseinctax+=float(i.PurchaseIncTax)
         tamonut= str(tamonut)
@@ -1133,7 +1133,7 @@ def PRDetails(request,id):
     purchaseinctax = 0
     for i in stock:
         tamonut+=float(i.Amount)
-        quantity+=int(i.Quantity)
+        quantity+=float(i.Quantity)
         purchaseprice+=float(i.PurchasePrice)
         purchaseinctax+=float(i.PurchaseIncTax)
     tamonut= str(tamonut)
@@ -1348,7 +1348,7 @@ def SRDetails(request,id):
     isp = 0
     for i in stock:
         tamonut+=float(i.TotalSales)
-        quantity+=int(i.Quantity)
+        quantity+=float(i.Quantity)
         purchaseprice+=float(i.PurchaseIncTax)
         bps +=float(i.BasicSalesPrice)
         sp+= round(float(i.SalesPriceAfterDiscount),2)
