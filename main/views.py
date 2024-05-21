@@ -6,7 +6,13 @@ from django.http import HttpResponse,JsonResponse
 from .models import PartyModel,CategoryModel,DeliveryBoyModel,ProductModel,UserDetails,ExpanseModel,NMModel,BiilNoModel,StockModel,PurchaseEntryModel,MainStockModel,SalesStockModel,SalesEntryModel,ExpanseListModel,ExpanseEntryModel,ChargesModel,ChargesListModel,InvoiceNoModel
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from io import BytesIO
+from xhtml2pdf import pisa
+from django.template.loader import get_template
+from django.http import Http404
 import os
+
+
 
 def Login(request):
     if request.method=="POST":
@@ -91,7 +97,6 @@ def AddParty(request):
     if is_user(request.user):
         return render(request,'addparty.html')
     
-
 @login_required(login_url='Login')
 def PartyDetails(request,id):
     data=PartyModel.objects.get(id=id)
@@ -138,8 +143,10 @@ def AddUserAccount(request):
             phone=request.POST.get('Number')
             Address=request.POST.get('Address')
             if is_user(username):
+                messages.success(request,'UserName Is Allready Register.')
                 return redirect('/AddUserAccount')
             if useremail(emailaddress):
+                messages.success(request,'Email Is Allready Register.')
                 return redirect('/AddUserAccount')
             new_user= User.objects.create_user(username,emailaddress,password)
             new_user.save()
@@ -263,8 +270,7 @@ def Category(request):
     if is_user(request.user):
         data=CategoryModel.objects.filter(user=request.user)
         return render(request,'category.html',{'data':data})
-
-    
+  
 @login_required(login_url='Login')
 def AddCategory(request):
     if request.method=="POST": 
@@ -279,7 +285,6 @@ def AddCategory(request):
     if is_user(request.user):
         return render(request,'addcategory.html')
     
-
 @login_required(login_url='Login')
 def EditCategory(request,id):
     if is_admin(request.user):
@@ -331,7 +336,6 @@ def AddDeliveryBoy(request):
     if is_user(request.user):
         return render(request,'adddeliveryboy.html')
     
-
 @login_required(login_url='Login')
 def DeliveryBoyDetails(request,pk):
     data=DeliveryBoyModel.objects.get(id=pk)
@@ -464,8 +468,39 @@ def DeleteCharges(request,id):
 @login_required(login_url='Login')
 def PurchaseEntry(request):
     if is_admin(request.user):
-        Purchase = PurchaseEntryModel.objects.filter(Type='Purchase')
-        data = {'Purchase':Purchase}
+        Purchase = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user)
+        sp = {i.PartyName for i in Purchase}
+        data = {'Purchase':Purchase,'sp':sp}
+        if request.method=="POST": 
+            StartDate = request.POST.get('StartDate')
+            EndDate = request.POST.get('EndDate')
+            PartyName = request.POST.get('PartyName')
+            BillNo = request.POST.get('BillNo')
+            if (StartDate == '' and EndDate == '') and (PartyName == 'Select' and BillNo == ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user)
+            elif (StartDate == '' and EndDate == '') and (PartyName == 'Select' and BillNo != ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user,BillNo=BillNo)
+            elif (StartDate == '' and EndDate == '') and (PartyName != 'Select' and BillNo == ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user,PartyName=PartyName)
+            elif (StartDate != '' and EndDate != '') and (PartyName != 'Select' and BillNo == ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user,PartyName=PartyName,Date__range=[StartDate, EndDate])
+            elif (StartDate != '' and EndDate != '') and (PartyName == 'Select' and BillNo == ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user,Date__range=[StartDate, EndDate])
+            elif StartDate != '' and EndDate == '':
+                if PartyName != 'Select':
+                    Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user,Date=StartDate,PartyName=PartyName)
+                elif PartyName == 'Select':
+                    Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user,Date=StartDate,BillNo=BillNo)
+                elif BillNo != '':
+                    Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user,Date=StartDate,BillNo=BillNo)
+                elif BillNo == '':
+                    Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user,Date=StartDate)
+                # Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user,Date__range=[StartDate, EndDate])
+            else:
+                Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=request.user)
+            sp = {i.PartyName for i in Purchase}
+            data = {'Purchase':Pl,'sp':sp,'StartDate':StartDate,'EndDate':EndDate,'PartyName':PartyName,'BillNo':BillNo}
+            return render(request,'admin/purchaseentry.html',data)
         return render(request,'admin/purchaseentry.html',data)
     if is_user(request.user):
         return render(request,'purchaseentry.html')
@@ -530,6 +565,7 @@ def AddPurchaseEntry(request):
         Bill=request.POST.get('BillNo')
         InvoiceNo=request.POST.get('InvoiceNo')
         TypeofPayment=request.POST.get('TypeofPayment')
+        Terms=request.POST.get('Terms')
         PartyName=request.POST.get('PartyName')
         ProductId=request.POST.get('ProductId')
         DueDate=request.POST.get('DueDate')
@@ -551,7 +587,7 @@ def AddPurchaseEntry(request):
         purchaseprice= str(purchaseprice)
         purchaseinctax= str(purchaseinctax)
         tamonut = str(float(tamonut) + float(TCA))
-        dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,DueDate=DueDate,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date,TChargesAmount=TCA)
+        dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,Terms=Terms,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,DueDate=DueDate,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date,TChargesAmount=TCA)
         dt.save()
         stock = StockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         for i in stock:
@@ -573,13 +609,18 @@ def AddPurchaseEntry(request):
 
 @login_required(login_url='Login')
 @csrf_exempt
-def SProducts(request,PN,id,type):
+def SProducts(request,PN,id,type,PId=None):
     prd = ProductModel.objects.get(id=id)
     user = str(request.user.username)
     val= NMModel.objects.get(user=user,type=type)
-    stockproduct = StockModel.objects.create(ProductId=val.ProductId,user=user,type=type,ProductName=prd.ProductName,Category=prd.Category,Tax=prd.Tax,Unit=prd.Unit,PurchasePrice='0',PurchaseIncTax='0',MinQty=prd.MinQty,MaxQty=prd.MaxQty,BarcodeNo=prd.BarcodeNo,Quantity='0',Amount='0')
-    stockproduct.save()
-    get = StockModel.objects.filter(ProductId=val.ProductId,user=user,type=type).values()
+    if PId == None:
+        stockproduct = StockModel.objects.create(ProductId=val.ProductId,user=user,type=type,ProductName=prd.ProductName,Category=prd.Category,Tax=prd.Tax,Unit=prd.Unit,PurchasePrice='0',PurchaseIncTax='0',MinQty=prd.MinQty,MaxQty=prd.MaxQty,BarcodeNo=prd.BarcodeNo,Quantity='0',Amount='0')
+        stockproduct.save()
+        get = StockModel.objects.filter(ProductId=val.ProductId,user=user,type=type).values()
+    else:
+        stockproduct = StockModel.objects.create(ProductId=PId,user=user,type=type,ProductName=prd.ProductName,Category=prd.Category,Tax=prd.Tax,Unit=prd.Unit,PurchasePrice='0',PurchaseIncTax='0',MinQty=prd.MinQty,MaxQty=prd.MaxQty,BarcodeNo=prd.BarcodeNo,Quantity='0',Amount='0')
+        stockproduct.save()
+        get = StockModel.objects.filter(ProductId=PId,user=user,type=type).values()
     Sc = list(get)
     tamonut = 0
     for i in get:
@@ -628,7 +669,7 @@ def ProductE(request):
     if dt.Quantity == '':
         Quantity = 0
     else:
-        Quantity = int(dt.Quantity)
+        Quantity = float(dt.Quantity)
     if dt.Quantity == 0:
         dt.Amount = '' 
     else:
@@ -658,7 +699,7 @@ def ProductE(request):
         tamonut+=float(i['Amount'])
     PT = "%.2f" % tamonut
     tamonut= str(PT)
-    return JsonResponse({'Sc':Sc,'tamonut':tamonut})
+    return JsonResponse({'Sc':Sc,'tamonut':tamonut,})
 
 @login_required(login_url='Login')
 @csrf_exempt
@@ -682,6 +723,8 @@ def ProductsDelete(request):
 def PurchaseCancel(request,id):
     data=StockModel.objects.filter(ProductId=id,user=request.user,type='Purchase')
     data.delete()
+    data2=ChargesListModel.objects.filter(ProductId=id,user=request.user,type='Purchase')
+    data2.delete()
     return redirect('/Purchase')
 
 @login_required(login_url='Login')
@@ -714,11 +757,101 @@ def PurchaseDetails(request,id):
         return render(request,'purchasedetails.html',{'data':data,'stock':stock,'tamonut':tamonut,'quantity':quantity,'purchaseprice':purchaseprice,'purchaseinctax':purchaseinctax,'Charges':Charges,'CA':CA,'TCA':TCA})
 
 @login_required(login_url='Login')
+def DeletePurchase(request,id):
+    dt=PurchaseEntryModel.objects.get(id=id)
+    sl=StockModel.objects.filter(ProductId=dt.ProductId)
+    msl=MainStockModel.objects.filter(ProductId=dt.ProductId)
+    msl.delete()
+    sl.delete()
+    dt.delete()
+    return redirect('/Purchase')
+
+@login_required(login_url='Login')
+def EditPurchase(request,id):
+    dt=PurchaseEntryModel.objects.get(id=id)
+    user = request.user
+    stock = StockModel.objects.filter(ProductId=dt.ProductId,user=user,type='Purchase')
+    Category=CategoryModel.objects.filter(user=user)
+    Product = ProductModel.objects.filter(user=user)
+    Party = PartyModel.objects.filter(user=user)
+    tamonut = 0
+    for i in stock:
+        tamonut+=float(i.Amount)
+    tamonut= str(tamonut)
+    Charges=ChargesModel.objects.filter(user=user.username)
+    ChargesList = ChargesListModel.objects.filter(user=user,ProductId=dt.ProductId,type='Purchase')
+    TCA = 0
+    for i in ChargesList:
+        TCA += float(i.TotalAmount)
+    TCA = TCA
+    data={'Category':Category,'Product':Product,'dt':dt,'TCA':TCA,'ChargesList':ChargesList,'Charges':Charges,'Party':Party,'stock':stock,'tamonut':tamonut}
+    dt=PurchaseEntryModel.objects.get(id=id)
+    if request.method=="POST":    
+        dt.user=str(request.user.username)
+        dt.TypeofPurchase=request.POST.get('TypeofPurchase')
+        dt.BillNo=request.POST.get('BillNo')
+        dt.InvoiceNo=request.POST.get('InvoiceNo')
+        dt.TypeofPayment=request.POST.get('TypeofPayment')
+        dt.Terms=request.POST.get('Terms')
+        dt.PartyName=request.POST.get('PartyName')
+        ProductId=request.POST.get('ProductId')
+        dt.ProductId = ProductId
+        dt.DueDate=request.POST.get('DueDate')
+        dt.Date=request.POST.get('Date')
+        dt.Type='Purchase'
+        stock=StockModel.objects.filter(ProductId=ProductId,user=request.user.username)
+        tamonut= 0
+        quantity = 0
+        purchaseprice = 0
+        purchaseinctax = 0
+        for i in stock:
+            tamonut+=float(i.Amount)
+            quantity+=float(i.Quantity)
+            purchaseprice+=float(i.PurchasePrice)
+            purchaseinctax+=float(i.PurchaseIncTax)
+        tamonut= str(tamonut)
+        dt.TQuantity= str(quantity)
+        dt.TPurchasePrice= str(purchaseprice)
+        dt.TPurchaseIncTax= str(purchaseinctax)
+        dt.Amount = str(float(tamonut) + float(TCA))
+        dt.TChargesAmount=TCA
+        dt.save()
+        user=request.user.username
+        msm=MainStockModel.objects.filter(ProductId=ProductId,user=user,type='Purchase')
+        msm.delete()
+        stock = StockModel.objects.filter(ProductId=ProductId,user=user,type='Purchase')
+        for i in stock:
+            MainS=MainStockModel.objects.create(OldProductId=i.id,ProductId=i.ProductId,user=user,type='Purchase',ProductName=i.ProductName,Category=i.Category,Tax=i.Tax,Unit=i.Unit,PurchasePrice=i.PurchasePrice,PurchaseIncTax=i.PurchaseIncTax,MinQty=i.MinQty,MaxQty=i.MaxQty,BarcodeNo=i.BarcodeNo,Quantity=i.Quantity,Amount=i.Amount)
+            MainS.save()
+        return redirect('/Purchase')
+    return render(request,'admin/editpurchaseentry.html',data)
+
+@login_required(login_url='Login')
 def SalesEntry(request):
     if is_admin(request.user):
-        sales = SalesEntryModel.objects.filter(Type='Sales')
+        sales = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
         sp = {i.PartyName for i in sales}
         data = {'sales':sales,'sp':sp}
+        if request.method=="POST": 
+            StartDate = request.POST.get('StartDate')
+            EndDate = request.POST.get('EndDate')
+            PartyName = request.POST.get('PartyName')
+            if (StartDate != '' and EndDate != '') and (PartyName == 'Select' ):
+                ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user)
+            elif (StartDate == '' and EndDate == '') and (PartyName == 'Select'):
+                ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+            elif StartDate == '' and EndDate == '':
+                if PartyName == 'Select':
+                    ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+                else :  
+                    ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,PartyName=PartyName)
+            elif (StartDate != '' and EndDate == '') and (PartyName == 'Select'):
+                    ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,Date=StartDate)
+            else:
+                ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user,PartyName=PartyName)
+            sp = {i.PartyName for i in sales}
+            data = {'sales':ss,'sp':sp,'StartDate':StartDate,'EndDate':EndDate,'PartyName':PartyName}
+            return render(request,'admin/salesentry.html',data)
         return render(request,'admin/salesentry.html',data)
     if is_user(request.user):
         return render(request,'salesentry.html')
@@ -786,11 +919,13 @@ def AddSalesEntry(request):
         DeliveryTime=request.POST.get('DeliveryTime')
         InvoiceNo=Invoice
         PartyName=request.POST.get('PartyName')
+        TypeofPayment=request.POST.get('TypeofPayment')
+        Terms=request.POST.get('Terms')
         ProductId=request.POST.get('ProductId')
         Date=request.POST.get('Date')
         Type='Sales'
         Amount=str(float(tamonut) + float(TCA))
-        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,TChargesAmount=TCA)
+        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,TChargesAmount=TCA)
         dt.save()
         stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         wtAmount=0
@@ -798,7 +933,10 @@ def AddSalesEntry(request):
             dt=MainStockModel.objects.get(id=i.sid)
             newQuantity = float(dt.Quantity) - float(i.Quantity)
             if newQuantity == 0:
-                dt.delete()
+                dt.Quantity = '0'
+                dt.Amount = '0'
+                dt.out = '1'
+                dt.save()
             else:
                 wtAmount += float(dt.PurchaseIncTax) * float(newQuantity)
                 dt.Quantity = str(newQuantity)
@@ -818,7 +956,6 @@ def AddSalesEntry(request):
     if is_user(request.user):
         return render(request,'addsalesentry.html',data)
     
-
 def StockDetails(request,name):
     Ms = MainStockModel.objects.filter(user=request.user,ProductName=name).values()
     Ms = list(Ms)
@@ -830,10 +967,20 @@ def Stockswork(request,PN,id,id2,type):
     user = str(request.user.username)
     val= NMModel.objects.get(user=user,type=type)
     ms = MainStockModel.objects.get(id=id2)
-    OldProductId = id
+    PRD = ProductModel.objects.get(BarcodeNo=ms.BarcodeNo)
     type = type
     ProductId = val.ProductId
-    SalesStock=SalesStockModel.objects.create(ProductId=ProductId,user=user,type=type,ProductName=ms.ProductName,Category=ms.Category,Tax=ms.Tax,Unit=ms.Unit,PurchaseIncTax=ms.PurchaseIncTax,BarcodeNo=ms.BarcodeNo,Quantity=ms.Quantity,Amount='0',sid=ms.id,ProfitMargin='0',BasicSalesPrice='0',Discount='0',SalesPriceAfterDiscount='0',IncSalesPrice='0',TotalSales='0')
+    TSP = eval(ms.Quantity) * eval(ms.PurchaseIncTax)
+    if ms.Tax != 'TaxFree':
+        tax = int(ms.Tax)
+        ISP = eval(ms.PurchaseIncTax) +(eval(ms.PurchaseIncTax) * tax /100)
+        ISP =  "%.2f" % ISP
+    else:
+        ISP = eval(ms.PurchaseIncTax)
+        ISP =  "%.2f" % ISP    
+    TSP = eval(ms.Quantity) * eval(ISP)
+    TSP =  "%.2f" % TSP
+    SalesStock=SalesStockModel.objects.create(ProductId=ProductId,user=user,type=type,ProductName=ms.ProductName,Category=ms.Category,Tax=ms.Tax,Unit=ms.Unit,PurchaseIncTax=ms.PurchaseIncTax,BarcodeNo=ms.BarcodeNo,Quantity=ms.Quantity,Amount=PRD.MRP,sid=ms.id,ProfitMargin='0',BasicSalesPrice=ms.PurchaseIncTax,Discount='0',SalesPriceAfterDiscount=ms.PurchaseIncTax,IncSalesPrice=ISP,TotalSales=str(TSP))
     SalesStock.save()
     get = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type).values()
     Sc = list(get)
@@ -870,74 +1017,96 @@ def ProductE2(request):
         id = request.POST.get('id')
         val = request.POST.get('val')
         type = request.POST.get('type')
-    dt=SalesStockModel.objects.get(id=id)
-    if name == 'ProfitMargin':
-        if val == '':
-            dt.ProfitMargin = ''
-        else:
-            dt.ProfitMargin = val
-        dt.save()
+    dt=SalesStockModel.objects.get(id=id,type=type)
     if name == 'Quantity':
         if val == '':
-            dt.Quantity = ''
+            dt.Quantity = '0'
         else:
             mstock = MainStockModel.objects.get(id=dt.sid)
             if mstock.Unit == 'KG':
-                if int(mstock.Quantity) < float(val):
+                if eval(mstock.Quantity) < eval(val):
                     return JsonResponse({'msg':'Stoke is not Avilabel.'})
                 else:
                     dt.Quantity = val
+                    if dt.ProfitMargin == '' or dt.ProfitMargin == '0':
+                        if dt.Tax != 'TaxFree':
+                            tax = int(dt.Tax)
+                            pass
+                        else:
+                            dt.IncSalesPrice = eval(dt.PurchaseIncTax)
+                            dt.TotalSales = eval(val) * eval(dt.PurchaseIncTax)
+                    elif dt.ProfitMargin != '':
+                        dt.IncSalesPrice = eval(dt.BasicSalesPrice)
+                        dt.TotalSales = eval(val) * eval(dt.BasicSalesPrice)
             else:
                 if int(val):
-                    if int(mstock.Quantity) < int(val):
+                    if eval(mstock.Quantity) < int(val):
                         return JsonResponse({'msg':'Stoke is not Avilabel.'})
                     else:
                         dt.Quantity = val
                 else:
                     return JsonResponse({'msg':'Quantity Value is not Perfact.'})
         dt.save()
+    if name == 'ProfitMargin':
+        if val != '':
+            dt.ProfitMargin = val
+            val = eval(val)
+            if val == 0: 
+                pt = eval(dt.PurchaseIncTax)
+            else:
+                pt = eval(dt.PurchaseIncTax) + (val * eval(dt.PurchaseIncTax) /100)
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
+        else : 
+            dt.ProfitMargin = '0'
+            pt = eval(dt.PurchaseIncTax)
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
+        dt.save()
     if name == 'Discount':
-        if val == '':
-            dt.Discount = ''
-        else:
+        if val != '':
             dt.Discount = val
-        dt.save()
-    if name == 'Amount':
-        if val == '':
-            dt.Amount = ''
+            val = eval(val)
+            if val == 0:
+                dt.SalesPriceAfterDiscount = dt.BasicSalesPrice
+            else:
+                pt = eval(dt.BasicSalesPrice) - (eval(dt.BasicSalesPrice) * val / 100 )
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            dt.save()
         else:
-            dt.Amount = val
-        dt.save()
-        return JsonResponse({'msg':'Stoke is not Avilabel.'})
+            dt.Discount = '0'
+            if dt.BasicSalesPrice == '0' or dt.BasicSalesPrice == '0':
+                dt.SalesPriceAfterDiscount = dt.PurchaseIncTax
+            else:
+                dt.SalesPriceAfterDiscount = dt.BasicSalesPrice
+            dt.save()
     dt=SalesStockModel.objects.get(id=id)
-    if dt.ProfitMargin == '' or dt.ProfitMargin == '0':
-        dt.BasicSalesPrice = '0'
+    if dt.Tax != 'TaxFree':
+        tax = int(dt.Tax)
+        pt = eval(dt.SalesPriceAfterDiscount) + (eval(dt.SalesPriceAfterDiscount) * tax / 100)
+        pt = float("%.2f" % pt)
+        dt.IncSalesPrice = pt
+        pt = pt * eval(dt.Quantity)
+        dt.TotalSales = "%.2f" % pt
     else:
-        PT =float(dt.PurchaseIncTax) * int(dt.ProfitMargin) / 100
-        BSP = float(dt.PurchaseIncTax)+PT
-        dt.BasicSalesPrice =  "%.2f" % BSP
-    if dt.Discount == '' or dt.Discount == '0':
-        dt.SalesPriceAfterDiscount = '0'
-    else:
-        PT =float(dt.BasicSalesPrice) * int(dt.Discount) / 100
-        dt.SalesPriceAfterDiscount =  str(round(float(dt.BasicSalesPrice)-PT,2))
-        if dt.Tax == 'TaxFree':
-            PT2 = float(dt.SalesPriceAfterDiscount)
-            dt.IncSalesPrice =  str(round(float(dt.SalesPriceAfterDiscount),2))
-        else:
-            PT2 = float(dt.SalesPriceAfterDiscount) * int(dt.Tax) /100
-            dt.IncSalesPrice =  str(round(float(dt.SalesPriceAfterDiscount)+PT2,2))
-        if dt.Quantity == '' or dt.Quantity == '0':
-            dt.TotalSales = '0'
-        else:
-            dt.TotalSales = str(round(float(dt.Quantity)* float(dt.IncSalesPrice),2))
+        dt.IncSalesPrice = dt.SalesPriceAfterDiscount
+        pt = eval(dt.IncSalesPrice) * eval(dt.Quantity)
+        dt.TotalSales = "%.2f" % pt
     dt.save()
     get = SalesStockModel.objects.filter(ProductId=dt.ProductId,user=request.user.username,type=type).values()
     Sc = list(get)
     rt= 0
     for i in get:
         rt += float(i['TotalSales'])
-    rt = str(rt)
+    rt = "%.2f" % rt
     return JsonResponse({'Sc':Sc,'rt':rt})
 
 @login_required(login_url='Login')
@@ -979,7 +1148,90 @@ def SalesDetails(request,id):
 def SalesCancel(request,id):
     data=SalesStockModel.objects.filter(ProductId=id,user=request.user,type='Sales')
     data.delete()
+    dt = ChargesListModel.objects.filter(ProductId=id,user=request.user,type='Sales')
+    dt.delete()
     return redirect('/Sales')
+
+@login_required(login_url='Login')
+def DeleteSales(request,id):
+    dt=SalesEntryModel.objects.get(id=id)
+    sl=SalesStockModel.objects.filter(ProductId=dt.ProductId)
+    for i in sl:
+        msl=MainStockModel.objects.get(id=i.sid)
+        msl.Quantity =float(msl.Quantity) + float(i.Quantity)
+        msl.Amount = float(msl.PurchaseIncTax) * float(msl.Quantity)
+        msl.out = '0'
+        msl.save()
+    sl.delete()
+    dt.delete()
+    return redirect('/Sales')
+
+# @login_required(login_url='Login')
+# def EditSales(request,id):
+#     user=str(request.user.username)
+#     type = 'Sales'
+#     cp = NMModel.objects.get(user=user,type=type)
+#     ProductId = cp.ProductId
+#     BN= InvoiceNoModel.objects.get(user=user,type=type)
+#     Invoice = BN.InvoiceNo
+#     stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
+#     Category=CategoryModel.objects.filter(user=request.user)
+#     stokes=MainStockModel.objects.filter(user=request.user)
+#     Charges=ChargesModel.objects.filter(user=request.user.username)
+#     ChargesList = ChargesListModel.objects.filter(user=request.user,ProductId=ProductId,type='Sales')
+#     TCA = 0
+#     for i in ChargesList:
+#         TCA += float(i.TotalAmount)
+#     TCA = TCA
+#     productns={i.ProductName for i in stokes}
+#     Product = ProductModel.objects.filter(user=request.user)
+#     Party = PartyModel.objects.filter(user=request.user)
+#     DB =  DeliveryBoyModel.objects.filter(user=request.user)
+#     tamonut = 0
+#     for i in stock:
+#         tamonut += float(i.TotalSales)
+#     data={'Category':Category,'Product':Product,'ProductId':ProductId,'productns':productns,'Invoice':Invoice,'TCA':TCA,'ChargesList':ChargesList,'Party':Party,'Charges':Charges,'stokes':stokes,'type':type,'stock':stock,'tamonut':tamonut,'DB':DB}
+#     return render(request,'admin/')
+
+@login_required(login_url='Login')
+def PurchaseReturnEntry(request):
+    if is_admin(request.user):
+        Purchase = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user)
+        sp = {i.PartyName for i in Purchase}
+        data = {'Purchase':Purchase,'sp':sp}
+        if request.method=="POST": 
+            StartDate = request.POST.get('StartDate')
+            EndDate = request.POST.get('EndDate')
+            PartyName = request.POST.get('PartyName')
+            BillNo = request.POST.get('BillNo')
+            if (StartDate == '' and EndDate == '') and (PartyName == 'Select' and BillNo == ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user)
+            elif (StartDate == '' and EndDate == '') and (PartyName == 'Select' and BillNo != ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user,BillNo=BillNo)
+            elif (StartDate == '' and EndDate == '') and (PartyName != 'Select' and BillNo == ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user,PartyName=PartyName)
+            elif (StartDate != '' and EndDate != '') and (PartyName != 'Select' and BillNo == ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user,PartyName=PartyName,Date__range=[StartDate, EndDate])
+            elif (StartDate != '' and EndDate != '') and (PartyName == 'Select' and BillNo == ''):
+                Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user,Date__range=[StartDate, EndDate])
+            elif StartDate != '' and EndDate == '':
+                if PartyName != 'Select':
+                    Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user,Date=StartDate,PartyName=PartyName)
+                elif PartyName == 'Select':
+                    Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user,Date=StartDate,BillNo=BillNo)
+                elif BillNo != '':
+                    Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user,Date=StartDate,BillNo=BillNo)
+                elif BillNo == '':
+                    Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user,Date=StartDate)
+                # Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user,Date__range=[StartDate, EndDate])
+            else:
+                Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=request.user)
+            sp = {i.PartyName for i in Purchase}
+            data = {'Purchase':Pl,'sp':sp,'StartDate':StartDate,'EndDate':EndDate,'PartyName':PartyName,'BillNo':BillNo}
+            return render(request,'admin/purchasereturnentry.html',data)
+        return render(request,'admin/purchasereturnentry.html',data)
+    if is_user(request.user):
+        return render(request,'purchasereturnentry.html')
 
 @login_required(login_url='Login')
 def PurchaseReturn(request):
@@ -1062,11 +1314,11 @@ def AddPurchaseReturnEntry(request):
         stock = StockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         for i in stock:
             dt=MainStockModel.objects.get(id=i.sid)
-            newQuantity = int(dt.Quantity) - int(i.Quantity)
+            newQuantity = float(dt.Quantity) - float(i.Quantity)
             if newQuantity == 0:
                 dt.delete()
             else:
-                wtAmount = float(dt.PurchaseIncTax) * int(newQuantity)
+                wtAmount = float(dt.PurchaseIncTax) * float(newQuantity)
                 dt.Quantity = str(newQuantity)
                 PT = "%.2f" % wtAmount
                 dt.Amount = str(PT)
@@ -1085,7 +1337,6 @@ def AddPurchaseReturnEntry(request):
     if is_user(request.user):
         return render(request,'addpurchasereturnentry.html',data)
     
-
 @login_required(login_url='Login')
 @csrf_exempt
 def PRStock(request,PN,id,id2,type):
@@ -1146,6 +1397,36 @@ def PRDetails(request,id):
         return render(request,'prdetails.html',{'data':data,'stock':stock,'tamonut':tamonut,'quantity':quantity,'purchaseprice':purchaseprice,'purchaseinctax':purchaseinctax})
 
 @login_required(login_url='Login')
+def SalesReturnEntry(request):
+    if is_admin(request.user):
+        sales = SalesEntryModel.objects.filter(Type='SalesReturn',user=request.user)
+        sp = {i.PartyName for i in sales}
+        data = {'sales':sales,'sp':sp}
+        if request.method=="POST":
+            StartDate = request.POST.get('StartDate')
+            EndDate = request.POST.get('EndDate')
+            PartyName = request.POST.get('PartyName')
+            if (StartDate != '' and EndDate != '') and (PartyName == 'Select' ):
+                ss = SalesEntryModel.objects.filter(Type='SalesReturn',Date__range=[StartDate, EndDate],user=request.user)
+            elif (StartDate == '' and EndDate == '') and (PartyName == 'Select'):
+                ss = SalesEntryModel.objects.filter(Type='SalesReturn',user=request.user)
+            elif StartDate == '' and EndDate == '':
+                if PartyName == 'Select':
+                    ss = SalesEntryModel.objects.filter(Type='SalesReturn',user=request.user)
+                else :  
+                    ss = SalesEntryModel.objects.filter(Type='SalesReturn',user=request.user,PartyName=PartyName)
+            elif (StartDate != '' and EndDate == '') and (PartyName == 'Select'):
+                    ss = SalesEntryModel.objects.filter(Type='SalesReturn',user=request.user,Date=StartDate)
+            else:
+                ss = SalesEntryModel.objects.filter(Type='SalesReturn',Date__range=[StartDate, EndDate],user=request.user,PartyName=PartyName)
+            sp = {i.PartyName for i in sales}
+            data = {'sales':ss,'sp':sp,'StartDate':StartDate,'EndDate':EndDate,'PartyName':PartyName}
+            return render(request,'admin/salesreturnentry.html',data)
+        return render(request,'admin/salesreturnentry.html',data)
+    if is_user(request.user):
+        return render(request,'salesreturnentry.html')
+
+@login_required(login_url='Login')
 def SalesReturn(request):
     if is_admin(request.user):
         salesReturn = SalesEntryModel.objects.filter(Type='SalesReturn',user=request.user)
@@ -1195,7 +1476,6 @@ def AddSalesReturnEntry(request):
     for i in stock:
         tamonut += float(i.TotalSales)
     tamonut = tamonut
-    print(tamonut)
     data={'Category':Category,'Product':Product,'ProductId':ProductId,'productns':productns,'Invoice':Invoice,'Party':Party,'stokes':stokes,'type':type,'stock':stock,'tamonut':tamonut,'DB':DB}
     if request.method=="POST":    
         user=str(request.user)
@@ -1205,14 +1485,16 @@ def AddSalesReturnEntry(request):
         InvoiceNo=Invoice
         PartyName=request.POST.get('PartyName')
         ProductId=request.POST.get('ProductId')
+        TypeofPayment=request.POST.get('TypeofPayment')
+        Terms=request.POST.get('Terms')
         Date=request.POST.get('Date')
         Type='SalesReturn'
         Amount=tamonut
-        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date)
+        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date)
         dt.save()
         stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         for i in stock:
-            MainS=MainStockModel.objects.create(OldProductId='0',ProductId=i.ProductId,user=user,type=type,ProductName=i.ProductName,Category=i.Category,Tax=i.Tax,Unit=i.Unit,PurchasePrice=i.PurchaseIncTax,PurchaseIncTax=i.PurchaseIncTax,MinQty='0',MaxQty='0',BarcodeNo=i.BarcodeNo,Quantity=i.Quantity,Amount=i.Amount)
+            MainS=MainStockModel.objects.create(OldProductId='0',ProductId=i.ProductId,user=user,type=type,ProductName=i.ProductName,Category=i.Category,Tax=i.Tax,Unit=i.Unit,PurchasePrice=i.PurchaseIncTax,PurchaseIncTax=i.PurchaseIncTax,MinQty='0',MaxQty='0',BarcodeNo=i.BarcodeNo,Quantity=i.Quantity,Amount=i.TotalSales)
             MainS.save()
         user=str(request.user)
         cp = NMModel.objects.get(user=user,type = 'SalesReturn')
@@ -1227,7 +1509,7 @@ def AddSalesReturnEntry(request):
         return render(request,'admin/addsalesreturnentry.html',data)
     if is_user(request.user):
         return render(request,'addsalesreturnentry.html',data)
-    
+     
 @login_required(login_url='Login')
 @csrf_exempt
 def SRStocks(request,PN,id,type):
@@ -1275,65 +1557,78 @@ def SRSEdit(request):
         val = request.POST.get('val')
         type = request.POST.get('type')
     dt=SalesStockModel.objects.get(id=id,type=type)
+    if name == 'Quantity':
+        if val == '':
+            dt.Quantity = '0'
+        else:
+            dt.Quantity = val
+        dt.save()
     if name == 'PurchaseIncTax':
         if val == '':
-            dt.PurchaseIncTax = ''
+            dt.PurchaseIncTax = '0'
         else:
             dt.PurchaseIncTax = val
         dt.save()
     if name == 'ProfitMargin':
-        if val == '':
-            dt.ProfitMargin = ''
-        else:
+        if val != '':
             dt.ProfitMargin = val
-        dt.save()
-    if name == 'Quantity':
-        if val == '':
-            dt.Quantity = ''
-        else:
-            dt.Quantity = val
+            val = eval(val)
+            if val == 0: 
+                pt = eval(dt.PurchaseIncTax)
+            else:
+                pt = eval(dt.PurchaseIncTax) + (val * eval(dt.PurchaseIncTax) /100)
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
+        else : 
+            dt.ProfitMargin = '0'
+            pt = eval(dt.PurchaseIncTax)
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
         dt.save()
     if name == 'Discount':
-        if val == '':
-            dt.Discount = ''
-        else:
+        if val != '':
             dt.Discount = val
-        dt.save()
-    if name == 'Amount':
-        if val == '':
-            dt.Amount = ''
+            val = eval(val)
+            if val == 0:
+                dt.SalesPriceAfterDiscount = dt.BasicSalesPrice
+            else:
+                pt = eval(dt.BasicSalesPrice) - (eval(dt.BasicSalesPrice) * val / 100 )
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            dt.save()
         else:
-            dt.Amount = val
-        dt.save()
+            dt.Discount = '0'
+            if dt.BasicSalesPrice == '0' or dt.BasicSalesPrice == '0':
+                dt.SalesPriceAfterDiscount = dt.PurchaseIncTax
+            else:
+                dt.SalesPriceAfterDiscount = dt.BasicSalesPrice
+            dt.save()
     dt=SalesStockModel.objects.get(id=id)
-    if dt.ProfitMargin == '' or dt.ProfitMargin == '0':
-        dt.BasicSalesPrice = '0'
+    if dt.Tax != 'TaxFree':
+        tax = int(dt.Tax)
+        pt = eval(dt.SalesPriceAfterDiscount) + (eval(dt.SalesPriceAfterDiscount) * tax / 100)
+        pt = float("%.2f" % pt)
+        dt.IncSalesPrice = pt
+        pt = pt * eval(dt.Quantity)
+        dt.TotalSales = "%.2f" % pt
     else:
-        PT =float(dt.PurchaseIncTax) * int(dt.ProfitMargin) / 100
-        BSP = float(dt.PurchaseIncTax)+PT
-        dt.BasicSalesPrice =  "%.2f" % BSP
-    if dt.Discount == '' or dt.Discount == '0':
-        dt.SalesPriceAfterDiscount = '0'
-    else:
-        PT =float(dt.BasicSalesPrice) * int(dt.Discount) / 100
-        dt.SalesPriceAfterDiscount =  str(round(float(dt.BasicSalesPrice)-PT,2))
-        if dt.Tax == 'TaxFree':
-            PT2 = float(dt.SalesPriceAfterDiscount)
-            dt.IncSalesPrice =  str(round(float(dt.SalesPriceAfterDiscount),2))
-        else:
-            PT2 = float(dt.SalesPriceAfterDiscount) * int(dt.Tax) /100
-            dt.IncSalesPrice =  str(round(float(dt.SalesPriceAfterDiscount)+PT2,2))
-        if dt.Quantity == '' or dt.Quantity == '0':
-            dt.TotalSales = '0'
-        else:
-            dt.TotalSales = str(round(float(dt.Quantity)* float(dt.IncSalesPrice),2))
+        dt.IncSalesPrice = dt.SalesPriceAfterDiscount
+        pt = eval(dt.IncSalesPrice) * eval(dt.Quantity)
+        dt.TotalSales = "%.2f" % pt
     dt.save()
     get = SalesStockModel.objects.filter(ProductId=dt.ProductId,user=request.user.username,type=type).values()
     Sc = list(get)
     rt= 0
     for i in get:
         rt += float(i['TotalSales'])
-    rt = str(rt)
+    rt = "%.2f" % rt
     return JsonResponse({'Sc':Sc,'rt':rt})
 
 @login_required(login_url='Login')
@@ -1506,19 +1801,22 @@ def CreateCharges(request):
     if request.method == 'POST':
         ChargesID = request.POST.get('ChargesID')
         Type = request.POST.get('type')
+        Productid = request.POST.get('Productid')
         user = request.user.username
         PN = NMModel.objects.get(type=Type,user=user)
         Ch = ChargesModel.objects.get(id=ChargesID)
-        data = ChargesListModel.objects.create(user=user,Charges=Ch.Charges,ProductId=PN.ProductId,Amount='0',Tax='',TotalAmount='0',type=Type)
-        data.save()
-        if data.save:
-            print("created")
-        get = ChargesListModel.objects.filter(ProductId=PN.ProductId,user=user,type=Type).values()
+        if Productid == None:
+            data = ChargesListModel.objects.create(user=user,Charges=Ch.Charges,ProductId=PN.ProductId,Amount='0',Tax='',TotalAmount='0',type=Type)
+            data.save()
+            get = ChargesListModel.objects.filter(ProductId=PN.ProductId,user=user,type=Type).values()
+        else:
+            data = ChargesListModel.objects.create(user=user,Charges=Ch.Charges,ProductId=Productid,Amount='0',Tax='',TotalAmount='0',type=Type)
+            data.save()
+            get = ChargesListModel.objects.filter(ProductId=Productid,user=user,type=Type).values()
         Sc = list(get)
-        ET = ChargesListModel.objects.filter(ProductId=PN.ProductId,user=user,type=Type)
         tamonut = 0
-        for i in ET:
-            tamonut+=float(i.TotalAmount)
+        for i in Sc:
+            tamonut+=float(i['TotalAmount'])
             PT = "%.2f" % tamonut
         tamonut = str(PT)
         return JsonResponse({'Sc':Sc,'tamonut':tamonut})
@@ -1587,26 +1885,31 @@ def error_404_view(request,exception):
 
 @login_required(login_url='Login')
 def AllDelete(request):
-    # data=ChargesListModel.objects.all()
-    # data.delete()
-    # data2=CategoryModel.objects.all()
-    # data2.delete()
-    # data4=DeliveryBoyModel.objects.all()
-    # data4.delete()
-    # data1=ProductModel.objects.all()
-    # data1.delete()
-    # data5=StockModel.objects.all()
-    # data5.delete()
-    # data6=NMModel.objects.all()
-    # data6.delete()
-    # data7=PurchaseEntryModel.objects.all()
-    # data7.delete()
-    # data8=SalesEntryModel.objects.all()
-    # data8.delete()
-    # data0=MainStockModel.objects.all()
-    # data0.delete()
-    # dt=SalesStockModel.objects.all()
-    # dt.delete()
+    data=ChargesListModel.objects.all()
+    data.delete()
+    data2=CategoryModel.objects.all()
+    data2.delete()
+    data4=DeliveryBoyModel.objects.all()
+    data4.delete()
+    data1=ProductModel.objects.all()
+    data1.delete()
+    data5=StockModel.objects.all()
+    data5.delete()
+    data6=NMModel.objects.all()
+    data6.delete()
+    data7=PurchaseEntryModel.objects.all()
+    data7.delete()
+    data8=SalesEntryModel.objects.all()
+    data8.delete()
+    data0=MainStockModel.objects.all()
+    data0.delete()
+    dt=SalesStockModel.objects.all()
+    dt.delete()
+    df=BiilNoModel.objects.all()
+    df.delete()
+    du=UserDetails.objects.all()
+    du.delete()
+    
     # datad=NMModel.objects.get(user=request.user)
     # datad.ProductId='1'
     # datad.save()
@@ -1619,7 +1922,11 @@ def AllDelete(request):
 @login_required(login_url='Login')
 def StockReport(request):
     stock = MainStockModel.objects.filter(user=request.user.username)
-    Productname = {i.ProductName for i in stock}
+    Productname = []
+    for i in stock:
+        if int(i.out) != 1:
+            Productname.append(i.ProductName)
+    Productname = set(Productname)
     data = {'stock':Productname}
     if is_admin(request.user):
         return render(request,'admin/stock.html',data)
@@ -1664,3 +1971,193 @@ def SalesStockReport(request):
         return render(request,'admin/salesstock.html',data)
     if is_user(request.user):
         return render(request,'stock.html',data)
+    
+@login_required(login_url='Login')
+def DeliveryReport(request):
+    if is_admin(request.user):
+        sales = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+        sp = {i.DeliveryBoyName for i in sales}
+        data = {'sales':sales,'sp':sp}
+        if request.method=="POST": 
+            StartDate = request.POST.get('StartDate')
+            EndDate = request.POST.get('EndDate')
+            DeliveryBoyName = request.POST.get('DeliveryBoyName')
+            if (StartDate != '' and EndDate != '') and (DeliveryBoyName == 'Select' ):
+                ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user)
+            elif (StartDate == '' and EndDate == '') and (DeliveryBoyName == 'Select'):
+                ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+            elif StartDate == '' and EndDate == '':
+                if DeliveryBoyName == 'Select':
+                    ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+                else :  
+                    ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,DeliveryBoyName=DeliveryBoyName)
+            elif (StartDate != '' and EndDate == '') and (DeliveryBoyName == 'Select'):
+                    ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,Date=StartDate)
+            else:
+                ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user,DeliveryBoyName=DeliveryBoyName)
+            sp = {i.DeliveryBoyName for i in sales}
+            data = {'sales':ss,'sp':sp,'StartDate':StartDate,'EndDate':EndDate,'DeliveryBoyName':DeliveryBoyName}
+            return render(request,'admin/deliveryreport.html',data)
+        return render(request,'admin/deliveryreport.html',data)
+    if is_user(request.user):
+        return render(request,'deliveryreport.html')
+    
+@login_required(login_url='Login')
+def LedgerReport(request):
+    if is_admin(request.user):
+        sales = SalesEntryModel.objects.filter(user=request.user)
+        Purchase = PurchaseEntryModel.objects.filter(user=request.user)
+        sp = {i.PartyName for i in sales}
+        pp = {i.PartyName for i in Purchase}
+        data = {'sales':sales,'pem':Purchase,'sp':sp,'pp':pp}
+        if request.method=="POST": 
+            StartDate = request.POST.get('StartDate')
+            EndDate = request.POST.get('EndDate')
+            PartyName = request.POST.get('PartyName')
+            if (StartDate != '' and EndDate != '') and (PartyName == 'Select' ):
+                ss = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user)
+                pem = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user)
+            elif (StartDate == '' and EndDate == '') and (PartyName == 'Select'):
+                ss = SalesEntryModel.objects.filter(user=request.user)
+                pem = PurchaseEntryModel.objects.filter(user=request.user)
+            elif StartDate == '' and EndDate == '':
+                if PartyName == 'Select':
+                    ss = SalesEntryModel.objects.filter(user=request.user)
+                    pem = PurchaseEntryModel.objects.filter(user=request.user)
+                else :  
+                    ss = SalesEntryModel.objects.filter(user=request.user,PartyName=PartyName)
+                    pem = PurchaseEntryModel.objects.filter(user=request.user,PartyName=PartyName)
+            elif (StartDate != '' and EndDate == '') and (PartyName == 'Select'):
+                    ss = SalesEntryModel.objects.filter(user=request.user,Date=StartDate)
+                    pem = PurchaseEntryModel.objects.filter(user=request.user,Date=StartDate)
+            else:
+                ss = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user,PartyName=PartyName)
+                pem = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user,PartyName=PartyName)
+            sp = {i.PartyName for i in sales}
+            pp = {i.PartyName for i in Purchase}
+            data = {'sales':ss,'pem':pem,'sp':sp,'pp':pp,'StartDate':StartDate,'EndDate':EndDate,'PartyName':PartyName}
+            return render(request,'admin/ledgerreport.html',data)
+        return render(request,'admin/ledgerreport.html',data)
+    if is_user(request.user):
+        return render(request,'ledgerreport.html')
+
+def render_to_pdf(template, context):
+   template = get_template(template)
+   html  = template.render(context)
+   result = BytesIO()
+   pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+   if not pdf.err:
+       return HttpResponse(result.getvalue(), content_type='application/pdf')
+   return None
+
+def SPDF(request):
+   data = MainStockModel.objects.all()
+   context = {
+      'data':data
+   }
+   pdf = render_to_pdf('admin/vbill.html',context)
+   if pdf:
+      response = HttpResponse(pdf,content_type='application/pdf')
+      filename = "Bill123.pdf"
+      content = f"attachment; filename={filename}"
+    #   if download:
+    #     content = f"inline; filename={filename}"
+      response['Content-Disposition'] = content
+      return response
+   return HttpResponse("Not Found")
+
+@login_required(login_url='Login')
+@csrf_exempt
+def Link(request,name):
+    user = str(request.user.username)  
+    if name == 'Charges':
+        if request.method=="POST":          
+            Charges=request.POST.get('Charge')
+            try:
+                dt=ChargesModel.objects.get(Charges=Charges)
+                if dt.Charges == Charges:
+                    mgs = 'Add Charges.'
+                    ld = ChargesModel.objects.filter(user=user).values()
+                    ld = list(ld)
+                    return JsonResponse({'ld':ld,'mgs':mgs})
+                else:
+                    dt=ChargesModel.objects.create(user=user,Charges=Charges)
+                    dt.save()
+                    mgs = 'Add Charges.'
+                    ld = ChargesModel.objects.filter(user=user).values()
+                    ld = list(ld)
+                    return JsonResponse({'ld':ld,'mgs':mgs})
+            except:
+                dt=ChargesModel.objects.create(user=user,Charges=Charges)
+                dt.save()
+                mgs = 'Add Charges.'
+                ld = ChargesModel.objects.filter(user=user).values()
+                ld = list(ld)
+                return JsonResponse({'ld':ld,'mgs':mgs})
+    if name == 'Products':
+        if request.method=="POST":
+            ProductName=request.POST.get('ProductName')
+            Tax=request.POST.get('Tax')
+            Category=request.POST.get('Category')
+            Unit=request.POST.get('Unit')
+            MinQty=request.POST.get('MinQty')
+            MaxQty=request.POST.get('MaxQty')
+            BarcodeNo=request.POST.get('Barcode')
+            HSNCode=request.POST.get('HSNCode')
+            MRP=request.POST.get('MRP')
+            MFGDate=request.POST.get('MFGDate')
+            ExpiryDate=request.POST.get('ExpiryDate')
+            dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,BarcodeNo=BarcodeNo,HSNCode=HSNCode,MRP=MRP,MFGDate=MFGDate,ExpiryDate=ExpiryDate)
+            dt.save()
+            mgs = 'Add Products.'
+            ld = ProductModel.objects.filter(user=user).values()
+            ld = list(ld)
+            return JsonResponse({'ld':ld,'mgs':mgs})
+    if name == 'Party':
+        if request.method=="POST":
+            Type=request.POST.get('Type')
+            PartyName=request.POST.get('PartyName')
+            Number=request.POST.get('Number')
+            Address=request.POST.get('Address')
+            GSTNo=request.POST.get('GSTNo')
+            Email=request.POST.get('Email')
+            City=request.POST.get('City')
+            try:
+                d=PartyModel.objects.filter(user=request.user)
+                if d:
+                    df=0
+                    for i in d:
+                        if i.Number == Number:
+                            NUM = 'This Number is Allready Available.'
+                            ld = 0
+                            df += 1
+                            return JsonResponse({'ld':ld,'NUM':NUM})
+                        elif i.Email == Email:
+                            EM = 'This Email is Allready Available.'
+                            ld = 0
+                            df += 2
+                            return JsonResponse({'ld':ld,'EM':EM})
+                    if df == 0:
+                        dt=PartyModel.objects.create(user=user,Type=Type,PartyName=PartyName,Number=Number,Address=Address,GSTNo=GSTNo,Email=Email,City=City)
+                        dt.save()
+                        mgs = 'Add Party Successfully.'
+                        ld = PartyModel.objects.filter(user=user).values()
+                        ld = list(ld)
+                        return JsonResponse({'ld':ld,'mgs':mgs}) 
+                else:
+                    print("2")
+                    dt=PartyModel.objects.create(user=user,Type=Type,PartyName=PartyName,Number=Number,Address=Address,GSTNo=GSTNo,Email=Email,City=City)
+                    dt.save()
+                    mgs = 'Add Party Successfully.'
+                    ld = PartyModel.objects.filter(user=user).values()
+                    ld = list(ld)
+                    return JsonResponse({'ld':ld,'mgs':mgs}) 
+            except:
+                print("3")
+                dt=PartyModel.objects.create(user=user,Type=Type,PartyName=PartyName,Number=Number,Address=Address,GSTNo=GSTNo,Email=Email,City=City)
+                dt.save()
+                mgs = 'Add Party Successfully.'
+                ld = PartyModel.objects.filter(user=user).values()
+                ld = list(ld)
+                return JsonResponse({'ld':ld,'mgs':mgs})
+            

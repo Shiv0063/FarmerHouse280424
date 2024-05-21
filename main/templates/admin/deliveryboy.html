@@ -67,11 +67,7 @@
                   <td>{{i.Address}}</td>
                   <td>{{i.Email}}</td>
                   <td>
-                    <div class="row">
-                      <div class="col d-flex justify-content-end">
-                        <a class="btn btn-warning mr-3" href="/DeliveryBoyDetails/{{i.id}}" style="margin-left: 5px;">Details</a><a class="btn btn-success mr-3" href="/EditDeliveryBoy/{{i.id}}" style="margin-left: 5px;">Edit</a><a href="DeleteDeliveryBoy/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger">Delete</a>
-                      </div>
-                    </div>
+                  <a class="btn btn-warning mr-3" href="/DeliveryBoyDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a><a class="btn btn-success mr-3" href="/EditDeliveryBoy/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-pencil'></i></a><a href="DeleteDeliveryBoy/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger"><i class='ti ti-trash'></i></a>
                   </td>
                 </tr>
                 {% endfor %}

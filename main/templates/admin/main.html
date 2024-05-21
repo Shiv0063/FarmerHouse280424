@@ -28,17 +28,33 @@
     }
 
     .table-bordered {
-      border: 1px solid #353535 !important;
+      border: 0.5px solid #E8F0FE !important;
+      box-shadow: #E8F0FE;
+      color: black !important;
     }
-
+    table{
+      border-radius: 12px !important;
+    }
+    thead{
+      border-radius: 12px !important;
+      border-radius: 12px !important;
+    }
     th {
-      border: 1px solid #353535 !important;
+      border: 0.5px solid #E8F0FE !important;
       padding: 8px !important;
+      border-top-left-radius: 12px !important;
+      border-top-right-radius: 12px !important;
+      
     }
-
-    td {
-      border: 1px solid #353535 !important;
+    td{
+      border: 0.5px solid #E8F0FE !important;
       padding: 8px !important;
+      color: rgb(20, 20, 20) !important;
+    }
+    tbody
+    {
+      border-bottom-left-radius: 12px !important;
+      border-bottom-right-radius: 12px !important;
     }
   </style>
 </head>
@@ -2181,6 +2197,18 @@
                     <a href="/PurchaseEntry" class="sidebar-link">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Purchase Register</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/SalesReturnEntry" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Sales Return<br>Register</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/PurchaseReturnEntry" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Purchase Return<br>Register</span>
                     </a>
                   </li>
                   <li class="sidebar-item">

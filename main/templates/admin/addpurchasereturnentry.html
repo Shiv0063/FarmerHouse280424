@@ -59,6 +59,16 @@
               </div>
               <div class="col-md-2">
                 <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Terms</label>
+                  <select class="form-select" id="exampleInputtype" name="Terms" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Debit">Debit</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
                   <label for="exampleInputtype" class="form-label">Type of Payment</label>
                   <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
                     <option value="" selected>-- Selet --</option>
@@ -70,25 +80,25 @@
                   </select>
                 </div>
               </div>
-              <div class="col-md-3">
-                <div class="row">
+              <div class="col-md-4">
+                <div class="row" id="Partyselect2">
                   <div class="col-9">
                     <label for="exampleInputtype" class="form-label">Party Name</label>
                     <div class="mb-4">
                       <select class="select2 form-control  custom-select" name="PartyName" required>
-                        <option>Select</option>
+                        <option class="after3">Select</option>
                         <optgroup label="">
                           {% for i in Party %}
                           {% if i.Type != 'Customer' and i.Type != 'Hotel & Restaurant' %}
-                          <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                          <option value="{{i.PartyName}}">{{i.PartyName}} ( {{i.Number}} )</option>
                           {% endif %}
                           {% endfor %}
                         </optgroup>
                       </select>
                     </div>
                   </div>
-                  <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
-                    class='ti ti-plus'></i></a></div>
+                  <div class="col-1 d-flex align-items-center"><a data-bs-toggle="modal" data-bs-target="#AddParty"
+                    class="btn btn-success btn-lg"><i class='ti ti-plus'></i></a></div>
                 </div>
               </div>
               <div class="col-md-8">
@@ -172,6 +182,80 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+<div class="modal fade" id="AddParty" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <form class="modal-content" id="AddPartyF">
+      <div class="modal-header d-flex align-items-center">
+        <h5 class="modal-title" id="myLargeModalLabel">Add Party</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputtype" class="form-label">Type Of Party</label>
+              <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1" required>
+                <option value="" selected>-- Selet --</option>
+                <option value="Market Yard">Market Yard</option>
+                <option value="Local Market">Local Market</option>
+                <option value="Vendor">Vendor</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputPartyName" class="form-label">Party Name</label>
+              <input type="text" class="form-control" id="exampleInputPartyName" name="PartyName"
+                placeholder="Party Name" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputnumber" class="form-label">Phone Namber</label>
+              <input type="text" class="form-control" id="exampleInputnumber" name="Number" placeholder="1234567890"
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputGSTNo" class="form-label">GST No.</label>
+              <input type="text" class="form-control" id="exampleInputGSTNo" name="GSTNo" placeholder="GST No."
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputGmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="exampleInputGmail" name="Email" placeholder="xyz@gmail.com"
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputcity" class="form-label">City</label>
+              <select id="inputState" class="form-select" name="City" required>
+                <option selected>Choose...</option>
+                {% include "city.html" %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-4">
+              <label class="form-label">Address</label>
+              <textarea class="form-control p-7" name="Address" rows="1" placeholder="" required></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="submit">Submit</button>
+        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 {% endblock content %}
@@ -279,6 +363,41 @@
         }
         var tamount2 = document.getElementById("tamount2");
         tamount2.innerText = data.tamonut;
+      }
+    });
+  });
+  $("#AddPartyF").submit(function (e) {
+    e.preventDefault();
+    var form = $(this);
+    dt = form.serialize();
+    $("#Partyselect2 select[name='PartyName']").find('.after3').nextAll().remove();
+    $.ajax({
+      type: "POST",
+      url: '/Link/Party',
+      data: dt,
+      success: function (data) {
+        if(data.ld != 0){
+          x = data.ld
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            if(x[i].Type != 'Customer' & x[i].Type != 'Hotel & Restaurant'){
+              output += "<option value="+x[i].PartyName+">" + x[i].PartyName +' '+x[i].Number+"</option>";
+            }
+          };
+          $("#Partyselect2 select[name='PartyName']").find('.after3').after(output);
+          $('#AddPartyF').trigger("reset");
+          $('#AddParty').modal('hide');
+        }
+        else{
+          if(data.NUM){
+            alert(data.NUM)
+          }
+          else{
+            alert(data.EM)
+          }
+          
+        }
+        
       }
     });
   });

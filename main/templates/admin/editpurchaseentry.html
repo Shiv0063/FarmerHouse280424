@@ -17,7 +17,7 @@
       <div class="col-12">
         <div class="card">
           <div class="px-4 py-3 border-bottom">
-            <h4 class="card-title mb-0">Add Purchase Entery</h4>
+            <h4 class="card-title mb-0">Edit Purchase Entery</h4>
           </div>
           <form class="card-body p-4" enctype="multipart/form-data" method="post">
             {% csrf_token %}
@@ -25,7 +25,7 @@
               <div class="col-md-2">
                 <div class="mb-4">
                   <label class="form-label">Date</label>
-                  <input type="date" class="form-control " name="Date" id="Date" required>
+                  <input type="date" class="form-control" name="Date" value="{{dt.DDate}}" required>
                 </div>
               </div>
               <div class="col-md-2">
@@ -33,28 +33,27 @@
                   <label for="exampleInputtype" class="form-label">Source of Purchase</label>
                   <select class="form-select form-control-sm" id="exampleInputtype" name="TypeofPurchase" tabindex="1"
                     required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Market Yard">Market Yard</option>
-                    <option value="Vendor">Vendor</option>
-                    <option value="Local Market">Local Market</option>
+                    <option value="Local Market" {% if dt.TypeofPurchase == 'Local Market' %} selected {% endif %}>Local Market</option>
+                    <option value="Vendor" {% if dt.TypeofPurchase == 'Vendor' %} selected {% endif %}>Vendor</option>
+                    <option value="Market Yard" {% if dt.TypeofPurchase == 'Market Yard' %} selected {% endif %}>Market Yard</option>
                   </select>
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputBillno" class="form-label">Bill No</label>
-                  <input type="text" class="form-control " id="exampleInputBillno" name="BillNo2" value="{{BiilNo}}"
+                  <input type="text" class="form-control " id="exampleInputBillno" name="BillNo2" value="{{dt.BillNo}}"
                     disabled>
-                  <input type="hidden" name="BillNo" value="{{BiilNo}}">
+                  <input type="hidden" name="BillNo" value="{{dt.BillNo}}">
                   <input type="hidden" name="Amount" value="{{tamonut}}">
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
-                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" placeholder=""
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" value="{{dt.InvoiceNo}}"
                     required>
-                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                  <input type="hidden" name="ProductId" id="ProductId" value="{{dt.ProductId}}">
                 </div>
               </div>
               <div class="col-md-2">
@@ -62,8 +61,8 @@
                   <label for="exampleInputtype" class="form-label">Terms</label>
                   <select class="form-select" id="exampleInputtype" name="Terms" tabindex="1" required>
                     <option value="" selected>-- Selet --</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Debit">Debit</option>
+                    <option value="Credit" {% if dt.Terms == 'Credit' %} selected {% endif %}>Credit</option>
+                    <option value="Debit" {% if dt.Terms == 'Debit' %} selected {% endif %}>Debit</option>
                   </select>
                 </div>
               </div>
@@ -71,23 +70,22 @@
                 <div class="mb-4">
                   <label for="exampleInputtype" class="form-label">Type of Payment</label>
                   <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Case">Case</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Gpay">Gpay</option>
-                    <option value="UPI">UPI</option>
-                    <option value="Net banking">Net banking</option>
+                    <option value="Case" {% if dt.TypeofPayment == 'Case' %} selected {% endif %}>Case</option>
+                    <option value="Credit" {% if dt.TypeofPayment == 'Credit' %} selected {% endif %}>Credit</option>
+                    <option value="Gpay" {% if dt.TypeofPayment == 'Gpay' %} selected {% endif %}>Gpay</option>
+                    <option value="UPI" {% if dt.TypeofPayment == 'UPI' %} selected {% endif %}>UPI</option>
+                    <option value="Net banking" {% if dt.TypeofPayment == 'Net banking' %} selected {% endif %}>Net banking</option>
                   </select>
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="mb-4">
                   <label class="form-label">Due Date</label>
-                  <input type="date" class="form-control " name="DueDate" required>
+                  <input type="date" class="form-control " name="DueDate" value="{{dt.DueDate2}}" required>
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="row" id="Partyselect2">
+                <div class="row">
                   <div class="col-9">
                     <label for="exampleInputtype" class="form-label">Party Name</label>
                     <div class="mb-4">
@@ -96,7 +94,7 @@
                         <optgroup label="">
                           {% for i in Party %}
                           {% if i.Type != 'Customer' and i.Type != 'Hotel & Restaurant' %}
-                          <option value="{{i.PartyName}}">{{i.PartyName}} ( {{i.Number}} )</option>
+                          <option value="{{i.PartyName}}" {% if dt.PartyName == i.PartyName %} selected {% endif %}>{{i.PartyName}} ( {{i.Number}} )</option>
                           {% endif %}
                           {% endfor %}
                         </optgroup>
@@ -104,7 +102,7 @@
                     </div>
                   </div>
                   <div class="col-1 d-flex align-items-center"><a data-bs-toggle="modal" data-bs-target="#AddParty"
-                      class="btn btn-success btn-lg"><i class='ti ti-plus'></i></a></div>
+                    class="btn btn-success btn-lg"><i class='ti ti-plus'></i></a></div>
                 </div>
               </div>
               <div class="col-md-4">
@@ -119,7 +117,7 @@
                     </select>
                   </div>
                   <div class="col-1 d-flex align-items-center"><a class="btn btn-success btn-lg" data-bs-toggle="modal"
-                      data-bs-target="#AddProduct"><i class='ti ti-plus'></i></a></div>
+                    data-bs-target="#AddProduct"><i class='ti ti-plus'></i></a></div>
                 </div>
               </div>
               <div class="col-12">
@@ -162,7 +160,7 @@
                   <tfoot>
                     <tr>
                       <th colspan="5">
-                        Total Amount :
+                        total Amount :
                       </th>
                       <th colspan="2">
                         <span id="tamount2">{{tamonut}}</span>
@@ -185,8 +183,8 @@
                         </select>
                       </div>
                       <div class="col-1 d-flex align-items-center"><a data-bs-toggle="modal"
-                          data-bs-target="#AddCharges" class=" btn btn-success btn-lg"><i class='ti ti-plus'></i></a>
-                      </div>
+                        data-bs-target="#AddCharges" class=" btn btn-success btn-lg"><i class='ti ti-plus'></i></a>
+                    </div>
                     </div>
                   </div>
                 </div>
@@ -218,8 +216,8 @@
                           <option value="28" {% if i.Tax == '28' %} selected {% endif %}>28%</option>
                           <option value="TaxFree" {% if i.Tax == 'TaxFree' %} selected {% endif %}>Tax Free</option>
                         </select></td>
-                      <td class="p-2"><input type="text" class="form-control text-center " name="TotalAmount"
-                          id="TotalAmount{{i.id}}" value="{{i.TotalAmount}}" disabled></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="TotalAmount"
+                          id="TotalAmount{{i.id}}" value="{{i.TotalAmount}}"></td>
                       <td class="p-2">
                         <a type='button' class='btn btn-danger bg-danger btn-delete ms-2' data-sid='{{i.id}}'><i
                             class='ti ti-trash'></i></a>
@@ -241,7 +239,7 @@
                         Total Bill Amount :
                       </th>
                       <th class="p-2" colspan="2">
-                        <span id="tamount4">{{TBA}}</span>
+                        <span id="tamount4"></span>
                       </th>
                     </tr>
                   </tfoot>
@@ -251,7 +249,7 @@
                 <div class="gap-3">
                   <button class="btn btn-success" type="submit">Save</button>
                   <button class="btn btn-success" type="submit">Save & Print</button>
-                  <a class="btn bg-danger-subtle text-danger" href="/PurchaseCancel/{{ProductId}}">Cancel</a>
+                  <a class="btn bg-danger-subtle text-danger" onclick="window.history.go(-1);">Cancel</a>
                 </div>
               </div>
             </div>
@@ -261,7 +259,6 @@
     </div>
   </div>
 </div>
-
 <div class="modal fade" id="AddParty" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
     <form class="modal-content" id="AddPartyF">
@@ -279,6 +276,9 @@
                 <option value="Market Yard">Market Yard</option>
                 <option value="Local Market">Local Market</option>
                 <option value="Vendor">Vendor</option>
+                <option value="Hotel & Restaurant">Hotel & Restaurant</option>
+                <option value="Customer">Customer</option>
+                <option value="Expanse">Expanse</option>
               </select>
             </div>
           </div>
@@ -478,24 +478,20 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
-  function Amount() {
-    var TA = document.getElementById('tamount2').innerText;
-    var TCA = document.getElementById('tamount3').innerText;
-    var TBA = parseFloat(TA) + parseFloat(TCA)
-    var tamount2 = document.getElementById("tamount4");
-    tamount2.innerText = TBA;
-  }
-  setInterval(Amount, 500);
-
-  DF = new Date()
-  document.getElementById("Date").value = DF.toJSON().slice(0, 10);
+  function Amount(){
+  var TA = document.getElementById('tamount2').innerText;
+  var TCA = document.getElementById('tamount3').innerText;
+  var TBA = parseFloat(TA) + parseFloat(TCA)
+  var tamount2 = document.getElementById("tamount4");
+  tamount2.innerText = TBA;}
+  setInterval(Amount,500);
 
   $("#Prodectselect2 select[name='Product2']").on('change', function () {
     var $Productname = $(this);
-    var $Productid = $("input[name='Productid']").val();
+    let Productid = '{{dt.ProductId}}';
     if ($Productname.val() != '') {
       $.ajax({
-        url: '/SProducts/' + $Productname.val() + '/Purchase',
+        url: '/SProducts/' + $Productname.val() +'/'+ Productid + '/Purchase',
         type: 'GET',
         success: function (resp) {
           x = resp.Sc
@@ -512,8 +508,6 @@
           $('#tbody').html(output);
           var tamount2 = document.getElementById("tamount2");
           tamount2.innerText = resp.tamonut;
-          var $TA = $("#TA");
-          $TA.val(parseFloat(resp.tamonut).toFixed(2));
         },
         error: function (resp) {
           console.log('Something went wrong');
@@ -541,8 +535,6 @@
         }
         var $tamount2 = document.getElementById("tamount2");
         $tamount2.innerText = resp.tamonut;
-        var $TA = $("#TA");
-        $TA.val(parseFloat(resp.tamonut).toFixed(2));
       },
       error: function (resp) {
         console.log('Something went wrong');
@@ -566,40 +558,37 @@
         }
         var tamount2 = document.getElementById("tamount2");
         tamount2.innerText = data.tamonut;
-        var $TA = $("#TA");
-        $TA.val(parseFloat(data.tamonut).toFixed(2));
       }
     });
   });
   $("#Chargesselect2 select[name='Charges']").on('change', function () {
     var ChargesID = $(this).val();
-    mydata = { ChargesID: ChargesID, type: 'Purchase' };
+    let Productid = '{{dt.ProductId}}';
+    mydata = { ChargesID :ChargesID ,type: 'Purchase',Productid:Productid};
     $.ajax({
       type: "POST",
       url: '/CreateCharges',
       data: mydata,
       success: function (resp) {
         x = resp.Sc
-        output = ''
-        for (i = 0; i < x.length; i++) {
-          output += "<tr><td class='mt-5 p-2'>" + x[i].Charges + "</td>";
-          output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' onkeydown=onCharges('Amount','" + x[i].id + "'); onkeyup=onCharges('Amount','" + x[i].id + "'); value='" + x[i].Amount + "'></td>";
-          output += "<td class='p-2'><select class='form-select' name='Tax' onchange=onCharges('Tax','" + x[i].id + "'); id='Tax" + x[i].id + "' aria-label='Default select example' required>";
-          if (x[i].Tax == '') { output += "<option selected>--select--</option>"; }
-          else { output += "<option selected>" + x[i].Tax + "%</option>"; }
-          output += "<option value='5'>5%</option>";
-          output += "<option value='12'>12%</option>";
-          output += "<option value='18'>18%</option>";
-          output += "<option value='28'>28%</option>";
-          output += "<option value='TaxFree'>Tax Free</option></select></td>";
-          output += "<td class='p-2'><input type='text' class='form-control text-center ' name='TotalAmount' id='TotalAmount" + x[i].id + "' value='" + x[i].TotalAmount + "' disabled></td>";
-          output += "<td class='p-2'><a type='button' class='btn btn-danger bg-danger btn-delete ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></td></tr>";
-        };
-        $('#tbody2').html(output);
-        var tamount2 = document.getElementById("tamount3");
-        tamount2.innerText = resp.tamonut;
-        var $TCA = $('#TCA');
-        $TCA.val(parseFloat(resp.tamonut).toFixed(2));
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<tr><td class='mt-5 p-2'>"+ x[i].Charges + "</td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount"+ x[i].id +"' onkeydown=onCharges('Amount','"+ x[i].id +"'); onkeyup=onCharges('Amount','"+ x[i].id +"'); value='"+x[i].Amount+"'></td>";
+            output += "<td class='p-2'><select class='form-select' name='Tax' onchange=onCharges('Tax','"+ x[i].id +"'); id='Tax"+ x[i].id +"' aria-label='Default select example' required>";
+            if(x[i].Tax == ''){output += "<option selected>--select--</option>";}
+            else{output += "<option selected>"+x[i].Tax+"%</option>";}
+            output += "<option value='5'>5%</option>";
+            output += "<option value='12'>12%</option>";
+            output += "<option value='18'>18%</option>";
+            output += "<option value='28'>28%</option>";
+            output += "<option value='TaxFree'>Tax Free</option></select></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center ' name='TotalAmount' id='TotalAmount"+ x[i].id +"' value='"+x[i].TotalAmount+"'></td>";
+            output += "<td class='p-2'><a type='button' class='btn btn-danger bg-danger btn-delete ms-2' data-sid='"+ x[i].id +"'><i class='ti ti-trash'></i></a></td></tr>";
+            };
+          $('#tbody2').html(output);
+          var tamount2 = document.getElementById("tamount3");
+          tamount2.innerText = resp.tamonut;
       }
     });
   });
@@ -617,8 +606,6 @@
         }
         var tamount2 = document.getElementById("tamount3");
         tamount2.innerText = data.tamonut;
-        var $TCA = $('#TCA');
-        $TCA.val(parseFloat(data.tamonut).toFixed(2));
       }
     });
   });
@@ -634,18 +621,14 @@
         x = resp.Sc;
         let value = 0;
         for (i = 0; i < x.length; i++) {
+          console.log(x[i].id);
           var $PIT = $('#TotalAmount' + x[i].id);
           $PIT.val(x[i].TotalAmount);
         };
         var $tamount2 = document.getElementById("tamount3");
         $tamount2.innerText = resp.rt;
-        var TCA = $('#TCA');
-        TCA.val(parseFloat(resp.rt).toFixed(2));
-
-        var tamount2 = document.getElementById("tamount4");
-        tamount2.innerText = '';
         var tamount2 = document.getElementById("mes");
-        tamount2.innerText = ' ';
+        tamount2.innerText = '';
       },
       error: function (resp) {
         console.log('Something went wrong');

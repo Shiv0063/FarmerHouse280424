@@ -7,7 +7,7 @@
       <!-- start File export -->
       <div class="card">
         <div class="px-4 py-3 border-bottom">
-          <h4 class="card-title mb-0">Sales Register</h4>
+          <h4 class="card-title mb-0">Delivery Report</h4>
         </div>
         <form class="card-body p-4 pb-0 mb-0" method="post">
           {% csrf_token %}
@@ -31,13 +31,13 @@
               </div>
             </div>
             <div class="col-md-2">
-              <label for="exampleInputtype" class="form-label">Party Name</label>
+              <label for="exampleInputtype" class="form-label">Delivery Boy Name</label>
               <div class="mb-4">
-                <select class="select2 form-control  custom-select" name="PartyName">
+                <select class="select2 form-control  custom-select" name="DeliveryBoyName">
                   <option>Select</option>
                   <optgroup label="">
                     {% for i in sp %}
-                    <option value="{{i}}" {% if PartyName == i %} selected {% endif %}>{{i}}</option>
+                    <option value="{{i}}" {% if DeliveryBoyName == i %} selected {% endif %}>{{i}}</option>
                     {% endfor %}
                   </optgroup>
                 </select>

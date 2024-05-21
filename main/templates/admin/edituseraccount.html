@@ -17,21 +17,27 @@
       <div class="col-12">
         <div class="card">
           <div class="px-4 py-3 border-bottom">
-            <h4 class="card-title mb-0">Add User</h4>
+            <h4 class="card-title mb-0">Edit User</h4>
           </div>
           <form class="card-body p-4" method="post">
             {% csrf_token %}
             <div class="row">
-              <div class="col-lg-6">
+              <div class="col-lg-4">
                 <div class="mb-4">
                   <label for="exampleInputName" class="form-label">Name</label>
                   <input type="text" class="form-control" id="exampleInputName" name="Username" value="{{data.username}}">
                 </div>
               </div>
-              <div class="col-lg-6">
+              <div class="col-lg-4">
                 <div class="mb-4">
                   <label for="exampleInputnumber" class="form-label">Phone Number</label>
                   <input type="text" class="form-control" id="exampleInputnumber" name="Number" value="{{data.phone}}">
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="mb-4">
+                  <label for="exampleInputemail" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="exampleInputemail" name="emailaddress" value="{{data.email}}">
                 </div>
               </div>
               <div class="col-12">
@@ -40,16 +46,40 @@
                   <textarea class="form-control p-7" name="Address" id="" cols="20" rows="1">{{data.Address}}</textarea>
                 </div>
               </div>
-              <div class="col-lg-6">
-                <div class="mb-4">
-                  <label for="exampleInputemail" class="form-label">Email</label>
-                  <input type="email" class="form-control" id="exampleInputemail" name="emailaddress" value="{{data.email}}">
+              <div class="modal fade" id="vertical-center-modal" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header d-flex align-items-center">
+                      <h4 class="modal-title" id="myLargeModalLabel">
+                        Change PassWord
+                      </h4>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body row">
+                      <form action="" method="post">
+                      <div class="col-12">
+                        <div class="mb-4">
+                          <label for="exampleInputpassword" class="form-label">New Password</label>
+                          <input type="password" class="form-control" id="exampleInputpassword" name="Password" placeholder="">
+                        </div>
+                      </div>
+                    </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn bg-success-subtle text-success  waves-effect text-start" data-bs-dismiss="modal">
+                        Submit
+                      </button>
+                      <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+                        Close
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="col-12">
                 <div class="d-flex justify-content-end gap-3">
-                  <button class="btn btn-primary" type="submit">Submit</button>
-                  <a class="btn bg-info text-white" href="/PassWordChange">Change PassWord</a>
+                  <button class="btn btn-success" type="submit">Submit</button>
+                  <a class="btn bg-info text-white" href="/PassWordChange" data-bs-toggle="modal" data-bs-target="#vertical-center-modal">Change PassWord</a>
                   <a class="btn bg-danger-subtle text-danger" href="/UserAccount">Cancel</a>
                 </div>
               </div>

@@ -60,13 +60,7 @@
                 <tr>
                   <td>{{forloop.counter}}</td>
                   <td>{{i.Category}}</td>
-                  <td>
-                    <div class="row">
-                      <div class="col d-flex justify-content-end">
-                        <a class="btn btn-success mr-3" href="/EditCategory/{{i.id}}" style="margin-left: 5px;">Edit</a><a href="DeleteCategory/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger">Delete</a>
-                      </div>
-                    </div>
-                    </td>
+                  <td><a class="btn btn-success mr-3" href="/EditCategory/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-trash'></i></a><a href="DeleteCategory/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger"><i class='ti ti-trash'></i></a></td>
                 </tr>
                 {% endfor %}
               </tfoot>

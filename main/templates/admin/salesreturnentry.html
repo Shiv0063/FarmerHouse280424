@@ -7,7 +7,7 @@
       <!-- start File export -->
       <div class="card">
         <div class="px-4 py-3 border-bottom">
-          <h4 class="card-title mb-0">Sales Register</h4>
+          <h4 class="card-title mb-0">Sales Return Register</h4>
         </div>
         <form class="card-body p-4 pb-0 mb-0" method="post">
           {% csrf_token %}
@@ -105,7 +105,7 @@
     var IN = $InvoiceNo.val();
     if ($InvoiceNo.val() != '') {
       $.ajax({
-        url: '/InvoiceNo/' + $InvoiceNo.val() + '/Sales',
+        url: '/InvoiceNo/' + $InvoiceNo.val() + '/SalesReturn',
         type: 'GET',
         success: function (resp) {
           if(resp.mgs != 0){

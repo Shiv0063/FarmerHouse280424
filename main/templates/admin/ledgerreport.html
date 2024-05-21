@@ -7,7 +7,7 @@
       <!-- start File export -->
       <div class="card">
         <div class="px-4 py-3 border-bottom">
-          <h4 class="card-title mb-0">Sales Register</h4>
+          <h4 class="card-title mb-0">Ledger Report</h4>
         </div>
         <form class="card-body p-4 pb-0 mb-0" method="post">
           {% csrf_token %}
@@ -25,18 +25,15 @@
               </div>
             </div>
             <div class="col-md-2">
-              <div class="mb-4">
-                <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
-                <input type="text" class="form-control" name="InvoiceNo" id="InvoiceNo" onkeydown="calcVal();" onkeyup="calcVal();">
-              </div>
-            </div>
-            <div class="col-md-2">
               <label for="exampleInputtype" class="form-label">Party Name</label>
               <div class="mb-4">
                 <select class="select2 form-control  custom-select" name="PartyName">
                   <option>Select</option>
                   <optgroup label="">
                     {% for i in sp %}
+                    <option value="{{i}}" {% if PartyName == i %} selected {% endif %}>{{i}}</option>
+                    {% endfor %}
+                    {% for i in pp %}
                     <option value="{{i}}" {% if PartyName == i %} selected {% endif %}>{{i}}</option>
                     {% endfor %}
                   </optgroup>
@@ -57,10 +54,7 @@
                 <tr>
                   <th class="p-2">Date</th>
                   <th class="p-2">Party Name</th>
-                  <th class="p-2">Invoice No.</th>
-                  <th class="p-2">Type Of Business</th>
-                  <th class="p-2">Delivery Time</th>
-                  <th class="p-2">Delivery Boy Name</th>
+                  <th class="p-2">Type</th>
                   <th class="p-2">Amount</th>
                   <th class="p-2"></th>
                 </tr>
@@ -71,12 +65,18 @@
                 <tr>
                   <td class="p-2">{{i.Date}}</td>
                   <td class="p-2">{{i.PartyName}}</td>
-                  <td class="p-2">{{i.InvoiceNo}}</td>
-                  <td class="p-2">{{i.TypeOfBusiness}}</td>
-                  <td class="p-2">{{i.DeliveryTime}}</td>
-                  <td class="p-2">{{i.DeliveryBoyName}}</td>
+                  <td class="p-2">{{i.Type}}</td>
                   <td class="p-2">{{i.Amount}}</td>
                   <td class="p-2"><a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;">Details</a></td>
+                </tr>
+                {% endfor %}
+                {% for i in pem %}
+                <tr>
+                  <td class="p-2">{{i.Date}}</td>
+                  <td class="p-2">{{i.PartyName}}</td>
+                  <td class="p-2">{{i.Type}}</td>
+                  <td class="p-2">{{i.Amount}}</td>
+                  <td class="p-2"><a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;">Details</a></td>
                 </tr>
                 {% endfor %}
               </tbody>
