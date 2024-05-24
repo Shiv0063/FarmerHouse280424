@@ -76,9 +76,15 @@
                   <td class="p-2">{{i.DeliveryTime}}</td>
                   <td class="p-2">{{i.DeliveryBoyName}}</td>
                   <td class="p-2">{{i.Amount}}</td>
-                  <td class="p-2"><a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;">Details</a></td>
+                  <td class="p-2"><a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></td>
                 </tr>
                 {% endfor %}
+              </tbody>
+              <tbody>
+                <tr>
+                  <td colspan="6"><b>Total Amount</b></td>
+                  <td colspan="2"><b id="tam">{{ta}}</b></td>
+                </tr>
               </tbody>
               <tbody class="bg-white">
                 <tr class="bg-white">
@@ -111,12 +117,15 @@
           if(resp.mgs != 0){
             var tamount3 = document.getElementById("mes");
             tamount3.innerText = resp.mgs;
+            var tam = document.getElementById('tam');
+            tam.innerText = 0;
             output = '';
             $('#tbody').html(output);
           }
           else{
             x = resp.Sc
           output = ''
+          ta = 0
           for (i = 0; i < x.length; i++) {
             output += "<tr><td class='p-2'>"+ x[i].Date +"</td>";
             output += "<td class='p-2'>"+ x[i].PartyName +"</td>";
@@ -125,11 +134,14 @@
             output += "<td class='p-2'>"+ x[i].DeliveryTime +"</td>";
             output += "<td class='p-2'>"+ x[i].DeliveryBoyName +"</td>";
             output += "<td class='p-2'>"+ x[i].Amount +"</td>";
-            output += "<td class='p-2'><a class='btn btn-warning mr-3' href='/SalesDetails/"+ x[i].id +"' style='margin-left: 5px;'>Details</a></td></tr>";  
+            output += "<td class='p-2'><a class='btn btn-warning mr-3' href='/SalesDetails/"+ x[i].id +"' style='margin-left: 5px;'>Details</a></td></tr>"; 
+            ta += parseFloat(x[i].Amount);
           };
           $('#tbody').html(output);
           var tamount3 = document.getElementById("mes");
             tamount3.innerText = '';
+          var tam = document.getElementById('tam');
+            tam.innerText = ta;
           }
           
         },

@@ -158,6 +158,26 @@ class SalesStockModel(models.Model):
     IncSalesPrice = models.CharField(max_length=100,null=True, blank=True)
     TotalSales = models.CharField(max_length=100,null=True, blank=True)
 
+class EditSalesStockModel(models.Model):
+    ProductId = models.CharField(max_length=100,null=True,blank=True)
+    user = models.CharField(max_length=100,null=True, blank=True)
+    type = models.CharField(max_length=100,null=True, blank=True)
+    ProductName = models.CharField(max_length=100,null=True, blank=True)
+    Category = models.CharField(max_length=100,null=True, blank=True)
+    Tax = models.CharField(max_length=100,null=True, blank=True)
+    Unit = models.CharField(max_length=100,null=True, blank=True)
+    PurchaseIncTax = models.CharField(max_length=100,null=True, blank=True)
+    BarcodeNo = models.CharField(max_length=100,blank=True)
+    Quantity = models.CharField(max_length=100,blank=True)
+    Amount = models.CharField(max_length=100,null=True, blank=True)
+    sid = models.CharField(max_length=100,null=True, blank=True)
+    ProfitMargin = models.CharField(max_length=100,null=True, blank=True)
+    BasicSalesPrice = models.CharField(max_length=100,null=True, blank=True)
+    Discount = models.CharField(max_length=100,null=True, blank=True)
+    SalesPriceAfterDiscount = models.CharField(max_length=100,null=True, blank=True)
+    IncSalesPrice = models.CharField(max_length=100,null=True, blank=True)
+    TotalSales = models.CharField(max_length=100,null=True, blank=True)
+
 class SalesEntryModel(models.Model):
     user = models.CharField(max_length=100,null=True, blank=True)
     DeliveryBoyName = models.CharField(max_length=100,null=True, blank=True)
@@ -173,8 +193,15 @@ class SalesEntryModel(models.Model):
     Terms = models.CharField(max_length=100,null=True, blank=True)
     TypeofPayment = models.CharField(max_length=100,null=True, blank=True)
     TChargesAmount = models.CharField(max_length=100,null=True, blank=True)
+    def DDate(self):
+        return self.Date.strftime('%Y-%m-%d')
+
     def date(self):
         return self.DateTime.strftime('%B %d %Y')
+    
+    def time(self):
+        return self.DeliveryTime.strftime("%H:%M")
+        
     
 class ExpanseListModel(models.Model):
     ProductId = models.CharField(max_length=100,null=True, blank=True)

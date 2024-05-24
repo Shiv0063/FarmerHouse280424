@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.models import User,Group
 from django.http import HttpResponse,JsonResponse
-from .models import PartyModel,CategoryModel,DeliveryBoyModel,ProductModel,UserDetails,ExpanseModel,NMModel,BiilNoModel,StockModel,PurchaseEntryModel,MainStockModel,SalesStockModel,SalesEntryModel,ExpanseListModel,ExpanseEntryModel,ChargesModel,ChargesListModel,InvoiceNoModel
+from .models import PartyModel,CategoryModel,DeliveryBoyModel,ProductModel,UserDetails,ExpanseModel,NMModel,BiilNoModel,StockModel,PurchaseEntryModel,MainStockModel,SalesStockModel,SalesEntryModel,ExpanseListModel,ExpanseEntryModel,ChargesModel,ChargesListModel,InvoiceNoModel,EditSalesStockModel
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from io import BytesIO
@@ -963,13 +963,16 @@ def StockDetails(request,name):
 
 @login_required(login_url='Login')
 @csrf_exempt
-def Stockswork(request,PN,id,id2,type):
+def Stockswork(request,PN,id,id2,type,PID=None):
     user = str(request.user.username)
     val= NMModel.objects.get(user=user,type=type)
     ms = MainStockModel.objects.get(id=id2)
     PRD = ProductModel.objects.get(BarcodeNo=ms.BarcodeNo)
     type = type
-    ProductId = val.ProductId
+    if PID == None:
+        ProductId = val.ProductId
+    else:
+        ProductId = PID
     TSP = eval(ms.Quantity) * eval(ms.PurchaseIncTax)
     if ms.Tax != 'TaxFree':
         tax = int(ms.Tax)
@@ -1025,6 +1028,108 @@ def ProductE2(request):
             mstock = MainStockModel.objects.get(id=dt.sid)
             if mstock.Unit == 'KG':
                 if eval(mstock.Quantity) < eval(val):
+                    return JsonResponse({'msg':'Stoke is not Avilabel.'})
+                else:
+                    dt.Quantity = val
+                    if dt.ProfitMargin == '' or dt.ProfitMargin == '0':
+                        if dt.Tax != 'TaxFree':
+                            tax = int(dt.Tax)
+                            pass
+                        else:
+                            dt.IncSalesPrice = eval(dt.PurchaseIncTax)
+                            dt.TotalSales = eval(val) * eval(dt.PurchaseIncTax)
+                    elif dt.ProfitMargin != '':
+                        dt.IncSalesPrice = eval(dt.BasicSalesPrice)
+                        dt.TotalSales = eval(val) * eval(dt.BasicSalesPrice)
+            else:
+                if int(val):
+                    if eval(mstock.Quantity) < int(val):
+                        return JsonResponse({'msg':'Stoke is not Avilabel.'})
+                    else:
+                        dt.Quantity = val
+                else:
+                    return JsonResponse({'msg':'Quantity Value is not Perfact.'})
+        dt.save()
+    if name == 'ProfitMargin':
+        if val != '':
+            dt.ProfitMargin = val
+            val = eval(val)
+            if val == 0: 
+                pt = eval(dt.PurchaseIncTax)
+            else:
+                pt = eval(dt.PurchaseIncTax) + (val * eval(dt.PurchaseIncTax) /100)
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
+        else : 
+            dt.ProfitMargin = '0'
+            pt = eval(dt.PurchaseIncTax)
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
+        dt.save()
+    if name == 'Discount':
+        if val != '':
+            dt.Discount = val
+            val = eval(val)
+            if val == 0:
+                dt.SalesPriceAfterDiscount = dt.BasicSalesPrice
+            else:
+                pt = eval(dt.BasicSalesPrice) - (eval(dt.BasicSalesPrice) * val / 100 )
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            dt.save()
+        else:
+            dt.Discount = '0'
+            if dt.BasicSalesPrice == '0' or dt.BasicSalesPrice == '0':
+                dt.SalesPriceAfterDiscount = dt.PurchaseIncTax
+            else:
+                dt.SalesPriceAfterDiscount = dt.BasicSalesPrice
+            dt.save()
+    dt=SalesStockModel.objects.get(id=id)
+    if dt.Tax != 'TaxFree':
+        tax = int(dt.Tax)
+        pt = eval(dt.SalesPriceAfterDiscount) + (eval(dt.SalesPriceAfterDiscount) * tax / 100)
+        pt = float("%.2f" % pt)
+        dt.IncSalesPrice = pt
+        pt = pt * eval(dt.Quantity)
+        dt.TotalSales = "%.2f" % pt
+    else:
+        dt.IncSalesPrice = dt.SalesPriceAfterDiscount
+        pt = eval(dt.IncSalesPrice) * eval(dt.Quantity)
+        dt.TotalSales = "%.2f" % pt
+    dt.save()
+    get = SalesStockModel.objects.filter(ProductId=dt.ProductId,user=request.user.username,type=type).values()
+    Sc = list(get)
+    rt= 0
+    for i in get:
+        rt += float(i['TotalSales'])
+    rt = "%.2f" % rt
+    return JsonResponse({'Sc':Sc,'rt':rt})
+
+@login_required(login_url='Login')
+@csrf_exempt
+def ProductE3(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        id = request.POST.get('id')
+        val = request.POST.get('val')
+        type = request.POST.get('type')
+    dt=SalesStockModel.objects.get(id=id,type=type)
+    if name == 'Quantity':
+        if val == '':
+            dt.Quantity = '0'
+        else:
+            mstock = MainStockModel.objects.get(id=dt.sid)
+            ESS = EditSalesStockModel.objects.get(ProductId=dt.ProductId)
+            Qtt = eval(mstock.Quantity) + eval(ESS.Quantity)
+            if mstock.Unit == 'KG':
+                if Qtt < eval(val):
                     return JsonResponse({'msg':'Stoke is not Avilabel.'})
                 else:
                     dt.Quantity = val
@@ -1166,32 +1271,59 @@ def DeleteSales(request,id):
     dt.delete()
     return redirect('/Sales')
 
-# @login_required(login_url='Login')
-# def EditSales(request,id):
-#     user=str(request.user.username)
-#     type = 'Sales'
-#     cp = NMModel.objects.get(user=user,type=type)
-#     ProductId = cp.ProductId
-#     BN= InvoiceNoModel.objects.get(user=user,type=type)
-#     Invoice = BN.InvoiceNo
-#     stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
-#     Category=CategoryModel.objects.filter(user=request.user)
-#     stokes=MainStockModel.objects.filter(user=request.user)
-#     Charges=ChargesModel.objects.filter(user=request.user.username)
-#     ChargesList = ChargesListModel.objects.filter(user=request.user,ProductId=ProductId,type='Sales')
-#     TCA = 0
-#     for i in ChargesList:
-#         TCA += float(i.TotalAmount)
-#     TCA = TCA
-#     productns={i.ProductName for i in stokes}
-#     Product = ProductModel.objects.filter(user=request.user)
-#     Party = PartyModel.objects.filter(user=request.user)
-#     DB =  DeliveryBoyModel.objects.filter(user=request.user)
-#     tamonut = 0
-#     for i in stock:
-#         tamonut += float(i.TotalSales)
-#     data={'Category':Category,'Product':Product,'ProductId':ProductId,'productns':productns,'Invoice':Invoice,'TCA':TCA,'ChargesList':ChargesList,'Party':Party,'Charges':Charges,'stokes':stokes,'type':type,'stock':stock,'tamonut':tamonut,'DB':DB}
-#     return render(request,'admin/')
+@login_required(login_url='Login')
+def EditSales(request,id):
+    user=str(request.user.username)
+    type = 'Sales'
+    dt = SalesEntryModel.objects.get(id=id)
+    ProductId = dt.ProductId
+    Invoice = dt.InvoiceNo
+    SRtoESR(user,ProductId,type)
+    stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
+    Category=CategoryModel.objects.filter(user=request.user)
+    stokes=MainStockModel.objects.filter(user=request.user)
+    Charges=ChargesModel.objects.filter(user=request.user.username)
+    ChargesList = ChargesListModel.objects.filter(user=request.user,ProductId=ProductId,type='Sales')
+    TCA = 0
+    for i in ChargesList:
+        TCA += float(i.TotalAmount)
+    TCA = "%.2f" % TCA
+    productns={i.ProductName for i in stokes}
+    Product = ProductModel.objects.filter(user=request.user)
+    Party = PartyModel.objects.filter(user=request.user)
+    DB =  DeliveryBoyModel.objects.filter(user=request.user)
+    tamonut = 0
+    for i in stock:
+        tamonut += eval(i.TotalSales)
+    tamonut = "%.2f" % tamonut
+    data={'Category':Category,'Product':Product,'dt':dt,'ProductId':ProductId,'productns':productns,'Invoice':Invoice,'TCA':TCA,'ChargesList':ChargesList,'Party':Party,'Charges':Charges,'stokes':stokes,'type':type,'stock':stock,'tamonut':tamonut,'DB':DB}
+    dt=SalesEntryModel.objects.get(id=id)
+    if request.method=="POST":
+        dt.DeliveryBoyName=request.POST.get('DeliveryBoyName')
+        dt.TypeOfBusiness=request.POST.get('TypeOfBusiness')
+        dt.DeliveryTime=request.POST.get('DeliveryTime')
+        dt.PartyName=request.POST.get('PartyName')
+        dt.TypeofPayment=request.POST.get('TypeofPayment')
+        dt.Terms=request.POST.get('Terms')
+        dt.Date=request.POST.get('Date')
+        stock = SalesStockModel.objects.filter(ProductId=dt.ProductId,user=dt.user,type='Sales')
+        tamonut = 0
+        for i in stock:
+            TS=float(i.TotalSales)
+            tamonut += TS
+        tamonut = "%.2f" % tamonut
+        ChargesList = ChargesListModel.objects.filter(user=request.user,ProductId=dt.ProductId,type='Sales')
+        TCA = 0
+        for i in ChargesList:
+            TCA += float(i.TotalAmount)
+        TCA = "%.2f" % TCA
+        ta = eval(tamonut) + eval(TCA)
+        dt.Amount= str(ta)
+        dt.TChargesAmount = TCA
+        dt.save()
+        messages.success(request,'Edit Sales Successfully.')
+        return redirect('/Sales')
+    return render(request,'admin/editsalesentry.html',data)
 
 @login_required(login_url='Login')
 def PurchaseReturnEntry(request):
@@ -1512,12 +1644,15 @@ def AddSalesReturnEntry(request):
      
 @login_required(login_url='Login')
 @csrf_exempt
-def SRStocks(request,PN,id,type):
+def SRStocks(request,PN,id,type,PD=None):
     user = str(request.user.username)
     val= NMModel.objects.get(user=user,type=type)
     type = type
     pd = ProductModel.objects.get(id=id)
-    ProductId = val.ProductId
+    if PD == None:
+        ProductId = val.ProductId
+    else:
+        ProductId = PD
     SalesStock=SalesStockModel.objects.create(ProductId=ProductId,user=user,type=type,ProductName=pd.ProductName,Category=pd.Category,Tax=pd.Tax,Unit=pd.Unit,PurchaseIncTax='0',BarcodeNo=pd.BarcodeNo,Quantity='0',Amount='0',ProfitMargin='0',BasicSalesPrice='0',Discount='0',SalesPriceAfterDiscount='0',IncSalesPrice='0',TotalSales='0')
     SalesStock.save()
     get = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type).values()
@@ -1546,8 +1681,8 @@ def SRDelete(request):
         tamonut= str(tamonut)
         return JsonResponse({'status':1,'tamonut':tamonut})
     else:
-        return JsonResponse({'status':0})
-    
+        return JsonResponse({'status':0})    
+
 @login_required(login_url='Login')
 @csrf_exempt
 def SRSEdit(request):
@@ -1663,6 +1798,93 @@ def SRDetails(request,id):
 def SRCancel(request,id):
     data=SalesStockModel.objects.filter(ProductId=id,user=request.user,type='SalesReturn')
     data.delete()
+    return redirect('/SalesReturn')
+
+@login_required(login_url='Login')
+def DeleteSR(request,id):
+    data=SalesEntryModel.objects.get(id=id)
+    data.delete()
+    return redirect('/SalesReturn')
+
+def SRtoESR(user,ProductId,type):
+    stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
+    try:
+        dt=EditSalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
+        if dt:
+            pass
+        else:
+            for i in stock:
+                ESR = EditSalesStockModel.objects.create(ProductId=i.ProductId,user=i.user,type=i.type,ProductName=i.ProductName,Category=i.Category,Tax=i.Tax,Unit=i.Unit,PurchaseIncTax=i.PurchaseIncTax,BarcodeNo=i.BarcodeNo,Quantity=i.Quantity,Amount=i.Amount,ProfitMargin=i.ProfitMargin,BasicSalesPrice=i.BasicSalesPrice,Discount=i.Discount,SalesPriceAfterDiscount=i.SalesPriceAfterDiscount,IncSalesPrice=i.IncSalesPrice,TotalSales=i.TotalSales)
+                ESR.save()
+    except:
+        for i in stock:
+                ESR = EditSalesStockModel.objects.create(ProductId=i.ProductId,user=i.user,type=i.type,ProductName=i.ProductName,Category=i.Category,Tax=i.Tax,Unit=i.Unit,PurchaseIncTax=i.PurchaseIncTax,BarcodeNo=i.BarcodeNo,Quantity=i.Quantity,Amount=i.Amount,ProfitMargin=i.ProfitMargin,BasicSalesPrice=i.BasicSalesPrice,Discount=i.Discount,SalesPriceAfterDiscount=i.SalesPriceAfterDiscount,IncSalesPrice=i.IncSalesPrice,TotalSales=i.TotalSales)
+                ESR.save()
+
+@login_required(login_url='Login')
+def EditSR(request,id):
+    user=str(request.user.username)
+    type = 'SalesReturn'
+    dt = SalesEntryModel.objects.get(id=id)
+    ProductId = dt.ProductId
+    Invoice = dt.InvoiceNo
+    SRtoESR(user,ProductId,type)
+    stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
+    Category=CategoryModel.objects.filter(user=request.user)
+    stokes=MainStockModel.objects.filter(user=request.user)
+    productns={i.ProductName for i in stokes}
+    Product = ProductModel.objects.filter(user=request.user)
+    Party = PartyModel.objects.filter(user=request.user)
+    DB =  DeliveryBoyModel.objects.filter(user=request.user)
+    tamonut = 0
+    for i in stock:
+        tamonut += float(i.TotalSales)
+    tamonut = str("%.2f" % tamonut )
+    data={'Category':Category,'Product':Product,'dt':dt,'ProductId':ProductId,'productns':productns,'Invoice':Invoice,'Party':Party,'stokes':stokes,'type':type,'stock':stock,'tamonut':tamonut,'DB':DB}
+    dt = SalesEntryModel.objects.get(id=id)
+    if request.method=="POST":    
+        dt.DeliveryBoyName=request.POST.get('DeliveryBoyName')
+        dt.TypeOfBusiness=request.POST.get('TypeOfBusiness')
+        dt.DeliveryTime=request.POST.get('DeliveryTime')
+        dt.PartyName=request.POST.get('PartyName')
+        dt.ProductId=request.POST.get('ProductId')
+        dt.TypeofPayment=request.POST.get('TypeofPayment')
+        dt.Terms=request.POST.get('Terms')
+        dt.Date=request.POST.get('Date')
+        tamonut = 0
+        for i in stock:
+            tamonut += float(i.TotalSales)
+        tamonut = "%.2f" % tamonut
+        dt.Amount=str(tamonut)
+        dt.save()
+        stokes=MainStockModel.objects.filter(user=request.user,ProductId=ProductId,type='SalesReturn')
+        stokes.delete()
+        stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
+        for i in stock:
+            MainS=MainStockModel.objects.create(OldProductId='0',ProductId=i.ProductId,user=user,type=type,ProductName=i.ProductName,Category=i.Category,Tax=i.Tax,Unit=i.Unit,PurchasePrice=i.PurchaseIncTax,PurchaseIncTax=i.PurchaseIncTax,MinQty='0',MaxQty='0',BarcodeNo=i.BarcodeNo,Quantity=i.Quantity,Amount=i.TotalSales)
+            MainS.save()
+        df = EditSalesStockModel.objects.filter(ProductId=ProductId,user=user,type='SalesReturn')
+        df.delete()
+        messages.success(request,'Edit Sales Return Successfully.')
+        return redirect('/SalesReturn')
+    if is_admin(request.user):
+        return render(request,'admin/editsalesreturnentry.html',data)
+    if is_user(request.user):
+        return render(request,'editsalesreturnentry.html',data)
+
+@login_required(login_url='Login')
+def CancelSR(request,PID):
+    ProductId=PID
+    type='SalesReturn'
+    user=request.user
+    stokes=SalesStockModel.objects.filter(user=request.user,ProductId=ProductId,type=type)
+    stokes.delete()
+    stock = EditSalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
+    for i in stock:
+        MainS=SalesStockModel.objects.create(ProductId=i.ProductId,user=i.user,type=i.type,ProductName=i.ProductName,Category=i.Category,Tax=i.Tax,Unit=i.Unit,PurchaseIncTax=i.PurchaseIncTax,BarcodeNo=i.BarcodeNo,Quantity=i.Quantity,Amount=i.Amount,ProfitMargin=i.ProfitMargin,BasicSalesPrice=i.BasicSalesPrice,Discount=i.Discount,SalesPriceAfterDiscount=i.SalesPriceAfterDiscount,IncSalesPrice=i.IncSalesPrice,TotalSales=i.TotalSales)
+        MainS.save()
+    df = EditSalesStockModel.objects.filter(ProductId=ProductId,user=user,type='SalesReturn')
+    df.delete()
     return redirect('/SalesReturn')
 
 @login_required(login_url='Login')
@@ -1951,6 +2173,10 @@ def ProductsDetails(request,name):
 
 @login_required(login_url='Login')
 def InvoiceNoDetails(request,IN,type):
+    if IN == '':
+        print('balnak')
+    else:
+        print('value')
     data=SalesEntryModel.objects.filter(InvoiceNo=IN,Type=type).values()
     dt = list(data)
     if dt == []:
@@ -1977,26 +2203,54 @@ def DeliveryReport(request):
     if is_admin(request.user):
         sales = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
         sp = {i.DeliveryBoyName for i in sales}
-        data = {'sales':sales,'sp':sp}
+        ta = 0
+        for i in sales:
+            ta += eval(i.Amount)
+        ta = "%.2f" % ta
+        data = {'sales':sales,'sp':sp,'ta':ta}
         if request.method=="POST": 
             StartDate = request.POST.get('StartDate')
             EndDate = request.POST.get('EndDate')
             DeliveryBoyName = request.POST.get('DeliveryBoyName')
             if (StartDate != '' and EndDate != '') and (DeliveryBoyName == 'Select' ):
                 ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user)
+                ta = 0
+                for i in ss:
+                    ta += eval(i.Amount)
+                ta = "%.2f" % ta
             elif (StartDate == '' and EndDate == '') and (DeliveryBoyName == 'Select'):
                 ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+                ta = 0
+                for i in ss:
+                    ta += eval(i.Amount)
+                ta = "%.2f" % ta
             elif StartDate == '' and EndDate == '':
                 if DeliveryBoyName == 'Select':
                     ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+                    ta = 0
+                    for i in ss:
+                        ta += eval(i.Amount)
+                    ta = "%.2f" % ta
                 else :  
                     ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,DeliveryBoyName=DeliveryBoyName)
+                    ta = 0
+                    for i in ss:
+                        ta += eval(i.Amount)
+                    ta = "%.2f" % ta
             elif (StartDate != '' and EndDate == '') and (DeliveryBoyName == 'Select'):
                     ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,Date=StartDate)
+                    ta = 0
+                    for i in ss:
+                        ta += eval(i.Amount)
+                    ta = "%.2f" % ta
             else:
                 ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user,DeliveryBoyName=DeliveryBoyName)
+                ta = 0
+                for i in ss:
+                    ta += eval(i.Amount)
+                ta = "%.2f" % ta
             sp = {i.DeliveryBoyName for i in sales}
-            data = {'sales':ss,'sp':sp,'StartDate':StartDate,'EndDate':EndDate,'DeliveryBoyName':DeliveryBoyName}
+            data = {'sales':ss,'sp':sp,'StartDate':StartDate,'EndDate':EndDate,'ta':ta,'DeliveryBoyName':DeliveryBoyName}
             return render(request,'admin/deliveryreport.html',data)
         return render(request,'admin/deliveryreport.html',data)
     if is_user(request.user):
