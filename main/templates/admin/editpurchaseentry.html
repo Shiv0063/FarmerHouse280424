@@ -3,17 +3,17 @@
 {% block content %}
 <div class="body-wrapper">
   <div class="container-fluid">
-    <div class="row">
-      {% for message in messages %}
+    {% for message in messages %}
       {% if message.tags == 'success' %}
       <div class="row justify-content-center">
-        <div class="col-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+        <div class="col-md-6 col-11 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
           <strong>{{message}}</strong>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       </div>
       {% endif %}
       {% endfor %}
+    <div class="row">
       <div class="col-12">
         <div class="card">
           <div class="px-4 py-3 border-bottom">
@@ -94,7 +94,9 @@
                         <optgroup label="">
                           {% for i in Party %}
                           {% if i.Type != 'Customer' and i.Type != 'Hotel & Restaurant' %}
+                          {% if i.Type != 'Expanse' %}
                           <option value="{{i.PartyName}}" {% if dt.PartyName == i.PartyName %} selected {% endif %}>{{i.PartyName}} ( {{i.Number}} )</option>
+                          {% endif %}
                           {% endif %}
                           {% endfor %}
                         </optgroup>
@@ -120,14 +122,14 @@
                     data-bs-target="#AddProduct"><i class='ti ti-plus'></i></a></div>
                 </div>
               </div>
-              <div class="col-12">
+              <div class="col-12 table-responsive p-1">
                 <table class="table table-striped table-bordered display text-nowrap" id="thad">
                   <thead>
                     <tr>
                       <th>Prodect Name</th>
                       <th>Quantity</th>
                       <th>Purchase Price <br>( Per. Unit)</th>
-                      <th>Tax</th>
+                      <th><span class="ms-4 mx-4">Tax ( % )</span></th>
                       <th>Purchase Inc. Tax <br>( Per. Unit)</th>
                       <th>Grand Total</th>
                       <th></th>
@@ -189,13 +191,13 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12">
+              <div class="col-12 table-responsive p-1">
                 <table class="table table-striped table-bordered display text-nowrap" id="thad">
                   <thead>
                     <tr>
                       <th class="p-2">Charge Name</th>
                       <th class="p-2">Amount</th>
-                      <th class="p-2">Tax</th>
+                      <th class="p-2"><span class="ms-4 mx-4">Tax ( % )</span></th>
                       <th class="p-2">Total Amount</th>
                       <th class="p-2"></th>
                     </tr>
@@ -276,9 +278,6 @@
                 <option value="Market Yard">Market Yard</option>
                 <option value="Local Market">Local Market</option>
                 <option value="Vendor">Vendor</option>
-                <option value="Hotel & Restaurant">Hotel & Restaurant</option>
-                <option value="Customer">Customer</option>
-                <option value="Expanse">Expanse</option>
               </select>
             </div>
           </div>
@@ -424,13 +423,13 @@
             </div>
           </div>
           <div class="col-md-4">
-            <div class="">
+            <div class="mb-4">
               <label class="form-label">Manufacturing Date</label>
               <input type="date" class="form-control " name="MFGDate" required>
             </div>
           </div>
           <div class="col-md-4">
-            <div class="">
+            <div class="mb-4">
               <label class="form-label">Expiry Date</label>
               <input type="date" class="form-control " name="ExpiryDate" required>
             </div>
@@ -697,8 +696,12 @@
           x = data.ld
           output = ''
           for (i = 0; i < x.length; i++) {
-            if(x[i].Type != 'Customer' & x[i].Type != 'Hotel & Restaurant'){
-              output += "<option value="+x[i].PartyName+">" + x[i].PartyName +' '+x[i].Number+"</option>";
+            if (x[i].Type != 'Customer') {
+              if (x[i].Type != 'Hotel & Restaurant') {
+                if (x[i].Type != 'Expanse') {
+                  output += "<option value=" + x[i].PartyName + ">" + x[i].PartyName + ' ( ' + x[i].Number + ") </option>";
+                }
+              }
             }
           };
           $("#Partyselect2 select[name='PartyName']").find('.after3').after(output);

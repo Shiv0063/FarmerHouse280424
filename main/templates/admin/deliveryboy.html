@@ -33,14 +33,14 @@
     {% for message in messages %}
       {% if message.tags == 'success' %}
       <div class="row justify-content-center">
-        <div class="col-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+        <div class="col-md-6 col-11 mt-1 mb-3 alert alert-success alert-dismissible fade show" role="alert">
           <strong>{{message}}</strong>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       </div>
       {% endif %}
       {% endfor %}
-    <div class="datatables">
+    <div class="datatables mt-1">
       <!-- start File export -->
       <div class="card">
         <div class="card-body">

@@ -15,21 +15,42 @@
               <thead>
                 <!-- start row -->
                 <tr>
-                  <th>No.</th>
+                  <th>No</th>
                   <th>Product Name</th>
-                  <th></th>
+                  <th>Category</th>
+                  <th>Tax</th>
+                  <th>Unit</th>
+                  <th>Quantity</th>
+                  <th>Amount</th>
                 </tr>
                 <!-- end row -->
               </thead>
               <tbody>
                 {% for i in stock %}
+                {% if i.out == 0 %}
                 <tr>
                   <td>{{forloop.counter}}</td>
-                  <td>{{i}}</td>
-                  <td> <a class="btn btn-warning mr-3" href="/ProductsDetails/{{i}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></td>
+                  <td>{{i.ProductName}}</td>
+                  <td>{{i.Category}}</td>
+                  <td>{{i.Tax}}</td>
+                  <td>{{i.Unit}}</td>
+                  <td>{{i.Quantity}}</td>
+                  <td>{{i.Amount}}</td>
                 </tr>
+                {% endif %}
                 {% endfor %}
               </tbody>
+              <tfoot>
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th>{{Quantity}}</th>
+                  <th>{{Amount}}</th>
+                </tr>
+              </tfoot>
             </table>
           </div>
         </div>

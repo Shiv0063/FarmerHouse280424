@@ -308,11 +308,10 @@ def DeleteCategory(request,id):
 
 @login_required(login_url='Login')
 def DeliveryBoy(request):
-    if is_admin(request.user):
-        data=DeliveryBoyModel.objects.filter(user=request.user)
+    data=DeliveryBoyModel.objects.filter(user=request.user)
+    if is_admin(request.user):    
         return render(request,'admin/deliveryboy.html',{'data':data})
     if is_user(request.user):
-        data=DeliveryBoyModel.objects.filter(user=request.user)
         return render(request,'deliveryboy.html',{'data':data})
 
 @login_required(login_url='Login')
@@ -338,9 +337,12 @@ def AddDeliveryBoy(request):
     
 @login_required(login_url='Login')
 def DeliveryBoyDetails(request,pk):
-    data=DeliveryBoyModel.objects.get(id=pk)
-    return render(request,'admin/deliveryboydetails.html',{'data':data})
-
+    data=DeliveryBoyModel.objects.get(user=request.user,id=pk)
+    if is_admin(request.user):    
+        return render(request,'admin/deliveryboydetails.html',{'data':data})
+    if is_user(request.user):
+        return render(request,'deliveryboydetails.html',{'data':data})
+    
 @login_required(login_url='Login')
 def EditDeliveryBoy(request,pk):
     if is_admin(request.user):
@@ -2143,7 +2145,7 @@ def AllDelete(request):
 
 @login_required(login_url='Login')
 def StockReport(request):
-    stock = MainStockModel.objects.filter(user=request.user.username)
+    stock = MainStockModel.objects.filter(user=request.user)
     Productname = []
     for i in stock:
         if int(i.out) != 1:

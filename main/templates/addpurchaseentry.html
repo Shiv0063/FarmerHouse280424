@@ -3,17 +3,17 @@
 {% block content %}
 <div class="body-wrapper">
   <div class="container-fluid">
-    <div class="row">
-      {% for message in messages %}
-      {% if message.tags == 'success' %}
-      <div class="row justify-content-center">
-        <div class="col-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
-          <strong>{{message}}</strong>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-11 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{message}}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
-      {% endif %}
-      {% endfor %}
+    </div>
+    {% endif %}
+    {% endfor %}
+    <div class="row">
       <div class="col-12">
         <div class="card">
           <div class="px-4 py-3 border-bottom">
@@ -59,6 +59,16 @@
               </div>
               <div class="col-md-2">
                 <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Terms</label>
+                  <select class="form-select" id="exampleInputtype" name="Terms" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Debit">Debit</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
                   <label for="exampleInputtype" class="form-label">Type of Payment</label>
                   <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
                     <option value="" selected>-- Selet --</option>
@@ -77,24 +87,26 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="row">
+                <div class="row" id="Partyselect2">
                   <div class="col-9">
                     <label for="exampleInputtype" class="form-label">Party Name</label>
                     <div class="mb-4">
                       <select class="select2 form-control  custom-select" name="PartyName" required>
-                        <option>Select</option>
+                        <option class="after3">Select</option>
                         <optgroup label="">
                           {% for i in Party %}
                           {% if i.Type != 'Customer' and i.Type != 'Hotel & Restaurant' %}
-                          <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                          {% if i.Type != 'Expanse' %}
+                          <option value="{{i.PartyName}}">{{i.PartyName}} ( {{i.Number}} )</option>
+                          {% endif %}
                           {% endif %}
                           {% endfor %}
                         </optgroup>
                       </select>
                     </div>
                   </div>
-                  <div class="col-1 d-flex align-items-center"><a href="AddParty" class="btn btn-success btn-lg"><i
-                        class='ti ti-plus'></i></a></div>
+                  <div class="col-1 d-flex align-items-center"><a data-bs-toggle="modal" data-bs-target="#AddParty"
+                      class="btn btn-success btn-lg"><i class='ti ti-plus'></i></a></div>
                 </div>
               </div>
               <div class="col-md-4">
@@ -102,17 +114,17 @@
                   <div class="col-9 mb-4">
                     <label class="form-label">Product Name</label>
                     <select class="select form-control" name="Product2">
-                      <option>Product Name</option>
+                      <option class="after2">Product Name</option>
                       {% for i in Product %}
                       <option value="{{i.ProductName}}/{{i.id}}">{{i.ProductName}}</option>
                       {% endfor %}
                     </select>
                   </div>
-                  <div class="col-1 d-flex align-items-center"><a href="AddProduct"
-                      class="mt-3 btn btn-success btn-lg"><i class='ti ti-plus'></i></a></div>
+                  <div class="col-1 d-flex align-items-center"><a class="btn btn-success btn-lg" data-bs-toggle="modal"
+                      data-bs-target="#AddProduct"><i class='ti ti-plus'></i></a></div>
                 </div>
               </div>
-              <div class="col-12">
+              <div class="col-12 table-responsive p-1">
                 <table class="table table-striped table-bordered display text-nowrap" id="thad">
                   <thead>
                     <tr>
@@ -168,19 +180,20 @@
                       <div class="col-9 mb-4">
                         <label class="form-label">Charges</label>
                         <select class="select form-control" name="Charges">
-                          <option>Charges</option>
+                          <option class="after">Charges</option>
                           {% for i in Charges %}
                           <option value="{{i.id}}">{{i.Charges}}</option>
                           {% endfor %}
                         </select>
                       </div>
-                      <div class="col-1 d-flex align-items-center"><a href="AddCharges"
-                          class=" btn btn-success btn-lg"><i class='ti ti-plus'></i></a></div>
+                      <div class="col-1 d-flex align-items-center"><a data-bs-toggle="modal"
+                          data-bs-target="#AddCharges" class=" btn btn-success btn-lg"><i class='ti ti-plus'></i></a>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-12">
+              <div class="col-12 table-responsive p-1">
                 <table class="table table-striped table-bordered display text-nowrap" id="thad">
                   <thead>
                     <tr>
@@ -208,7 +221,7 @@
                           <option value="TaxFree" {% if i.Tax == 'TaxFree' %} selected {% endif %}>Tax Free</option>
                         </select></td>
                       <td class="p-2"><input type="text" class="form-control text-center " name="TotalAmount"
-                          id="TotalAmount{{i.id}}" value="{{i.TotalAmount}}"></td>
+                          id="TotalAmount{{i.id}}" value="{{i.TotalAmount}}" disabled></td>
                       <td class="p-2">
                         <a type='button' class='btn btn-danger bg-danger btn-delete ms-2' data-sid='{{i.id}}'><i
                             class='ti ti-trash'></i></a>
@@ -223,6 +236,14 @@
                       </th>
                       <th class="p-2" colspan="2">
                         <span id="tamount3">{{TCA}}</span>
+                      </th>
+                    </tr>
+                    <tr>
+                      <th class="p-2" colspan="3">
+                        Total Bill Amount :
+                      </th>
+                      <th class="p-2" colspan="2">
+                        <span id="tamount4">{{TBA}}</span>
                       </th>
                     </tr>
                   </tfoot>
@@ -242,10 +263,232 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="AddParty" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <form class="modal-content" id="AddPartyF">
+      <div class="modal-header d-flex align-items-center">
+        <h5 class="modal-title" id="myLargeModalLabel">Add Party</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputtype" class="form-label">Type Of Party</label>
+              <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1" required>
+                <option value="" selected>-- Selet --</option>
+                <option value="Market Yard">Market Yard</option>
+                <option value="Local Market">Local Market</option>
+                <option value="Vendor">Vendor</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputPartyName" class="form-label">Party Name</label>
+              <input type="text" class="form-control" id="exampleInputPartyName" name="PartyName"
+                placeholder="Party Name" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputnumber" class="form-label">Phone Namber</label>
+              <input type="text" class="form-control" id="exampleInputnumber" name="Number" placeholder="1234567890"
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputGSTNo" class="form-label">GST No.</label>
+              <input type="text" class="form-control" id="exampleInputGSTNo" name="GSTNo" placeholder="GST No."
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputGmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="exampleInputGmail" name="Email" placeholder="xyz@gmail.com"
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputcity" class="form-label">City</label>
+              <select id="inputState" class="form-select" name="City" required>
+                <option selected>Choose...</option>
+                {% include "city.html" %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-4">
+              <label class="form-label">Address</label>
+              <textarea class="form-control p-7" name="Address" rows="1" placeholder="" required></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="submit">Submit</button>
+        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal fade" id="AddProduct" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <form class="modal-content" id="AddProductF">
+      <div class="modal-header d-flex align-items-center">
+        <h5 class="modal-title" id="myLargeModalLabel">
+          Add Product
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputProductName" class="form-label">Product Name</label>
+              <input type="text" class="form-control" id="exampleInputProductName" name="ProductName"
+                placeholder="Party Name" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label class="form-label">Product Tax</label>
+              <select class="form-select" name="Tax" aria-label="Default select example" required>
+                <option selected>--select--</option>
+                <option value="5">5%</option>
+                <option value="12">12%</option>
+                <option value="18">18%</option>
+                <option value="28">28%</option>
+                <option value="TaxFree">Tax Free</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label class="form-label">Category</label>
+              <select class="form-select" name="Category" tabindex="1" required>
+                <option value="" selected>-- Selet --</option>
+                {% for i in Category %}
+                <option value="{{i.Category}}">{{i.Category}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label class="form-label">Product Unit</label>
+              <select class="form-select" name="Unit" aria-label="Default select example" required>
+                <option selected>--select--</option>
+                <option value="KG">KG</option>
+                <option value="GM">GM</option>
+                <option value="PC">PC</option>
+                <option value="LIT">LIT</option>
+                <option value="Box">Box</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputMinQty" class="form-label">Min Qty</label>
+              <input type="number" class="form-control" id="exampleInputMinQty" name="MinQty" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputMaxQty" class="form-label">Max Qty</label>
+              <input type="number" class="form-control" id="exampleInputMaxQty" name="MaxQty" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputBarcode" class="form-label">Barcode No.</label>
+              <input type="text" class="form-control" id="exampleInputBarcode" name="Barcode" placeholder="Barcode No."
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputBarcode" class="form-label">HSN Code</label>
+              <input type="text" class="form-control" id="exampleInputBarcode" name="HSNCode" placeholder="HSN Code"
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputBarcode" class="form-label">MRP</label>
+              <input type="text" class="form-control" id="exampleInputBarcode" name="MRP" placeholder="MRP" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="">
+              <label class="form-label">Manufacturing Date</label>
+              <input type="date" class="form-control " name="MFGDate" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="">
+              <label class="form-label">Expiry Date</label>
+              <input type="date" class="form-control " name="ExpiryDate" required>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="submit">Submit</button>
+        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal fade" id="AddCharges" tabindex="-1" aria-labelledby="AddCharges" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form class="modal-content" id="AddChargesF">
+      <div class="modal-header d-flex align-items-center">
+        <h4 class="modal-title" id="myLargeModalLabel">
+          Add Charges
+        </h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body row">
+        <div class="col-12">
+          <div class="mb-4">
+            <label class="form-label">Charges Name</label>
+            <input type="text" class="form-control" name="ACharges" id="ACharges" placeholder="Charges Name" required>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn bg-success-subtle text-success  waves-effect text-start">
+          Submit
+        </button>
+        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock content %}
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
+  function Amount() {
+    var TA = document.getElementById('tamount2').innerText;
+    var TCA = document.getElementById('tamount3').innerText;
+    var TBA = parseFloat(TA) + parseFloat(TCA)
+    var tamount2 = document.getElementById("tamount4");
+    tamount2.innerText = TBA;
+  }
+  setInterval(Amount, 500);
+
   DF = new Date()
   document.getElementById("Date").value = DF.toJSON().slice(0, 10);
 
@@ -271,6 +514,8 @@
           $('#tbody').html(output);
           var tamount2 = document.getElementById("tamount2");
           tamount2.innerText = resp.tamonut;
+          var $TA = $("#TA");
+          $TA.val(parseFloat(resp.tamonut).toFixed(2));
         },
         error: function (resp) {
           console.log('Something went wrong');
@@ -298,6 +543,8 @@
         }
         var $tamount2 = document.getElementById("tamount2");
         $tamount2.innerText = resp.tamonut;
+        var $TA = $("#TA");
+        $TA.val(parseFloat(resp.tamonut).toFixed(2));
       },
       error: function (resp) {
         console.log('Something went wrong');
@@ -321,36 +568,40 @@
         }
         var tamount2 = document.getElementById("tamount2");
         tamount2.innerText = data.tamonut;
+        var $TA = $("#TA");
+        $TA.val(parseFloat(data.tamonut).toFixed(2));
       }
     });
   });
   $("#Chargesselect2 select[name='Charges']").on('change', function () {
     var ChargesID = $(this).val();
-    mydata = { ChargesID :ChargesID ,type: 'Purchase'};
+    mydata = { ChargesID: ChargesID, type: 'Purchase' };
     $.ajax({
       type: "POST",
       url: '/CreateCharges',
       data: mydata,
       success: function (resp) {
         x = resp.Sc
-          output = ''
-          for (i = 0; i < x.length; i++) {
-            output += "<tr><td class='mt-5 p-2'>"+ x[i].Charges + "</td>";
-            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount"+ x[i].id +"' onkeydown=onCharges('Amount','"+ x[i].id +"'); onkeyup=onCharges('Amount','"+ x[i].id +"'); value='"+x[i].Amount+"'></td>";
-            output += "<td class='p-2'><select class='form-select' name='Tax' onchange=onCharges('Tax','"+ x[i].id +"'); id='Tax"+ x[i].id +"' aria-label='Default select example' required>";
-            if(x[i].Tax == ''){output += "<option selected>--select--</option>";}
-            else{output += "<option selected>"+x[i].Tax+"%</option>";}
-            output += "<option value='5'>5%</option>";
-            output += "<option value='12'>12%</option>";
-            output += "<option value='18'>18%</option>";
-            output += "<option value='28'>28%</option>";
-            output += "<option value='TaxFree'>Tax Free</option></select></td>";
-            output += "<td class='p-2'><input type='text' class='form-control text-center ' name='TotalAmount' id='TotalAmount"+ x[i].id +"' value='"+x[i].TotalAmount+"'></td>";
-            output += "<td class='p-2'><a type='button' class='btn btn-danger bg-danger btn-delete ms-2' data-sid='"+ x[i].id +"'><i class='ti ti-trash'></i></a></td></tr>";
-            };
-          $('#tbody2').html(output);
-          var tamount2 = document.getElementById("tamount3");
-          tamount2.innerText = resp.tamonut;
+        output = ''
+        for (i = 0; i < x.length; i++) {
+          output += "<tr><td class='mt-5 p-2'>" + x[i].Charges + "</td>";
+          output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' onkeydown=onCharges('Amount','" + x[i].id + "'); onkeyup=onCharges('Amount','" + x[i].id + "'); value='" + x[i].Amount + "'></td>";
+          output += "<td class='p-2'><select class='form-select' name='Tax' onchange=onCharges('Tax','" + x[i].id + "'); id='Tax" + x[i].id + "' aria-label='Default select example' required>";
+          if (x[i].Tax == '') { output += "<option selected>--select--</option>"; }
+          else { output += "<option selected>" + x[i].Tax + "%</option>"; }
+          output += "<option value='5'>5%</option>";
+          output += "<option value='12'>12%</option>";
+          output += "<option value='18'>18%</option>";
+          output += "<option value='28'>28%</option>";
+          output += "<option value='TaxFree'>Tax Free</option></select></td>";
+          output += "<td class='p-2'><input type='text' class='form-control text-center ' name='TotalAmount' id='TotalAmount" + x[i].id + "' value='" + x[i].TotalAmount + "' disabled></td>";
+          output += "<td class='p-2'><a type='button' class='btn btn-danger bg-danger btn-delete ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></td></tr>";
+        };
+        $('#tbody2').html(output);
+        var tamount2 = document.getElementById("tamount3");
+        tamount2.innerText = resp.tamonut;
+        var $TCA = $('#TCA');
+        $TCA.val(parseFloat(resp.tamonut).toFixed(2));
       }
     });
   });
@@ -368,6 +619,8 @@
         }
         var tamount2 = document.getElementById("tamount3");
         tamount2.innerText = data.tamonut;
+        var $TCA = $('#TCA');
+        $TCA.val(parseFloat(data.tamonut).toFixed(2));
       }
     });
   });
@@ -385,16 +638,108 @@
         for (i = 0; i < x.length; i++) {
           var $PIT = $('#TotalAmount' + x[i].id);
           $PIT.val(x[i].TotalAmount);
+        };
         var $tamount2 = document.getElementById("tamount3");
         $tamount2.innerText = resp.rt;
-        var tamount2 = document.getElementById("mes");
+        var TCA = $('#TCA');
+        TCA.val(parseFloat(resp.rt).toFixed(2));
+
+        var tamount2 = document.getElementById("tamount4");
         tamount2.innerText = '';
-        };
+        var tamount2 = document.getElementById("mes");
+        tamount2.innerText = ' ';
       },
       error: function (resp) {
         console.log('Something went wrong');
       }
     });
   }
+  $("#AddChargesF").submit(function (e) {
+    e.preventDefault();
+    var Cr = $("#ACharges");
+    Cr = Cr.val();
+    mydata = { 'Charge': Cr };
+    $("#Chargesselect2 select[name='Charges']").find('.after').nextAll().remove();
+    $.ajax({
+      type: "POST",
+      url: '/Link/Charges',
+      data: mydata,
+      success: function (dt) {
+        x = dt.ld
+        output = ''
+        for (i = 0; i < x.length; i++) {
+          output += "<option value=" + x[i].id + ">" + x[i].Charges + "</option>";
+        };
+        $("#Chargesselect2 select[name='Charges']").find('.after').after(output);
+        var ACharges = $('#ACharges');
+        ACharges.val('');
+        $('#AddCharges').modal('hide');
+      },
+      error: function () {
+        console.log('Something went wrong');
+      }
+    });
+  });
+  $("#AddProductF").submit(function (e) {
+    e.preventDefault();
+    var form = $(this);
+    dt = form.serialize();
+    $("#Prodectselect2 select[name='Product2']").find('.after2').nextAll().remove();
+
+    $.ajax({
+      type: "POST",
+      url: '/Link/Products',
+      data: dt,
+      success: function (data) {
+        x = data.ld
+        output = ''
+        for (i = 0; i < x.length; i++) {
+          output += "<option value=" + x[i].ProductName + '/' + x[i].id + ">" + x[i].ProductName + "</option>";
+        };
+        $("#Prodectselect2 select[name='Product2']").find('.after2').after(output);
+        $('#AddProductF').trigger("reset");
+        $('#AddProduct').modal('hide');
+      }
+    });
+  });
+  $("#AddPartyF").submit(function (e) {
+    e.preventDefault();
+    var form = $(this);
+    dt = form.serialize();
+    $("#Partyselect2 select[name='PartyName']").find('.after3').nextAll().remove();
+    $.ajax({
+      type: "POST",
+      url: '/Link/Party',
+      data: dt,
+      success: function (data) {
+        if (data.ld != 0) {
+          x = data.ld
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            if (x[i].Type != 'Customer') {
+              if (x[i].Type != 'Hotel & Restaurant') {
+                if (x[i].Type != 'Expanse') {
+                  output += "<option value=" + x[i].PartyName + ">" + x[i].PartyName + ' ( ' + x[i].Number + ") </option>";
+                }
+              }
+            }
+          };
+          $("#Partyselect2 select[name='PartyName']").find('.after3').after(output);
+          $('#AddPartyF').trigger("reset");
+          $('#AddParty').modal('hide');
+        }
+        else {
+          if (data.NUM) {
+            alert(data.NUM)
+          }
+          else {
+            alert(data.EM)
+          }
+
+        }
+
+      }
+    });
+  });
 </script>
 {% endblock script %}
