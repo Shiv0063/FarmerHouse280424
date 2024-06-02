@@ -16,8 +16,8 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR,'main/templates')
-STATIC_DIR=os.path.join(BASE_DIR,'main/static')
-MEDIA_ROOT=os.path.join(BASE_DIR,'main/media')
+STATIC_DIR = os.path.join(BASE_DIR,'main/static')
+MEDIA_ROOT = os.path.join(BASE_DIR,'main/media')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -129,7 +129,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 STATIC_URL = '/static/'
@@ -143,5 +142,5 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL='/'
+LOGIN_REDIRECT_URL=''
 LOGOUT_REDIRECT_URL='/login'

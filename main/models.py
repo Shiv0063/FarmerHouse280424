@@ -23,6 +23,9 @@ class PartyModel(models.Model):
     Email = models.CharField(max_length=100, null=True, blank=True)
     City = models.CharField(max_length=100, null=True, blank=True)
     Type = models.CharField(max_length=100,null=True, blank=True)
+    TypeofPayment = models.CharField(max_length=100,null=True, blank=True)
+    Debited = models.CharField(default='0',max_length=100,null=True, blank=True)
+    Cedited = models.CharField(default='0',max_length=100,null=True, blank=True)
 
 class ProductModel(models.Model):
     user = models.CharField(max_length=100,null=True, blank=True)
@@ -110,6 +113,9 @@ class PurchaseEntryModel(models.Model):
     TPurchaseIncTax = models.CharField(max_length=100,null=True, blank=True)
     TChargesAmount = models.CharField(max_length=100,null=True, blank=True)
     Terms = models.CharField(max_length=100,null=True, blank=True)
+    PayableAmount = models.CharField(max_length=100,null=True, blank=True)
+    PendingAmount = models.CharField(max_length=100,null=True, blank=True)
+    status = models.CharField(default='0',max_length=100,null=True, blank=True)
 
     def DDate(self):
         return self.Date.strftime('%Y-%m-%d')
@@ -157,6 +163,7 @@ class SalesStockModel(models.Model):
     SalesPriceAfterDiscount = models.CharField(max_length=100,null=True, blank=True)
     IncSalesPrice = models.CharField(max_length=100,null=True, blank=True)
     TotalSales = models.CharField(max_length=100,null=True, blank=True)
+    
 
 class EditSalesStockModel(models.Model):
     ProductId = models.CharField(max_length=100,null=True,blank=True)
@@ -193,6 +200,10 @@ class SalesEntryModel(models.Model):
     Terms = models.CharField(max_length=100,null=True, blank=True)
     TypeofPayment = models.CharField(max_length=100,null=True, blank=True)
     TChargesAmount = models.CharField(max_length=100,null=True, blank=True)
+    PayableAmount = models.CharField(max_length=100,null=True, blank=True)
+    status = models.CharField(default='0',max_length=100,null=True, blank=True)
+    PendingAmount = models.CharField(max_length=100,null=True, blank=True)
+
     def DDate(self):
         return self.Date.strftime('%Y-%m-%d')
 
@@ -218,6 +229,12 @@ class ExpanseEntryModel(models.Model):
     ProductId = models.CharField(max_length=100,null=True, blank=True)
     Amount = models.CharField(max_length=100,null=True, blank=True)
     Date = models.DateField(null=True, blank=True)
+    PayableAmount = models.CharField(max_length=100,null=True, blank=True)
+    status = models.CharField(default='0',max_length=100,null=True,blank=True)
+    PendingAmount = models.CharField(max_length=100,null=True, blank=True)
+
+    def DDate(self):
+        return self.Date.strftime('%Y-%m-%d')
 
     def date(self):
         return self.DateTime.strftime('%B %d %Y')
@@ -239,3 +256,46 @@ class InvoiceNoModel(models.Model):
     InvoiceNo = models.CharField(max_length=100,null=True,blank=True)
     user = models.CharField(max_length=100,null=True, blank=True)
     type = models.CharField(max_length=100,null=True, blank=True)
+
+
+class AmountModel(models.Model):
+    DateTime = models.DateTimeField(default=datetime.now())
+    user = models.CharField(max_length=100,null=True, blank=True)
+    Amount = models.CharField(max_length=100,null=True, blank=True)
+    TAmount = models.CharField(max_length=100,null=True, blank=True)
+    Method = models.CharField(max_length=100,null=True, blank=True)
+
+    def Date(self):
+        return self.DateTime.strftime('%B-%d-%Y')
+    
+class UserAmountModel(models.Model):
+    DateTime = models.DateTimeField(default=datetime.now())
+    user = models.CharField(max_length=100,null=True, blank=True)
+    Amount = models.CharField(max_length=100,null=True, blank=True)
+
+    def Date(self):
+        return self.DateTime.strftime('%B-%d-%Y')
+    
+class LedgerReportModel(models.Model):
+    user = models.CharField(max_length=100,null=True, blank=True)
+    PartyName = models.CharField(max_length=100,null=True, blank=True)
+    Type = models.CharField(max_length=100,null=True, blank=True)
+    BiilNo = models.CharField(max_length=100,null=True, blank=True)
+    Debited = models.CharField(default='0',max_length=100,null=True, blank=True)
+    Cedited = models.CharField(default='0',max_length=100,null=True, blank=True)
+    Balance = models.CharField(default='0',max_length=100,null=True, blank=True)
+    LRDate = models.DateField(default=datetime.now().date())
+    def Date(self):
+            return self.LRDate.strftime('%d-%B-%Y')
+    
+class PendingAmountModel(models.Model):
+    user = models.CharField(max_length=100,null=True, blank=True)
+    Type = models.CharField(max_length=100,null=True, blank=True)
+    Date = models.DateField(null=True, blank=True)
+    PartyName = models.CharField(max_length=100,null=True, blank=True)
+    Number = models.CharField(max_length=100,null=True, blank=True)
+    CeditedAmount = models.CharField(max_length=100,null=True, blank=True)
+    PayableAmount = models.CharField(max_length=100,null=True, blank=True)
+    TypeofPayment = models.CharField(max_length=100,null=True, blank=True)
+    TransactionID = models.CharField(max_length=100,null=True, blank=True)
+    Description = models.TextField(null=True, blank=True)

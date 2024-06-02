@@ -60,29 +60,6 @@
               </div>
               <div class="col-md-2">
                 <div class="mb-4">
-                  <label for="exampleInputtype" class="form-label">Terms</label>
-                  <select class="form-select" id="exampleInputtype" name="Terms" tabindex="1" required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Debit">Debit</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="mb-4">
-                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
-                  <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Case">Case</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Gpay">Gpay</option>
-                    <option value="UPI">UPI</option>
-                    <option value="Net banking">Net banking</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="mb-4">
                   <label for="exampleInputBillno" class="form-label">Delivery Time</label>
                   <input type="time" class="form-control " id="exampleInputBillno" name="DeliveryTime" placeholder=""
                     required>
@@ -98,7 +75,7 @@
                         <optgroup label="">
                           {% for i in Party %}
                           {% if i.Type == 'Customer' or i.Type == 'Hotel & Restaurant' %}
-                          <option value="{{i.PartyName}}">{{i.PartyName}} ( {{i.Number}} )</option>
+                          <option value="{{i.Number}}">{{i.PartyName}} ( {{i.Number}} )</option>
                           {% endif %}
                           {% endfor %}
                         </optgroup>
@@ -128,6 +105,12 @@
                     <select class="select form-control" name="Product2">
                       <option class="after" value="">Products</option>
                     </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="mb-4">
+                      <label for="exampleInputtype" class="form-label">Barcode</label>
+                      <input type="text" class="form-control" name="Barcode" id="Barcode">
                     </div>
                   </div>
                 </div>
@@ -280,11 +263,43 @@
                   </tfoot>
                 </table>
               </div>
+              <div class="col-md-2">
+                <div class="mb-4" id="Ts">
+                  <label for="exampleInputtype" class="form-label">Terms</label>
+                  <select class="form-select" id="Terms" name="Terms" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Debit">Debit</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
+                  <select class="form-select" id="TypeofPayment" name="TypeofPayment" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Case">Case</option>
+                    <option value="Credit" hidden>Credit</option>
+                    <option value="Gpay">Gpay</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Net banking">Net banking</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputInvoiceNo" class="form-label">Payable Amount</label>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="PayableAmount" placeholder=""
+                    required>
+                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                </div>
+              </div>
               <div class="col-12">
                 <div class="gap-3">
-                  <button class="btn btn-success" type="submit">Save</button>
-                  <button class="btn btn-success" type="submit">Save & Print</button>
-                  <a class="btn bg-danger-subtle text-danger" href="/SalesCancel/{{ProductId}}">Cancel</a>
+                  <button class="btn btn-success" formaction="/AddSalesEntry" type="submit">Save</button>
+                  <button class="btn btn-success" formaction="/AddSalesEntry/A2" type="submit">Save & Print</button>
+                  <a class="btn btn-danger" href="/SalesCancel/{{ProductId}}">Cancel</a>
+                  <a class="btn btn-danger" href="/AddSalesEntry">Clean</a>
                 </div>
               </div>
             </div>
@@ -322,7 +337,7 @@
           </div>
           <div class="col-md-4">
             <div class="mb-4">
-              <label for="exampleInputnumber" class="form-label">Phone Namber</label>
+              <label for="exampleInputnumber" class="form-label">Phone Number</label>
               <input type="text" class="form-control" id="exampleInputnumber" name="Number" placeholder="1234567890"
                 required>
             </div>
@@ -360,7 +375,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -385,10 +400,10 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn bg-success-subtle text-success  waves-effect text-start">
+        <button type="submit" class="btn btn-success">
           Submit
         </button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -399,10 +414,72 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
+  var $BillNo = $('#Barcode');
+  function calcVal() {
+  var bon = $BillNo.val()
+  if (bon.length == 24){
+    $.ajax({
+        url: '/Stockswork/' + bon + '/Sales',
+        type: 'GET',
+        success: function (resp) {
+          x = resp.Sc
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<tr><td class='p-2'><div class='mt-2'>" + x[i].ProductName + "</div></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Quantity' id='Quantity" + x[i].id + "' onkeydown=onstocks('Quantity','" + x[i].id + "'); onkeyup=onstocks('Quantity','" + x[i].id + "'); value='" + x[i].Quantity + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='PurchaseIncTax' id='PurchaseIncTax" + x[i].id + "' value='" + x[i].PurchaseIncTax + "' disabled></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' id='ProfitMargin" + x[i].id + "' onkeydown=onstocks('ProfitMargin','" + x[i].id + "'); onkeyup=onstocks('ProfitMargin','" + x[i].id + "'); value='" + x[i].ProfitMargin + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='BasicSalesPrice' id='BasicSalesPrice" + x[i].id + "'  value='" + x[i].BasicSalesPrice + "' disabled></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Discount' id='Discount" + x[i].id + "' onkeydown=onstocks('Discount','" + x[i].id + "'); onkeyup=onstocks('Discount','" + x[i].id + "'); value='" + x[i].Discount + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='SalesPriceAfterDiscount' id='SalesPriceAfterDiscount" + x[i].id + "' value='" + x[i].SalesPriceAfterDiscount + "' disabled></td>";
+            output += "<td class='p-2'><div class='mt-2'>" + x[i].Tax + "</div></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='IncSalesPrice' id='IncSalesPrice" + x[i].id + "' value='" + x[i].IncSalesPrice + "' disabled></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='TotalSales' id='TotalSales" + x[i].id + "' value='" + x[i].TotalSales + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' value='" + x[i].Amount + "' disabled></td>";
+            output += "<td class='p-2'><div class='mt-1'><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></div></td></tr>";
+          };
+          $('#tbody').html(output);
+          var tamount2 = document.getElementById("tamount2");
+          tamount2.innerText = resp.tamonut;
+          var tamount3 = document.getElementById("mes");
+          tamount3.innerText = '';
+        },
+        error: function (resp) {
+          console.log('Something went wrong');
+        }
+      });
+    $BillNo.val('');
+  }
+  
+  }
+  $BillNo.on("keydown keyup", function () {
+    calcVal();
+    });
+  $("#Ts select[name='Terms']").on('change', function () {
+    var Terms = $('#Terms').val();
+    if(Terms == 'Credit'){
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('Credit');
+    }
+    else{
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('');
+      const button = document.querySelector("#TypeofPayment");
+      button.removeAttribute("disabled", "");
+      var TypeofPayment = document.querySelector("#TypeofPayment");
+      var options;
+      for (var i=0; i<TypeofPayment.options.length;i++){
+        options = TypeofPayment.options[i];
+        if (options.value == 'Credit'){
+          options.setAttribute('hidden','');
+          return;
+        }
+      }
+    }
+   });
   function Amount(){
   var TA = document.getElementById('tamount2').innerText;
   var TCA = document.getElementById('tamount3').innerText;
-  console.log(TA,TCA);
   var TBA = parseFloat(TA) + parseFloat(TCA)
   var tamount2 = document.getElementById("tamount4");
       tamount2.innerText = TBA;}
@@ -428,7 +505,7 @@
             pn = pn.replace(' ','%20');
             output += pn;
             output += "/";
-            output += x[i].OldProductId + "/" + x[i].id + '>' + "Price: " + x[i].PurchaseIncTax + "  Quantity :" + x[i].Quantity + '</option>';
+            output += x[i].OldProductId + "/" + x[i].id + '>' + "Price: " + x[i].PurchaseIncTax + " --  --  Quantity :" + x[i].Quantity + '</option>';
           };
           $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
         },
@@ -649,7 +726,7 @@
           output = ''
           for (i = 0; i < x.length; i++) {
             if(x[i].Type == 'Customer' || x[i].Type == 'Hotel & Restaurant'){
-              output += "<option value="+x[i].PartyName+">" + x[i].PartyName +' ( '+x[i].Number+" )</option>";
+              output += "<option value="+x[i].Number+">" + x[i].PartyName +' ( '+x[i].Number+" )</option>";
             }
           };
           $("#Partyselect2 select[name='PartyName']").find('.after3').after(output);

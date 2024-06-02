@@ -27,7 +27,6 @@
               </thead>
               <tbody>
                 {% for i in stock %}
-                {% if i.out == 0 %}
                 <tr>
                   <td>{{forloop.counter}}</td>
                   <td>{{i.ProductName}}</td>
@@ -37,7 +36,6 @@
                   <td>{{i.Quantity}}</td>
                   <td>{{i.Amount}}</td>
                 </tr>
-                {% endif %}
                 {% endfor %}
               </tbody>
               <tfoot>

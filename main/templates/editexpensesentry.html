@@ -1,0 +1,405 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+      <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Edit Expenses Entry</h4>
+          </div>
+          <form class="card-body p-4" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control " name="Date" id="Date" value="{{data.DDate}}" required>
+                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4" id="Ts">
+                  <label for="exampleInputtype" class="form-label">Terms</label>
+                  <select class="form-select" id="Terms" name="Terms" tabindex="1" required >
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Credit" {% if data.Terms == 'Credit' %} selected {% endif %}>Credit</option>
+                    <option value="Debit" {% if data.Terms == 'Debit' %} selected {% endif %}>Debit</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
+                  <select class="form-select" id="TypeofPayment" name="TypeofPayment" tabindex="1" required {% if data.Terms == 'Credit' %} disabled {% endif %}>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Case" {% if data.TypeofPayment == 'Case' %} selected {% endif %}>Case</option>
+                    <option value="Credit" {% if data.TypeofPayment == 'Credit' %} selected {% endif %} hidden>Credit</option>
+                    <option value="Gpay" {% if data.TypeofPayment == 'Gpay' %} selected {% endif %}>Gpay</option>
+                    <option value="UPI" {% if data.TypeofPayment == 'UPI' %} selected {% endif %}>UPI</option>
+                    <option value="Net banking" {% if data.TypeofPayment == 'Net banking' %} selected {% endif %}>Net banking</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="row" id="Partyselect2">
+                  <div class="col-9">
+                    <label for="exampleInputtype" class="form-label">Party Name</label>
+                    <div class="mb-4">
+                      <select class="select2 form-control  custom-select" name="PartyName" required>
+                        <option class="after3">Select</option>
+                        <optgroup label="">
+                          {% for i in Party %}
+                          {% if i.Type == 'Expanse' %}
+                          <option value="{{i.PartyName}}" {% if data.PartyName == i.PartyName %} selected {% endif %}>{{i.PartyName}} ( {{i.Number}} )</option>
+                          {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-center">
+                    <a data-bs-toggle="modal" data-bs-target="#AddParty" class="btn btn-success btn-lg">
+                      <i class='ti ti-plus'></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3" id="Prodectselect2">
+                <div class="row">
+                  <div class="col-9">
+                    <label class="form-label">Expenses Name</label>
+                    <div class="mb-4">
+                      <select class="select form-control" name="Expanse">
+                        <option class="after">Expenses Name</option>
+                        {% for i in Expens %}
+                        <option value="{{i.id}}">{{i.Expanse}}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-center">
+                    <a data-bs-toggle="modal"
+                    data-bs-target="#AddExpenses" class="btn btn-success btn-lg">
+                      <i class='ti ti-plus'></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12">
+              <table class="table table-striped table-bordered display text-nowrap" id="thad">
+                <thead>
+                  <tr>
+                    <th>Expanse Name</th>
+                    <th>Amount</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="tbody">
+                  {% for i in ELM %}
+                  <tr>
+                    <td class="mt-5">{{i.Expanse}}</td>
+                    <td><input type="text" class="form-control text-center" onkeydown="onAmount('Amount','{{i.id}}');"
+                        onkeyup="onAmount('Amount','{{i.id}}');" name="Amount" id="Amount{{i.id}}"
+                        value="{{i.Amount}}"></td>
+                    <td><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='{{i.id}}'><i
+                          class='ti ti-trash'></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th colspan="1">
+                      Total Amount :
+                    </th>
+                    <th colspan="2">
+                      <span id="tamount2">{{tamonut}}</span>
+                    </th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <div class="col-12">
+              <div class="gap-3">
+                <button class="btn btn-success" type="submit">Save</button>
+                <button class="btn btn-success" type="submit">Save & Print</button>
+                <a class="btn btn-danger" onclick="window.history.go(-1);">Cancel</a>
+              </div>
+            </div>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="modal fade" id="AddParty" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <form class="modal-content" id="AddPartyF">
+      <div class="modal-header d-flex align-items-center">
+        <h5 class="modal-title" id="myLargeModalLabel">Add Party</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputtype" class="form-label">Type Of Party</label>
+              <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1" required>
+                <option value="" selected>-- Selet --</option>
+                <option value="Expanse">Expanse</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputPartyName" class="form-label">Party Name</label>
+              <input type="text" class="form-control" id="exampleInputPartyName" name="PartyName"
+                placeholder="Party Name" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputnumber" class="form-label">Phone Namber</label>
+              <input type="text" class="form-control" id="exampleInputnumber" name="Number" placeholder="1234567890"
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputGSTNo" class="form-label">GST No.</label>
+              <input type="text" class="form-control" id="exampleInputGSTNo" name="GSTNo" placeholder="GST No."
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputGmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="exampleInputGmail" name="Email" placeholder="xyz@gmail.com"
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputcity" class="form-label">City</label>
+              <select id="inputState" class="form-select" name="City" required>
+                <option selected>Choose...</option>
+                {% include "city.html" %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-4">
+              <label class="form-label">Address</label>
+              <textarea class="form-control p-7" name="Address" rows="1" placeholder="" required></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="submit">Submit</button>
+        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="modal fade" id="AddExpenses" tabindex="-1" aria-labelledby="AddExpenses" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form class="modal-content" id="AddExpensesF">
+      <div class="modal-header d-flex align-items-center">
+        <h4 class="modal-title" id="myLargeModalLabel">
+          Add Expenses
+        </h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body row">
+        <div class="col-12">
+          <div class="mb-4">
+            <label class="form-label">Expanse Name</label>
+            <input type="text" class="form-control" name="Expanse" placeholder="Expanse" required>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="mb-4">
+            <label for="exampleInputtype" class="form-label">Type Of Expanse</label>
+            <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1"
+              required>
+              <option value="" selected>-- Selet --</option>
+              <option value="Direct">Direct</option>
+              <option value="Indirect">Indirect</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn bg-success text-white  waves-effect text-start">
+          Submit
+        </button>
+        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
+<script>
+   $("#Ts select[name='Terms']").on('change', function () {
+    var Terms = $('#Terms').val();
+    if(Terms == 'Credit'){
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('Credit');
+    }
+    else{
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('');
+      const button = document.querySelector("#TypeofPayment");
+      button.removeAttribute("disabled", "");
+      var TypeofPayment = document.querySelector("#TypeofPayment");
+      var options;
+      for (var i=0; i<TypeofPayment.options.length;i++){
+        options = TypeofPayment.options[i];
+        if (options.value == 'Credit'){
+          options.setAttribute('hidden','');
+          return;
+        }
+      }
+    }
+   });
+  $("#Prodectselect2 select[name='Expanse']").on('change', function () {
+    var $Productname = $(this);
+    var $Productid = $("input[name='ProductId']").val();
+    if ($Productname.val() != '') {
+      $.ajax({
+        url: '/ExpanseList/' + $Productname.val() +'/'+$Productid,
+        type: 'GET',
+        success: function (resp) {
+          x = resp.Sc
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<tr><td class='mt-5'>" + x[i].Expanse + "</td>";
+            output += "<td><input type='text' class='form-control text-center' onkeydown=onAmount('Amount','" + x[i].id + "'); onkeyup=onAmount('Amount','" + x[i].id + "'); name='Amount' id='Amount" + x[i].id + "' value='" + x[i].Amount + "'></td>";
+            output += "<td><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></td></tr>"
+          };
+          $('#tbody').html(output);
+          var tamount2 = document.getElementById("tamount2");
+          tamount2.innerText = resp.tamonut;
+        },
+        error: function (resp) {
+          console.log('Something went wrong');
+        }
+      });
+    } else {
+      console.log('Something went wrong');
+    }
+  });
+  function onAmount(name, id) {
+    let val = '#' + name + id;
+    let va = $(val).val();
+    mydata = {id: id, val: va};
+    $.ajax({
+      type: "POST",
+      url: '/EAmount',
+      data: mydata,
+      success: function (resp) {
+        var $tamount2 = document.getElementById("tamount2");
+        $tamount2.innerText = resp.tamonut;
+      },
+      error: function (resp) {
+        console.log('Something went wrong');
+      }
+    });
+  }
+  // delete data
+  $("tbody").on('click', '.btn-del', function () {
+    // console.log('delete btn clicked');
+    let id = $(this).attr('data-sid');
+    // console.log(id);
+    mydata = { sid: id};
+    mythis = this;
+    $.ajax({
+      type: "POST",
+      url: '/EXDelete',
+      data: mydata,
+      success: function (data) {
+        if (data.status == 1) {
+          $(mythis).closest("tr").fadeOut();
+        }
+        var tamount2 = document.getElementById("tamount2");
+        tamount2.innerText = data.tamonut;
+      }
+    });
+  });
+  $("#AddPartyF").submit(function (e) {
+    e.preventDefault();
+    var form = $(this);
+    dt = form.serialize();
+    $("#Partyselect2 select[name='PartyName']").find('.after3').nextAll().remove();
+    $.ajax({
+      type: "POST",
+      url: '/Link/Party',
+      data: dt,
+      success: function (data) {
+        if(data.ld != 0){
+          x = data.ld
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            if (x[i].Type == 'Expanse') {
+                  output += "<option value=" + x[i].PartyName + ">" + x[i].PartyName + ' ( ' + x[i].Number + ") </option>";
+                }
+          };
+          $("#Partyselect2 select[name='PartyName']").find('.after3').after(output);
+          $('#AddPartyF').trigger("reset");
+          $('#AddParty').modal('hide');
+        }
+        else{
+          if(data.NUM){
+            alert(data.NUM)
+          }
+          else{
+            alert(data.EM)
+          } 
+        }
+      }
+    });
+  });
+  $("#AddExpensesF").submit(function (e) {
+    e.preventDefault();
+    var form = $(this);
+    dt = form.serialize();
+    $("#Prodectselect2 select[name='Expanse']").find('.after').nextAll().remove();
+    $.ajax({
+      type: "POST",
+      url: '/Link/Expanse',
+      data: dt,
+      success: function (data) {
+        if(data.ld != 0){
+          x = data.ld
+          output = ''
+          for (i = 0; i < x.length; i++) {
+              output += "<option value=" + x[i].id + ">" + x[i].Expanse + "</option>";
+          };
+          $("#Prodectselect2 select[name='Expanse']").find('.after').after(output);
+          $('#AddExpensesF').trigger("reset");
+          $('#AddExpenses').modal('hide');
+        }
+        else{
+          if(data.NUM){
+            alert(data.NUM)
+          }
+          else{
+            alert(data.EM)
+          } 
+        }
+      }
+    });
+  });
+</script>
+{% endblock script %}

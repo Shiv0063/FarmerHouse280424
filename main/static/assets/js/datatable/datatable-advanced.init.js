@@ -3,11 +3,11 @@
 // 
 $("#file_export").DataTable({
   dom: "Bfrtip",
-  buttons: ["copy", "csv", "excel", "pdf", "print"],
+  buttons: ["excel", "pdf", "print"],
 });
 $(
   ".buttons-copy, .buttons-csv, .buttons-print, .buttons-pdf, .buttons-excel"
-).addClass("btn btn-primary");
+).addClass("btn btn-success");
 
 // 
 //  Show / hide columns dynamically                 //

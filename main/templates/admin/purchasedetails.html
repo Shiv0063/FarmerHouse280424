@@ -224,11 +224,15 @@
                 <div class="col-md-12">
                   <div class="row">
                     <div class="col d-flex justify-content-end">
-                      <a href="/EditPurchase/{{data.id}}" class="btn btn-success">
+                      <a href="/PurchaseBill/{{data.id}}" class="btn btn-warning text-white">
+                        <i class="ti ti-printer fs-5"></i>
+                        Print
+                      </a>
+                      <a href="/EditPurchase/{{data.id}}" class="btn btn-success ms-6">
                         <i class="ti ti-edit fs-5"></i>
                         Edit
                       </a>
-                      <a class="btn bg-danger-subtle text-danger ms-6" onclick="window.history.go(-1);">
+                      <a class="btn bg-danger text-white ms-6" onclick="window.history.go(-1);">
                         Cancel
                       </a>
                     </div>

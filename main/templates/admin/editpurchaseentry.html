@@ -57,24 +57,25 @@
                 </div>
               </div>
               <div class="col-md-2">
-                <div class="mb-4">
+                <div class="mb-4" id="Ts">
                   <label for="exampleInputtype" class="form-label">Terms</label>
-                  <select class="form-select" id="exampleInputtype" name="Terms" tabindex="1" required>
+                  <select class="form-select" id="Terms" name="Terms" tabindex="1" required>
                     <option value="" selected>-- Selet --</option>
-                    <option value="Credit" {% if dt.Terms == 'Credit' %} selected {% endif %}>Credit</option>
-                    <option value="Debit" {% if dt.Terms == 'Debit' %} selected {% endif %}>Debit</option>
+                    <option value="Credit" {% if dt.Terms == "Credit" %} selected {% endif %}>Credit</option>
+                    <option value="Debit" {% if dt.Terms == "Debit" %} selected {% endif %}>Debit</option>
                   </select>
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputtype" class="form-label">Type of Payment</label>
-                  <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
-                    <option value="Case" {% if dt.TypeofPayment == 'Case' %} selected {% endif %}>Case</option>
-                    <option value="Credit" {% if dt.TypeofPayment == 'Credit' %} selected {% endif %}>Credit</option>
-                    <option value="Gpay" {% if dt.TypeofPayment == 'Gpay' %} selected {% endif %}>Gpay</option>
-                    <option value="UPI" {% if dt.TypeofPayment == 'UPI' %} selected {% endif %}>UPI</option>
-                    <option value="Net banking" {% if dt.TypeofPayment == 'Net banking' %} selected {% endif %}>Net banking</option>
+                  <select class="form-select" id="TypeofPayment" name="TypeofPayment" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Case" {% if dt.TypeofPayment == "Case" %} selected {% endif %}>Case</option>
+                    <option value="Credit" {% if dt.TypeofPayment == "Credit" %} selected {% endif %} hidden>Credit</option>
+                    <option value="Gpay" {% if dt.TypeofPayment == "Gpay" %} selected {% endif %}>Gpay</option>
+                    <option value="UPI" {% if dt.TypeofPayment == "UPI" %} selected {% endif %}>UPI</option>
+                    <option value="Net banking" {% if dt.TypeofPayment == "Net banking" %} selected {% endif %}>Net banking</option>
                   </select>
                 </div>
               </div>
@@ -251,7 +252,7 @@
                 <div class="gap-3">
                   <button class="btn btn-success" type="submit">Save</button>
                   <button class="btn btn-success" type="submit">Save & Print</button>
-                  <a class="btn bg-danger-subtle text-danger" onclick="window.history.go(-1);">Cancel</a>
+                  <a class="btn btn-danger" onclick="window.history.go(-1);">Cancel</a>
                 </div>
               </div>
             </div>
@@ -328,7 +329,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -438,7 +439,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -463,10 +464,10 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn bg-success-subtle text-success  waves-effect text-start">
+        <button type="submit" class="btn btn-success">
           Submit
         </button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -477,6 +478,28 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
+     $("#Ts select[name='Terms']").on('change', function () {
+    var Terms = $('#Terms').val();
+    if(Terms == 'Credit'){
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('Credit');
+    }
+    else{
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('');
+      const button = document.querySelector("#TypeofPayment");
+      button.removeAttribute("disabled", "");
+      var TypeofPayment = document.querySelector("#TypeofPayment");
+      var options;
+      for (var i=0; i<TypeofPayment.options.length;i++){
+        options = TypeofPayment.options[i];
+        if (options.value == 'Credit'){
+          options.setAttribute('hidden','');
+          return;
+        }
+      }
+    }
+   });
   function Amount(){
   var TA = document.getElementById('tamount2').innerText;
   var TCA = document.getElementById('tamount3').innerText;

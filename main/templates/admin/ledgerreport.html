@@ -24,17 +24,14 @@
                 <input type="date" class="form-control" name="EndDate" id="EndDate" value="{{EndDate}}">
               </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <label for="exampleInputtype" class="form-label">Party Name</label>
               <div class="mb-4">
                 <select class="select2 form-control  custom-select" name="PartyName">
                   <option>Select</option>
                   <optgroup label="">
-                    {% for i in sp %}
-                    <option value="{{i}}" {% if PartyName == i %} selected {% endif %}>{{i}}</option>
-                    {% endfor %}
-                    {% for i in pp %}
-                    <option value="{{i}}" {% if PartyName == i %} selected {% endif %}>{{i}}</option>
+                    {% for i in Party %}
+                    <option value="{{i.PartyName}}" {% if PartyName == i.PartyName %} selected {% endif %}>{{i.PartyName}} ( {{i.Number}})</option>
                     {% endfor %}
                   </optgroup>
                 </select>
@@ -55,22 +52,27 @@
                   <th class="p-2">Date</th>
                   <th class="p-2">Party Name</th>
                   <th class="p-2">Type</th>
-                  <th class="p-2">Amount</th>
-                  <th class="p-2"></th>
+                  <th class="p-2">Bill</th>
+                  <th class="p-2">Debited</th>
+                  <th class="p-2">Cedited</th>
+                  <th class="p-2">Balance</th>
                 </tr>
                 <!-- end row -->
               </thead>
               <tbody id="tbody">
-                {% for i in sales %}
+                {% for i in Lr %}
                 <tr>
                   <td class="p-2">{{i.Date}}</td>
                   <td class="p-2">{{i.PartyName}}</td>
                   <td class="p-2">{{i.Type}}</td>
-                  <td class="p-2">{{i.Amount}}</td>
-                  <td class="p-2"><a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;">Details</a></td>
+                  <td class="p-2">{{i.BiilNo}}</td>
+                  <td class="p-2">{{i.Debited}}</td>
+                  <td class="p-2">{{i.Cedited}}</td>
+                  <td class="p-2">{{i.Balance}}</td>
+                  <!-- <td class="p-2"><a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;">Details</a></td> -->
                 </tr>
                 {% endfor %}
-                {% for i in pem %}
+                <!-- {% for i in pem %}
                 <tr>
                   <td class="p-2">{{i.Date}}</td>
                   <td class="p-2">{{i.PartyName}}</td>
@@ -78,7 +80,7 @@
                   <td class="p-2">{{i.Amount}}</td>
                   <td class="p-2"><a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;">Details</a></td>
                 </tr>
-                {% endfor %}
+                {% endfor %} -->
               </tbody>
               <tbody class="bg-white">
                 <tr class="bg-white">

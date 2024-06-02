@@ -2,8 +2,9 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth.models import User,Group
-from django.http import HttpResponse,JsonResponse
-from .models import PartyModel,CategoryModel,DeliveryBoyModel,ProductModel,UserDetails,ExpanseModel,NMModel,BiilNoModel,StockModel,PurchaseEntryModel,MainStockModel,SalesStockModel,SalesEntryModel,ExpanseListModel,ExpanseEntryModel,ChargesModel,ChargesListModel,InvoiceNoModel,EditSalesStockModel
+from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
+from .models import PartyModel,CategoryModel,DeliveryBoyModel,ProductModel,UserDetails,ExpanseModel,NMModel,BiilNoModel,StockModel,PurchaseEntryModel,EditSalesStockModel,AmountModel,UserAmountModel
+from .models import LedgerReportModel,PendingAmountModel,MainStockModel,SalesStockModel,SalesEntryModel,ExpanseListModel,ExpanseEntryModel,ChargesModel,ChargesListModel,InvoiceNoModel
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from io import BytesIO
@@ -11,8 +12,6 @@ from xhtml2pdf import pisa
 from django.template.loader import get_template
 from django.http import Http404
 import os
-
-
 
 def Login(request):
     if request.method=="POST":
@@ -387,6 +386,70 @@ def Expanse(request):
         return render(request,'expanse.html',{'data':data})
 
 @login_required(login_url='Login')
+def Amount(request):
+    if is_admin(request.user):
+        user=User.objects.all()
+        try:
+            ca=UserAmountModel.objects.get(user=request.user)
+            ca = ca.Amount
+        except UserAmountModel.DoesNotExist:
+            ca = ''
+        dt = AmountModel.objects.all()
+        data={'user':user,'dt':dt,'ca':ca}
+        if request.method=="POST":
+            method=request.POST.get('method')
+            Username=request.POST.get('Username')
+            Amount=request.POST.get('Amount')
+            if method == 'AddAmount':
+                try:
+                    UAM=UserAmountModel.objects.get(user=Username)
+                    if UAM:
+                        amount = eval(UAM.Amount) + eval(Amount)
+                        UAM.Amount = amount
+                        UAM.save()
+                        UAM=UserAmountModel.objects.get(user=Username)
+                        LR=LedgerReportModel.objects.create(user=Username,PartyName='Opneing Balance',Type='',BiilNo='',Debited='0',Cedited=Amount,Balance=UAM.Amount)
+                        LR.save()
+                except UserAmountModel.DoesNotExist:
+                    UAM=UserAmountModel.objects.create(user=Username,Amount=Amount)
+                    UAM.save()
+                    LR=LedgerReportModel.objects.create(user=Username,PartyName='Opneing Balance',Type='',BiilNo='',Debited='0',Cedited=Amount,Balance=Amount)
+                    LR.save()
+                Method = 'Cedited'
+            else:
+                try:
+                    UAM=UserAmountModel.objects.get(user=Username)
+                    if UAM:
+                        if eval(UAM.Amount) >= eval(Amount):
+                            amount = eval(UAM.Amount) - eval(Amount)
+                            UAM.Amount = amount
+                            UAM.save()
+                            UAM=UserAmountModel.objects.get(user=Username)
+                            LR=LedgerReportModel.objects.create(user=Username,PartyName='Closing Balance',Type='',BiilNo='',Debited=Amount,Cedited='0',Balance=UAM.Amount)
+                            LR.save()
+                        else:
+                            messages.success(request,'You Have Not Sufficient Balance.')
+                            return redirect('/Amount')
+                except UserAmountModel.DoesNotExist:
+                    messages.success(request,'You Have Not Sufficient Balance.')
+                    return redirect('/Amount')
+                Method = 'Debited'
+            data = AmountModel.objects.create(user=Username,Amount=Amount,Method=Method)
+            data.save()
+            return redirect('/Amount')
+        return render(request,'admin/amount.html',data)
+    if is_user(request.user):
+        dt = AmountModel.objects.all()
+        return render(request,'expanse.html',{'dt':dt})
+
+@login_required(login_url='Login')
+def DAmount(request,id):
+    if is_admin(request.user):
+        dt = AmountModel.objects.get(id=id)
+        dt.delete()
+        return redirect('/Amount')
+
+@login_required(login_url='Login')
 def AddExpanse(request):
     if request.method=="POST": 
         user=str(request.user.username)   
@@ -466,6 +529,15 @@ def DeleteCharges(request,id):
         messages.success(request,'Delete Charges Successfully.')
         return redirect('/Charges')
     return redirect('/')
+
+def render_to_pdf(template, context):
+   template = get_template(template)
+   html  = template.render(context)
+   result = BytesIO()
+   pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+   if not pdf.err:
+       return HttpResponse(result.getvalue(), content_type='application/pdf')
+   return None
 
 @login_required(login_url='Login')
 def PurchaseEntry(request):
@@ -572,6 +644,7 @@ def AddPurchaseEntry(request):
         ProductId=request.POST.get('ProductId')
         DueDate=request.POST.get('DueDate')
         Date=request.POST.get('Date')
+        PayableAmount=request.POST.get('PayableAmount')
         Type='Purchase'
         Amount=request.POST.get('Amount')
         stock=StockModel.objects.filter(ProductId=ProductId,user=request.user)
@@ -589,12 +662,44 @@ def AddPurchaseEntry(request):
         purchaseprice= str(purchaseprice)
         purchaseinctax= str(purchaseinctax)
         tamonut = str(float(tamonut) + float(TCA))
-        dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,Terms=Terms,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,DueDate=DueDate,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date,TChargesAmount=TCA)
+        UAM=UserAmountModel.objects.get(user=request.user)
+        if Terms == 'Debit':
+            if eval(UAM.Amount) >= eval(tamonut):
+                amount = eval(UAM.Amount) - eval(tamonut)
+                UAM.Amount = "%.2f" % amount 
+                UAM.save()
+                PendingAmount = ''
+            else:
+                messages.success(request,'You Have Not Sufficient Balance.')
+                return redirect('/AddPurchaseEntry')
+        else:
+            PA = eval(tamonut)- eval(PayableAmount)
+            PendingAmount = PA
+            amount = eval(UAM.Amount) - eval(PayableAmount)
+            UAM.Amount =  "%.2f" % amount
+            UAM.save()
+        if Terms == 'Debit':
+            st = '0'
+        else:
+            st = '1'
+        pt= PartyModel.objects.get(user=request.user,Number=PartyName)
+        if pt.Debited == '0':
+            pt.Debited = tamonut
+            pt.save()
+        else:
+            pot = eval(pt.Debited) + eval(tamonut)
+            pt.Debited = str(pot)
+            pt.save()
+        PartyName = pt.PartyName
+        dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,Terms=Terms,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,DueDate=DueDate,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date,TChargesAmount=TCA,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
         dt.save()
         stock = StockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         for i in stock:
             MainS=MainStockModel.objects.create(OldProductId=i.id,ProductId=i.ProductId,user=user,type=type,ProductName=i.ProductName,Category=i.Category,Tax=i.Tax,Unit=i.Unit,PurchasePrice=i.PurchasePrice,PurchaseIncTax=i.PurchaseIncTax,MinQty=i.MinQty,MaxQty=i.MaxQty,BarcodeNo=i.BarcodeNo,Quantity=i.Quantity,Amount=i.Amount)
             MainS.save()
+        UAM=UserAmountModel.objects.get(user=request.user)
+        LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='Purchase',BiilNo=Bill,Debited=PayableAmount,Cedited='0',Balance=UAM.Amount)
+        LR.save()
         user=str(request.user.username)
         cp = NMModel.objects.get(user=user,type='Purchase')
         cp.ProductId =str(int(cp.ProductId)+1)
@@ -870,7 +975,7 @@ def Sales(request):
         return render(request,'sales.html',data)
     
 @login_required(login_url='Login')
-def AddSalesEntry(request):
+def AddSalesEntry(request,A2=None):
     try:
         user=str(request.user.username)
         type = 'Sales'
@@ -899,7 +1004,7 @@ def AddSalesEntry(request):
         Invoice = BN.InvoiceNo
     stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
     Category=CategoryModel.objects.filter(user=request.user)
-    stokes=MainStockModel.objects.filter(user=request.user)
+    stokes=MainStockModel.objects.filter(user=request.user,out='0')
     Charges=ChargesModel.objects.filter(user=request.user.username)
     ChargesList = ChargesListModel.objects.filter(user=request.user,ProductId=ProductId,type='Sales')
     TCA = 0
@@ -924,11 +1029,40 @@ def AddSalesEntry(request):
         TypeofPayment=request.POST.get('TypeofPayment')
         Terms=request.POST.get('Terms')
         ProductId=request.POST.get('ProductId')
+        PayableAmount=request.POST.get('PayableAmount')
         Date=request.POST.get('Date')
         Type='Sales'
         Amount=str(float(tamonut) + float(TCA))
-        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,TChargesAmount=TCA)
+        UAM=UserAmountModel.objects.get(user=request.user)
+        if Terms == 'Debit':
+            PendingAmount = ''
+            amount = eval(UAM.Amount) + eval(Amount)
+            UAM.Amount =  "%.2f" % amount 
+            UAM.save()
+        else:
+            PA = eval(Amount)- eval(PayableAmount)
+            PendingAmount = PA
+            amount = eval(UAM.Amount) + eval(PayableAmount)
+            UAM.Amount =  "%.2f" % amount 
+            UAM.save()
+        pt= PartyModel.objects.get(user=request.user,Number=PartyName)
+        if pt.Cedited == '0':
+            pt.Cedited = Amount
+            pt.save()
+        else:
+            pot = eval(pt.Cedited) + eval(Amount)
+            pt.Cedited = str(pot)
+            pt.save()
+        if Terms == 'Debit':
+            st = '0'
+        else:
+            st = '1'
+        PartyName = pt.PartyName
+        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,TChargesAmount=TCA,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
         dt.save()
+        UAM=UserAmountModel.objects.get(user=request.user)
+        LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='Sales',BiilNo=InvoiceNo,Debited='0',Cedited=PayableAmount,Balance=UAM.Amount)
+        LR.save()
         stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         wtAmount=0
         for i in stock:
@@ -951,6 +1085,20 @@ def AddSalesEntry(request):
         BN = InvoiceNoModel.objects.get(user=user,type='Sales')
         BN.InvoiceNo =str(int(BN.InvoiceNo)+1)
         BN.save()
+        if A2 != None:
+                data = MainStockModel.objects.all()
+                context = {'data':data}
+                pdf = render_to_pdf('admin/vbill.html',context)
+                if pdf:
+                    response = HttpResponse(pdf,content_type='application/pdf')
+                    filename = "New123.pdf"
+                    # content = f"attachment; filename={filename}"
+                    content = f"inline; filename={filename}"
+                    response['Content-Disposition'] = content
+                    return response
+                return HttpResponse("Not Found")
+        else:
+            pass
         messages.success(request,'Sales Successfully.')
         return redirect('/AddSalesEntry')
     if is_admin(request.user):
@@ -959,16 +1107,19 @@ def AddSalesEntry(request):
         return render(request,'addsalesentry.html',data)
     
 def StockDetails(request,name):
-    Ms = MainStockModel.objects.filter(user=request.user,ProductName=name).values()
+    Ms = MainStockModel.objects.filter(user=request.user,ProductName=name,out='0').values()
     Ms = list(Ms)
     return JsonResponse({'Ms':Ms})
 
 @login_required(login_url='Login')
 @csrf_exempt
-def Stockswork(request,PN,id,id2,type,PID=None):
+def Stockswork(request,PN=None,id=None,id2=None,type=None,PID=None,Barcode=None):
     user = str(request.user.username)
     val= NMModel.objects.get(user=user,type=type)
-    ms = MainStockModel.objects.get(id=id2)
+    if Barcode == None:
+        ms = MainStockModel.objects.get(id=id2)
+    else:
+        ms = MainStockModel.objects.get(BarcodeNo=Barcode)
     PRD = ProductModel.objects.get(BarcodeNo=ms.BarcodeNo)
     type = type
     if PID == None:
@@ -1425,8 +1576,10 @@ def AddPurchaseReturnEntry(request):
         TypeofPayment=request.POST.get('TypeofPayment')
         PartyName=request.POST.get('PartyName')
         ProductId=request.POST.get('ProductId')
+        Terms=request.POST.get('Terms')
         DueDate=request.POST.get('DueDate')
         Date=request.POST.get('Date')
+        PayableAmount=request.POST.get('PayableAmount')
         Type='PurchaseReturn'
         Amount=request.POST.get('Amount')
         stock=StockModel.objects.filter(ProductId=ProductId,user=request.user,type='PurchaseReturn')
@@ -1443,8 +1596,36 @@ def AddPurchaseReturnEntry(request):
         quantity= str(quantity)
         purchaseprice= str(purchaseprice)
         purchaseinctax= str(purchaseinctax)
-        dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,DueDate=DueDate,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date)
+        UAM=UserAmountModel.objects.get(user=request.user)
+        if Terms == 'Debit':
+            PendingAmount = ''
+            amount = eval(UAM.Amount) + eval(tamonut)
+            UAM.Amount =  "%.2f" % amount 
+            UAM.save()
+        else:
+            PA = eval(tamonut) - eval(PayableAmount)
+            PendingAmount = PA
+            amount = eval(UAM.Amount) + eval(PayableAmount)
+            UAM.Amount =  "%.2f" % amount 
+            UAM.save()
+        pt= PartyModel.objects.get(user=request.user,Number=PartyName)
+        if pt.Cedited == '0':
+            pt.Cedited = Amount
+            pt.save()
+        else:
+            pot = eval(pt.Cedited) + eval(Amount)
+            pt.Cedited = str(pot)
+            pt.save()
+        if Terms == 'Debit':
+            st = '0'
+        else:
+            st = '1'
+        PartyName = pt.PartyName
+        dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,DueDate=DueDate,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
         dt.save()
+        UAM=UserAmountModel.objects.get(user=request.user)
+        LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='PurchaseReturn',BiilNo=InvoiceNo,Debited='0',Cedited=PayableAmount,Balance=UAM.Amount)
+        LR.save()
         stock = StockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         for i in stock:
             dt=MainStockModel.objects.get(id=i.sid)
@@ -1620,12 +1801,44 @@ def AddSalesReturnEntry(request):
         PartyName=request.POST.get('PartyName')
         ProductId=request.POST.get('ProductId')
         TypeofPayment=request.POST.get('TypeofPayment')
+        PayableAmount=request.POST.get('PayableAmount')
         Terms=request.POST.get('Terms')
         Date=request.POST.get('Date')
         Type='SalesReturn'
         Amount=tamonut
-        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date)
+        UAM=UserAmountModel.objects.get(user=request.user)
+        if Terms == 'Debit':
+            if eval(UAM.Amount) >= float(Amount):
+                PendingAmount = ''
+                amount = eval(UAM.Amount) - float(Amount)
+                UAM.Amount = "%.2f" % amount 
+                UAM.save()
+            else:
+                messages.success(request,'You Have Not Sufficient Balance.')
+                return redirect('/AddSalesReturnEntry')
+        else:
+            PA = float(Amount)- eval(PayableAmount)
+            PendingAmount = "%.2f" % PA
+            amount = eval(UAM.Amount) - eval(PayableAmount)
+            UAM.Amount =  "%.2f" % amount 
+            UAM.save()
+        pt= PartyModel.objects.get(user=request.user,Number=PartyName)
+        if pt.Debited == '0':
+            pt.Debited = Amount
+            pt.save()
+        else:
+            pot = eval(pt.Debited) + float(Amount)
+            pt.Debited = str(pot)
+            pt.save()
+        if Terms == 'Debit':
+            st = '0'
+        else:
+            st = '1'
+        PartyName = pt.PartyName
+        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
         dt.save()
+        LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='SalesReturn',BiilNo=InvoiceNo,Debited=PayableAmount,Cedited='0',Balance=UAM.Amount)
+        LR.save()
         stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         for i in stock:
             MainS=MainStockModel.objects.create(OldProductId='0',ProductId=i.ProductId,user=user,type=type,ProductName=i.ProductName,Category=i.Category,Tax=i.Tax,Unit=i.Unit,PurchasePrice=i.PurchaseIncTax,PurchaseIncTax=i.PurchaseIncTax,MinQty='0',MaxQty='0',BarcodeNo=i.BarcodeNo,Quantity=i.Quantity,Amount=i.TotalSales)
@@ -1927,12 +2140,42 @@ def AddExpensesEntry(request):
     if request.method=="POST":    
         user=str(request.user.username)
         TypeofPayment=request.POST.get('TypeofPayment')
+        Terms=request.POST.get('Terms')
         PartyName=request.POST.get('PartyName')
         ProductId=request.POST.get('ProductId')
         Date=request.POST.get('Date')
+        PayableAmount=request.POST.get('PayableAmount')
         Amount=tamonut
-        dt=ExpanseEntryModel.objects.create(user=user,TypeofPayment=TypeofPayment,PartyName=PartyName,ProductId=ProductId,Amount=Amount,Date=Date)
+        UAM=UserAmountModel.objects.get(user=request.user)
+        if Terms == 'Debit':
+            if eval(UAM.Amount) >= eval(Amount):
+                amount = eval(UAM.Amount) - eval(Amount)
+                UAM.Amount = "%.2f" % amount 
+                UAM.save()
+            else:
+                messages.success(request,'You Have Not Sufficient Balance.')
+                return redirect('/AddExpensesEntry')
+        else:
+            amount = eval(UAM.Amount) - eval(PayableAmount)
+            UAM.Amount =  "%.2f" % amount 
+            UAM.save()
+        pt= PartyModel.objects.get(user=request.user,Number=PartyName)
+        if pt.Debited == '0':
+            pt.Debited = Amount
+            pt.save()
+        else:
+            pot = eval(pt.Debited) + eval(Amount)
+            pt.Debited = str(pot)
+            pt.save()
+        if Terms == 'Debit':
+            st = '0'
+        else:
+            st = '1'
+        PartyName = pt.PartyName
+        dt=ExpanseEntryModel.objects.create(user=user,TypeofPayment=TypeofPayment,Terms=Terms,PartyName=PartyName,ProductId=ProductId,Amount=Amount,Date=Date,PayableAmount=PayableAmount,status=st)
         dt.save()
+        LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='Expenses',BiilNo='',Debited=PayableAmount,Cedited='0',Balance=UAM.Amount)
+        LR.save()
         cp = NMModel.objects.get(user=user,type = 'Expenses')
         cp.ProductId =str(int(cp.ProductId)+1)
         cp.save()
@@ -1944,11 +2187,22 @@ def AddExpensesEntry(request):
         return render(request,'addexpensesentry.html',data)
 
 @login_required(login_url='Login')
+def ExpenseCancel(request,id):
+    ProductId=id
+    user=request.user
+    ELM = ExpanseListModel.objects.filter(ProductId=ProductId,user=user)
+    ELM.delete()
+    return redirect('/ExpensesEntry')
+
+@login_required(login_url='Login')
 @csrf_exempt
-def ExpanseList(request,id):
+def ExpanseList(request,id,pid=None):
     user = str(request.user.username)
     val= NMModel.objects.get(user=user,type='Expenses')
-    ProductId = val.ProductId
+    if pid == None:
+        ProductId = val.ProductId
+    else:
+        ProductId = pid
     ed=ExpanseModel.objects.get(id=id)
     ELM=ExpanseListModel.objects.create(ProductId=ProductId,user=user,Expanse=ed.Expanse,Amount='0')
     ELM.save()
@@ -2019,6 +2273,45 @@ def EXDetails(request,id):
     if is_user(request.user):
         return render(request,'exdetails.html',{'data':data,'ELM':ELM,'tamonut':tamonut})
     
+@login_required(login_url='Login')
+def DeleteEx(request,id):
+    data=ExpanseEntryModel.objects.get(id=id)
+    ELM=ExpanseListModel.objects.filter(ProductId=data.ProductId,user=request.user)
+    ELM.delete()
+    data.delete()
+    return redirect('/ExpensesEntry')
+
+@login_required(login_url='Login')
+def EditEx(request,id):
+    data=ExpanseEntryModel.objects.get(id=id)
+    user=str(request.user.username)
+    type = 'Expenses'
+    ProductId = data.ProductId
+    Expens = ExpanseModel.objects.filter(user=request.user)
+    Party = PartyModel.objects.filter(user=request.user)
+    ELM = ExpanseListModel.objects.filter(ProductId=ProductId,user=user)
+    tamonut = 0
+    for i in ELM:
+        tamonut+=float(i.Amount)
+    PT = "%.2f" % tamonut
+    tamonut = str(PT)
+    data={'ProductId':ProductId,'data':data,'Expens':Expens,'Party':Party,'type':type,'ELM':ELM,'tamonut':tamonut}
+    dt=ExpanseEntryModel.objects.get(id=id)
+    if request.method=="POST":
+        dt.TypeofPayment=request.POST.get('TypeofPayment')
+        dt.Terms=request.POST.get('Terms')
+        dt.PartyName=request.POST.get('PartyName')
+        dt.Date=request.POST.get('Date')
+        dt.Amount=tamonut
+        dt.save()
+        messages.success(request,'Edit Expenses Entry Successfully.')
+        return redirect('/ExpensesEntry')
+    if is_admin(request.user):
+        return render(request,'admin/editexpensesentry.html',data)
+    if is_user(request.user):
+        return render(request,'editexpensesentry.html',data)
+
+
 @login_required(login_url='Login')
 @csrf_exempt
 def CreateCharges(request):
@@ -2109,14 +2402,14 @@ def error_404_view(request,exception):
 
 @login_required(login_url='Login')
 def AllDelete(request):
-    data=ChargesListModel.objects.all()
+    data=PartyModel.objects.all()
     data.delete()
-    data2=CategoryModel.objects.all()
-    data2.delete()
-    data4=DeliveryBoyModel.objects.all()
-    data4.delete()
-    data1=ProductModel.objects.all()
-    data1.delete()
+    # data2=CategoryModel.objects.all()
+    # data2.delete()
+    # data4=DeliveryBoyModel.objects.all()
+    # data4.delete()
+    # data1=ProductModel.objects.all()
+    # data1.delete()
     data5=StockModel.objects.all()
     data5.delete()
     data6=NMModel.objects.all()
@@ -2131,9 +2424,16 @@ def AllDelete(request):
     dt.delete()
     df=BiilNoModel.objects.all()
     df.delete()
-    du=UserDetails.objects.all()
+    df1=AmountModel.objects.all()
+    df1.delete()
+    df2=UserAmountModel.objects.all()
+    df2.delete()
+    df3=LedgerReportModel.objects.all()
+    df3.delete()
+    du=PendingAmountModel.objects.all()
     du.delete()
-    
+    # du=PendingAmountModel.objects.all()
+    # du.delete()
     # datad=NMModel.objects.get(user=request.user)
     # datad.ProductId='1'
     # datad.save()
@@ -2159,7 +2459,7 @@ def StockReport(request):
     
 @login_required(login_url='Login')
 def ProductsDetails(request,name):
-    stock = MainStockModel.objects.filter(user=request.user,ProductName=name)
+    stock = MainStockModel.objects.filter(user=request.user,ProductName=name,out='0')
     Quantity = 0
     Amount = 0
     for i in stock:
@@ -2172,6 +2472,22 @@ def ProductsDetails(request,name):
         return render(request,'admin/productsdetails.html',data)
     if is_user(request.user):
         return render(request,'productsdetails.html',data)
+
+@login_required(login_url='Login')
+def RProductsDetails(request,name):
+    stock = SalesStockModel.objects.filter(user=request.user,type='SalesReturn',ProductName=name)
+    Quantity = 0
+    Amount = 0
+    for i in stock:
+        Quantity += eval(i.Quantity)
+        Amount += eval(i.TotalSales)
+    Quantity = Quantity
+    Amount = Amount
+    data = {'stock':stock,'Quantity':Quantity,'Amount':Amount}
+    if is_admin(request.user):
+        return render(request,'admin/rproductsdetails.html',data)
+    if is_user(request.user):
+        return render(request,'rproductsdetails.html',data)
 
 @login_required(login_url='Login')
 def InvoiceNoDetails(request,IN,type):
@@ -2192,119 +2508,167 @@ def InvoiceNoDetails(request,IN,type):
 @login_required(login_url='Login')
 def SalesStockReport(request):
     # stock = SalesEntryModel.objects.filter(user=request.user.username,Type='Sales')
-    ss=SalesStockModel.objects.filter(user=request.user.username)
-    Productname = {i.ProductName for i in ss}
+    try:
+        ss=SalesStockModel.objects.filter(user=request.user.username,type='SalesReturn')
+        Productname = {i.ProductName for i in ss}
+    except SalesStockModel.DoesNotExist:
+        Productname = ''
     data = {'stock':Productname}
     if is_admin(request.user):
         return render(request,'admin/salesstock.html',data)
     if is_user(request.user):
-        return render(request,'stock.html',data)
+        return render(request,'salesstock.html',data)
     
 @login_required(login_url='Login')
 def DeliveryReport(request):
-    if is_admin(request.user):
-        sales = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
-        sp = {i.DeliveryBoyName for i in sales}
-        ta = 0
-        for i in sales:
-            ta += eval(i.Amount)
-        ta = "%.2f" % ta
-        data = {'sales':sales,'sp':sp,'ta':ta}
-        if request.method=="POST": 
-            StartDate = request.POST.get('StartDate')
-            EndDate = request.POST.get('EndDate')
-            DeliveryBoyName = request.POST.get('DeliveryBoyName')
-            if (StartDate != '' and EndDate != '') and (DeliveryBoyName == 'Select' ):
-                ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user)
-                ta = 0
-                for i in ss:
-                    ta += eval(i.Amount)
-                ta = "%.2f" % ta
-            elif (StartDate == '' and EndDate == '') and (DeliveryBoyName == 'Select'):
+    sales = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+    sp = {i.DeliveryBoyName for i in sales}
+    ta = 0
+    PB = 0
+    BB = 0
+    CB = 0
+    for i in sales:
+        if i.TypeofPayment == 'Credit':
+            PB += eval(i.Amount)
+        elif i.TypeofPayment == 'Case':
+            CB += eval(i.Amount)
+        else:
+            BB += eval(i.Amount)
+        ta += eval(i.Amount)
+    ta = "%.2f" % ta
+    data = {'sales':sales,'sp':sp,'ta':ta,'PB':PB,'BB':BB,'CB':CB}
+    if request.method=="POST": 
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        DeliveryBoyName = request.POST.get('DeliveryBoyName')
+        if (StartDate != '' and EndDate != '') and (DeliveryBoyName == 'Select' ):
+            ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user)
+            ta = 0
+            for i in ss:
+                ta += eval(i.Amount)
+            ta = "%.2f" % ta
+        elif (StartDate == '' and EndDate == '') and (DeliveryBoyName == 'Select'):
+            ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+            ta = 0
+            for i in ss:
+                ta += eval(i.Amount)
+            ta = "%.2f" % ta
+        elif StartDate == '' and EndDate == '':
+            if DeliveryBoyName == 'Select':
                 ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
                 ta = 0
                 for i in ss:
                     ta += eval(i.Amount)
                 ta = "%.2f" % ta
-            elif StartDate == '' and EndDate == '':
-                if DeliveryBoyName == 'Select':
-                    ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
-                    ta = 0
-                    for i in ss:
-                        ta += eval(i.Amount)
-                    ta = "%.2f" % ta
-                else :  
-                    ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,DeliveryBoyName=DeliveryBoyName)
-                    ta = 0
-                    for i in ss:
-                        ta += eval(i.Amount)
-                    ta = "%.2f" % ta
-            elif (StartDate != '' and EndDate == '') and (DeliveryBoyName == 'Select'):
-                    ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,Date=StartDate)
-                    ta = 0
-                    for i in ss:
-                        ta += eval(i.Amount)
-                    ta = "%.2f" % ta
-            else:
-                ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user,DeliveryBoyName=DeliveryBoyName)
+            else :  
+                ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,DeliveryBoyName=DeliveryBoyName)
                 ta = 0
                 for i in ss:
                     ta += eval(i.Amount)
                 ta = "%.2f" % ta
-            sp = {i.DeliveryBoyName for i in sales}
-            data = {'sales':ss,'sp':sp,'StartDate':StartDate,'EndDate':EndDate,'ta':ta,'DeliveryBoyName':DeliveryBoyName}
-            return render(request,'admin/deliveryreport.html',data)
+        elif (StartDate != '' and EndDate == '') and (DeliveryBoyName == 'Select'):
+                ss = SalesEntryModel.objects.filter(Type='Sales',user=request.user,Date=StartDate)
+                ta = 0
+                for i in ss:
+                    ta += eval(i.Amount)
+                ta = "%.2f" % ta
+        else:
+            ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate],user=request.user,DeliveryBoyName=DeliveryBoyName)
+            ta = 0
+            for i in ss:
+                ta += eval(i.Amount)
+            ta = "%.2f" % ta
+        sp = {i.DeliveryBoyName for i in sales}
+        ta = 0
+        PB = 0
+        BB = 0
+        CB = 0
+        for i in ss:
+            if i.TypeofPayment == 'Credit':
+                PB += eval(i.Amount)
+            elif i.TypeofPayment == 'Case':
+                CB += eval(i.Amount)
+            else:
+                BB += eval(i.Amount)
+            ta += eval(i.Amount)
+        ta = "%.2f" % ta
+        data = {'sales':ss,'sp':sp,'StartDate':StartDate,'EndDate':EndDate,'ta':ta,'DeliveryBoyName':DeliveryBoyName,'PB':PB,'BB':BB,'CB':CB}
+        return render(request,'admin/deliveryreport.html',data)
+    if is_admin(request.user):
         return render(request,'admin/deliveryreport.html',data)
     if is_user(request.user):
         return render(request,'deliveryreport.html')
     
+# @login_required(login_url='Login')
+# def LedgerReport(request):
+#     if is_admin(request.user):
+#         sales = SalesEntryModel.objects.filter(user=request.user)
+#         Purchase = PurchaseEntryModel.objects.filter(user=request.user)
+#         sp = {i.PartyName for i in sales}
+#         pp = {i.PartyName for i in Purchase}
+#         data = {'sales':sales,'pem':Purchase,'sp':sp,'pp':pp}
+#         if request.method=="POST": 
+#             StartDate = request.POST.get('StartDate')
+#             EndDate = request.POST.get('EndDate')
+#             PartyName = request.POST.get('PartyName')
+#             if (StartDate != '' and EndDate != '') and (PartyName == 'Select' ):
+#                 ss = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user)
+#                 pem = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user)
+#             elif (StartDate == '' and EndDate == '') and (PartyName == 'Select'):
+#                 ss = SalesEntryModel.objects.filter(user=request.user)
+#                 pem = PurchaseEntryModel.objects.filter(user=request.user)
+#             elif StartDate == '' and EndDate == '':
+#                 if PartyName == 'Select':
+#                     ss = SalesEntryModel.objects.filter(user=request.user)
+#                     pem = PurchaseEntryModel.objects.filter(user=request.user)
+#                 else :  
+#                     ss = SalesEntryModel.objects.filter(user=request.user,PartyName=PartyName)
+#                     pem = PurchaseEntryModel.objects.filter(user=request.user,PartyName=PartyName)
+#             elif (StartDate != '' and EndDate == '') and (PartyName == 'Select'):
+#                     ss = SalesEntryModel.objects.filter(user=request.user,Date=StartDate)
+#                     pem = PurchaseEntryModel.objects.filter(user=request.user,Date=StartDate)
+#             else:
+#                 ss = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user,PartyName=PartyName)
+#                 pem = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user,PartyName=PartyName)
+#             sp = {i.PartyName for i in sales}
+#             pp = {i.PartyName for i in Purchase}
+#             data = {'sales':ss,'pem':pem,'sp':sp,'pp':pp,'StartDate':StartDate,'EndDate':EndDate,'PartyName':PartyName}
+#             return render(request,'admin/ledgerreport.html',data)
+#         return render(request,'admin/ledgerreport.html',data)
+#     if is_user(request.user):
+#         return render(request,'ledgerreport.html')
+
 @login_required(login_url='Login')
 def LedgerReport(request):
     if is_admin(request.user):
-        sales = SalesEntryModel.objects.filter(user=request.user)
-        Purchase = PurchaseEntryModel.objects.filter(user=request.user)
-        sp = {i.PartyName for i in sales}
-        pp = {i.PartyName for i in Purchase}
-        data = {'sales':sales,'pem':Purchase,'sp':sp,'pp':pp}
+        Lr = LedgerReportModel.objects.filter(user=request.user)
+        Party = PartyModel.objects.filter(user=request.user)
+        data = {'Lr':Lr,'Party':Party}
         if request.method=="POST": 
             StartDate = request.POST.get('StartDate')
             EndDate = request.POST.get('EndDate')
             PartyName = request.POST.get('PartyName')
-            if (StartDate != '' and EndDate != '') and (PartyName == 'Select' ):
-                ss = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user)
-                pem = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user)
-            elif (StartDate == '' and EndDate == '') and (PartyName == 'Select'):
-                ss = SalesEntryModel.objects.filter(user=request.user)
-                pem = PurchaseEntryModel.objects.filter(user=request.user)
-            elif StartDate == '' and EndDate == '':
+            if (StartDate != '' and EndDate != ''):
                 if PartyName == 'Select':
-                    ss = SalesEntryModel.objects.filter(user=request.user)
-                    pem = PurchaseEntryModel.objects.filter(user=request.user)
-                else :  
-                    ss = SalesEntryModel.objects.filter(user=request.user,PartyName=PartyName)
-                    pem = PurchaseEntryModel.objects.filter(user=request.user,PartyName=PartyName)
-            elif (StartDate != '' and EndDate == '') and (PartyName == 'Select'):
-                    ss = SalesEntryModel.objects.filter(user=request.user,Date=StartDate)
-                    pem = PurchaseEntryModel.objects.filter(user=request.user,Date=StartDate)
-            else:
-                ss = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user,PartyName=PartyName)
-                pem = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user,PartyName=PartyName)
-            sp = {i.PartyName for i in sales}
-            pp = {i.PartyName for i in Purchase}
-            data = {'sales':ss,'pem':pem,'sp':sp,'pp':pp,'StartDate':StartDate,'EndDate':EndDate,'PartyName':PartyName}
+                    Lr = LedgerReportModel.objects.filter(LRDate__range=[StartDate, EndDate],user=request.user)
+                else:
+                    Lr = LedgerReportModel.objects.filter(LRDate__range=[StartDate, EndDate],PartyName=PartyName,user=request.user)
+            elif(StartDate != '' or EndDate != ''):
+                if PartyName == 'Select':
+                    Lr = LedgerReportModel.objects.filter(LRDate__range=[StartDate, EndDate],user=request.user)
+                else:
+                    Lr = LedgerReportModel.objects.filter(LRDate__range=[StartDate, EndDate],PartyName=PartyName,user=request.user)
+                Lr = LedgerReportModel.objects.filter(LRDate__range=[StartDate, EndDate],user=request.user)
+            elif(StartDate == '' and EndDate == ''):
+                if PartyName == 'Select':
+                    Lr = LedgerReportModel.objects.filter(user=request.user)
+                else:
+                    Lr = LedgerReportModel.objects.filter(user=request.user,PartyName=PartyName)
+            data = {'Lr':Lr,'StartDate':StartDate,'EndDate':EndDate,'PartyName':PartyName,'Party':Party}
             return render(request,'admin/ledgerreport.html',data)
         return render(request,'admin/ledgerreport.html',data)
     if is_user(request.user):
         return render(request,'ledgerreport.html')
-
-def render_to_pdf(template, context):
-   template = get_template(template)
-   html  = template.render(context)
-   result = BytesIO()
-   pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
-   if not pdf.err:
-       return HttpResponse(result.getvalue(), content_type='application/pdf')
-   return None
 
 def SPDF(request):
    data = MainStockModel.objects.all()
@@ -2401,7 +2765,6 @@ def Link(request,name):
                         ld = list(ld)
                         return JsonResponse({'ld':ld,'mgs':mgs}) 
                 else:
-                    print("2")
                     dt=PartyModel.objects.create(user=user,Type=Type,PartyName=PartyName,Number=Number,Address=Address,GSTNo=GSTNo,Email=Email,City=City)
                     dt.save()
                     mgs = 'Add Party Successfully.'
@@ -2409,11 +2772,146 @@ def Link(request,name):
                     ld = list(ld)
                     return JsonResponse({'ld':ld,'mgs':mgs}) 
             except:
-                print("3")
                 dt=PartyModel.objects.create(user=user,Type=Type,PartyName=PartyName,Number=Number,Address=Address,GSTNo=GSTNo,Email=Email,City=City)
                 dt.save()
                 mgs = 'Add Party Successfully.'
                 ld = PartyModel.objects.filter(user=user).values()
                 ld = list(ld)
                 return JsonResponse({'ld':ld,'mgs':mgs})
-            
+    if name == 'Expanse':
+        if request.method=="POST":
+            Expanse=request.POST.get('Expanse')
+            Type=request.POST.get('Type')
+            try:
+                ex = ExpanseModel.objects.get(user=user,Expanse=Expanse,Type=Type)
+                if ex:
+                    mgs = 'Add Expanse Successfully.'
+                    ld = ExpanseModel.objects.filter(user=user).values()
+                    ld = list(ld)
+                    return JsonResponse({'ld':ld,'mgs':mgs})
+                else:
+                    dt=ExpanseModel.objects.create(user=user,Expanse=Expanse,Type=Type)
+                    dt.save()
+                    mgs = 'Add Party Successfully.'
+                    ld = ExpanseModel.objects.filter(user=user).values()
+                    ld = list(ld)
+                    return JsonResponse({'ld':ld,'mgs':mgs})
+            except:
+                dt=ExpanseModel.objects.create(user=user,Expanse=Expanse,Type=Type)
+                dt.save()
+                mgs = 'Add Party Successfully.'
+                ld = ExpanseModel.objects.filter(user=user).values()
+                ld = list(ld)
+                return JsonResponse({'ld':ld,'mgs':mgs})
+
+def PageTest(request):
+        return render(request,'admin/test.html')
+
+@login_required(login_url='Login')
+def OutstandingReport(request):
+    if is_admin(request.user):
+        return render(request,'admin/outstandingreport.html')
+    if is_user(request.user):
+        return render(request,'outstandingreport.html')
+
+@login_required(login_url='Login')
+def QuickPayment(request):
+    PAM = PendingAmountModel.objects.filter(user=request.user,Type='QuickPayment')
+    data={'PAM':PAM}
+    if request.method == 'POST':
+        Date = request.POST.get('Date')
+        BillNo = request.POST.get('BillNo')
+        PartyName = request.POST.get('PartyName')
+        Id = request.POST.get('Id')
+        TypeofPayment = request.POST.get('TypeofPayment')
+        CeditedAmount = request.POST.get('CeditedAmount')
+        PayableAmount = request.POST.get('PayableAmount')
+        TransactionID = request.POST.get('TransactionID')
+        Description = request.POST.get('Description')
+        if eval(CeditedAmount) == eval(PayableAmount):
+            UAM=UserAmountModel.objects.get(user=request.user)
+            if eval(UAM.Amount) >= eval(PayableAmount):
+                amount = eval(UAM.Amount) - eval(PayableAmount)
+                amount = "%.2f" % amount 
+                UAM.Amount = amount
+                UAM.save()
+                LR=LedgerReportModel.objects.create(user=request.user.username,PartyName=PartyName,Type='QuickPayment',BiilNo=BillNo,Debited=PayableAmount,Cedited='0',Balance=amount)
+                LR.save()
+                dt=PurchaseEntryModel.objects.get(id=Id)
+                dt.PendingAmount = '0'
+                dt.status = '0'
+                dt.save()
+                main = PendingAmountModel.objects.create(user=request.user.username,Type='QuickPayment',Date=Date,PartyName=PartyName,Number=BillNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+                main.save()
+                messages.success(request,'Quick Payment Successfully.')
+                return redirect('/QuickPayment')
+            else:
+                messages.success(request,'You Have Not Sufficient Balance.')
+                return redirect('/QuickPayment')
+        elif eval(CeditedAmount) < eval(PayableAmount):
+            messages.success(request,'Payable Amount Is High To The Cedited Amount.')
+            return redirect('/QuickPayment')
+        else:
+            UAM=UserAmountModel.objects.get(user=request.user)
+            if eval(UAM.Amount) >= eval(PayableAmount):
+                amount = eval(UAM.Amount) - eval(PayableAmount)
+                amount = "%.2f" % amount 
+                UAM.Amount = amount
+                UAM.save()
+                LR=LedgerReportModel.objects.create(user=request.user.username,PartyName=PartyName,Type='QuickPayment',BiilNo=BillNo,Debited=PayableAmount,Cedited='0',Balance=amount)
+                LR.save()
+                dt=PurchaseEntryModel.objects.get(id=Id)
+                Pa = eval(CeditedAmount) - eval(PayableAmount)
+                dt.PendingAmount = "%.2f" % Pa 
+                dt.status = '1'
+                dt.save()
+                main = PendingAmountModel.objects.create(user=request.user.username,Type='QuickPayment',Date=Date,PartyName=PartyName,Number=BillNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+                main.save()
+                messages.success(request,'Quick Payment Successfully.')
+                return redirect('/QuickPayment')
+            else:
+                messages.success(request,'You Have Not Sufficient Balance.')
+                return redirect('/QuickPayment')
+    if is_admin(request.user):
+        return render(request,'admin/quickpayment.html',data)
+    if is_user(request.user):
+        return render(request,'quickpayment.html',data)
+
+@login_required(login_url='Login')
+@csrf_exempt
+def QuickPaymentBill(request):
+    if request.method == 'POST':
+        BillNo = request.POST.get('BillNo')
+        try:
+            dt=PurchaseEntryModel.objects.get(user=request.user,Type='Purchase',BillNo=BillNo,status='1')
+            PN = dt.PartyName
+            PA = dt.PendingAmount
+            Id = dt.id
+        except PurchaseEntryModel.DoesNotExist:
+            PN = ''
+            PA = ''
+            Id = ''
+        return JsonResponse({'status':1,'PN':PN,'PA':PA,'Id':Id})
+    else:
+        return JsonResponse({'status':0})
+
+@login_required(login_url='Login')
+def QuickReceipt(request):
+    if is_admin(request.user):
+        return render(request,'admin/quickreceipt.html')
+    if is_user(request.user):
+        return render(request,'quickreceipt.html')
+
+@login_required(login_url='Login')
+def DebitNote(request):
+    if is_admin(request.user):
+        return render(request,'admin/debitnote.html')
+    if is_user(request.user):
+        return render(request,'debitnote.html')
+
+@login_required(login_url='Login')
+def CreditNote(request):
+    if is_admin(request.user):
+        return render(request,'admin/creditnote.html')
+    if is_user(request.user):
+        return render(request,'creditnote.html')

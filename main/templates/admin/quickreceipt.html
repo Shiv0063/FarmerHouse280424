@@ -1,0 +1,166 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="card card-body py-3">
+      <div class="row align-items-center">
+        <div class="col-12">
+          <div class="d-flex align-items-center justify-space-between">
+            <nav aria-label="breadcrumb" class="">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item d-flex align-items-center">
+                  <a class="text-muted text-decoration-none d-flex" href="/">
+                    <iconify-icon icon="solar:home-2-line-duotone" class="fs-6"></iconify-icon>
+                  </a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page">
+                  <span class="badge fw-medium fs-2 bg-primary-subtle text-primary">
+                    Quick Receipt
+                  </span>
+                </li>
+              </ol>
+            </nav>
+            <nav aria-label="breadcrumb" class="ms-auto">
+              <ol class="breadcrumb">
+                <a data-bs-toggle="modal" data-bs-target="#QuickReceipt" class="btn btn-success">Add Quick Receipt</a>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="datatables">
+      <div class="card">
+        <div class="px-4 py-3 border-bottom">
+          <h4 class="card-title mb-0">Quick Receipt</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+              <thead>
+                <!-- start row -->
+                <tr>
+                  <th>Date</th>
+                  <th>Bill No.</th>
+                  <th>Party Name</th>
+                  <th>Type of Payment</th>
+                  <th>Cedited Amount</th>
+                  <th>Payable Amount</th>
+                  <th>Transaction ID</th>
+                  <th>Description</th>
+                </tr>
+                <!-- end row -->
+              </thead>
+              <tbody>
+                {% for i in sales %}
+                <tr>
+                  <td>{{i.date}}</td>
+                  <td>{{i.PartyName}}</td>
+                  <td>{{i.InvoiceNo}}</td>
+                  <td>{{i.TypeOfBusiness}}</td>
+                  <td>{{i.DeliveryTime}}</td>
+                  <td>{{i.DeliveryBoyName}}</td>
+                  <td>{{i.Amount}}</td>
+                  <td>{{i.Amount}}</td>
+                  <td>
+                    <a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a><a class="btn btn-success mr-3" href="/EditSales/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-pencil'></i></a><a href="DeleteSales/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger"><i class='ti ti-trash'></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- end File export -->
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="QuickReceipt" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <form class="modal-content" id="QuickReceiptF" method="post">
+      <div class="modal-header d-flex align-items-center">
+        <h5 class="modal-title" id="myLargeModalLabel">Quick Receipt</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="mb-4">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-control" name="Date" id="Date" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-4">
+              <label for="exampleInputBillno" class="form-label">Bill No</label>
+              <input type="text" class="form-control" id="exampleInputBillno" name="BillNo" placeholder="Bill No" required>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-4">
+              <label for="" class="form-label">Party Name</label>
+              <input type="text" class="form-control" id="PartyName" name="PartyName"
+                placeholder="Party Name" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-4">
+              <label for="exampleInputtype" class="form-label">Type of Payment</label>
+              <select class="form-select" id="TypeofPayment" name="TypeofPayment" tabindex="1" required>
+                <option value="" selected>-- Selet --</option>
+                <option value="Case">Case</option>
+                <option value="Gpay">Gpay</option>
+                <option value="UPI">UPI</option>
+                <option value="Net banking">Net banking</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-4">
+              <label class="form-label">Cedited Amount</label>
+              <input type="text" class="form-control" id="CeditedAmount" name="CeditedAmount"
+                placeholder="Cedited Amount" disabled>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-4">
+              <label class="form-label">Payable Amount</label>
+              <input type="text" class="form-control" id="PayableAmount" name="PayableAmount"
+                placeholder="Payable Amount" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mb-4">
+              <label class="form-label">Transaction ID</label>
+              <input type="text" class="form-control" id="TransactionID" name="TransactionID"
+                placeholder="Transaction ID">
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="mb-4">
+              <label class="form-label">Description</label>
+              <textarea class="form-control p-7" name="Description" rows="1"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="submit">Submit</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
+<script>
+  DF = new Date()
+document.getElementById("Date").value = DF.toJSON().slice(0, 10);
+</script>
+{% endblock script %}

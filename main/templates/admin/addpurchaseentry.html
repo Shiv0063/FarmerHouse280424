@@ -52,32 +52,9 @@
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
-                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" placeholder=""
+                  <input type="text" class="form-control" id="exampleInputInvoiceNo" name="InvoiceNo" placeholder=""
                     required>
                   <input type="hidden" name="ProductId" value="{{ProductId}}">
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="mb-4">
-                  <label for="exampleInputtype" class="form-label">Terms</label>
-                  <select class="form-select" id="exampleInputtype" name="Terms" tabindex="1" required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Debit">Debit</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="mb-4">
-                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
-                  <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Case">Case</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Gpay">Gpay</option>
-                    <option value="UPI">UPI</option>
-                    <option value="Net banking">Net banking</option>
-                  </select>
                 </div>
               </div>
               <div class="col-md-2">
@@ -96,8 +73,8 @@
                         <optgroup label="">
                           {% for i in Party %}
                           {% if i.Type != 'Customer' and i.Type != 'Hotel & Restaurant' %}
-                          {% if i.Type != 'Expanse' %}
-                          <option value="{{i.PartyName}}">{{i.PartyName}} ( {{i.Number}} )</option>
+                          {% if i.Type != 'Expanse' and i.Type != 'Assets' %}
+                          <option value="{{i.Number}}">{{i.PartyName}} ( {{i.Number}} )</option>
                           {% endif %}
                           {% endif %}
                           {% endfor %}
@@ -249,11 +226,42 @@
                   </tfoot>
                 </table>
               </div>
+              <div class="col-md-2">
+                <div class="mb-4" id="Ts">
+                  <label for="exampleInputtype" class="form-label">Terms</label>
+                  <select class="form-select" id="Terms" name="Terms" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Debit">Debit</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
+                  <select class="form-select" id="TypeofPayment" name="TypeofPayment" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Case">Case</option>
+                    <option value="Credit" hidden>Credit</option>
+                    <option value="Gpay">Gpay</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Net banking">Net banking</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputInvoiceNo" class="form-label">Payable Amount</label>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="PayableAmount" placeholder=""
+                    required>
+                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                </div>
+              </div>
               <div class="col-12">
                 <div class="gap-3">
                   <button class="btn btn-success" type="submit">Save</button>
                   <button class="btn btn-success" type="submit">Save & Print</button>
-                  <a class="btn bg-danger-subtle text-danger" href="/PurchaseCancel/{{ProductId}}">Cancel</a>
+                  <a class="btn btn-danger" href="/PurchaseCancel/{{ProductId}}">Cancel</a>
                 </div>
               </div>
             </div>
@@ -293,7 +301,7 @@
           </div>
           <div class="col-md-4">
             <div class="mb-4">
-              <label for="exampleInputnumber" class="form-label">Phone Namber</label>
+              <label for="exampleInputnumber" class="form-label">Phone Number</label>
               <input type="text" class="form-control" id="exampleInputnumber" name="Number" placeholder="1234567890"
                 required>
             </div>
@@ -331,7 +339,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -441,7 +449,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -466,10 +474,10 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn bg-success-subtle text-success  waves-effect text-start">
+        <button type="submit" class="btn btn-success">
           Submit
         </button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -480,6 +488,28 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
+  $("#Ts select[name='Terms']").on('change', function () {
+    var Terms = $('#Terms').val();
+    if(Terms == 'Credit'){
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('Credit');
+    }
+    else{
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('');
+      const button = document.querySelector("#TypeofPayment");
+      button.removeAttribute("disabled", "");
+      var TypeofPayment = document.querySelector("#TypeofPayment");
+      var options;
+      for (var i=0; i<TypeofPayment.options.length;i++){
+        options = TypeofPayment.options[i];
+        if (options.value == 'Credit'){
+          options.setAttribute('hidden','');
+          return;
+        }
+      }
+    }
+   });
   function Amount() {
     var TA = document.getElementById('tamount2').innerText;
     var TCA = document.getElementById('tamount3').innerText;
@@ -719,7 +749,9 @@
             if (x[i].Type != 'Customer') {
               if (x[i].Type != 'Hotel & Restaurant') {
                 if (x[i].Type != 'Expanse') {
-                  output += "<option value=" + x[i].PartyName + ">" + x[i].PartyName + ' ( ' + x[i].Number + ") </option>";
+                  if (x[i].Type != 'Assets'){
+                  output += "<option value=" + x[i].Number + ">" + x[i].PartyName + ' ( ' + x[i].Number + ") </option>";
+                  }
                 }
               }
             }
