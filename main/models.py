@@ -1,10 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
-import barcode
-from barcode.writer import ImageWriter
-from io import BytesIO
-from django.core.files import File
 from django.utils.timezone import now
 
 class UserDetails(models.Model):
