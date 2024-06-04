@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    Product Name
+                </th>
+                <th>
+                    Barcode Number
+                </th>
+                <th>
+                    Barcode Image
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in data %}
+            <tr>
+                <td>
+                    {{i.ProductName}}
+                </td>
+                <td>
+                    {{i.BarcodeNo}}
+                </td>
+                <td>
+                    <img id="barcode{{i.id}}" width="340px" alt=""/>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</body>
+<script>
+    {% for i in data %}
+    JsBarcode("#barcode{{i.id}}", "{{i.BarcodeNo}}", {format: "code39"});
+    {% endfor %}
+</script>
+
+
+</html>

@@ -720,12 +720,19 @@ def SProducts(request,PN,id,type,PId=None):
     prd = ProductModel.objects.get(id=id)
     user = str(request.user.username)
     val= NMModel.objects.get(user=user,type=type)
+    try:
+        SM = StockModel.objects.all().count()
+        PIDx = int(SM)+1
+        PIDx = str(PIDx)
+    except StockModel.DoesNotExist:
+        PIDx = 1
+        PIDx = str(PIDx)
     if PId == None:
-        stockproduct = StockModel.objects.create(ProductId=val.ProductId,user=user,type=type,ProductName=prd.ProductName,Category=prd.Category,Tax=prd.Tax,Unit=prd.Unit,PurchasePrice='0',PurchaseIncTax='0',MinQty=prd.MinQty,MaxQty=prd.MaxQty,BarcodeNo=prd.BarcodeNo,Quantity='0',Amount='0')
+        stockproduct = StockModel.objects.create(ProductId=val.ProductId,PID=PIDx,user=user,type=type,ProductName=prd.ProductName,Category=prd.Category,Tax=prd.Tax,Unit=prd.Unit,PurchasePrice='0',PurchaseIncTax='0',MinQty=prd.MinQty,MaxQty=prd.MaxQty,Quantity='0',Amount='0')
         stockproduct.save()
         get = StockModel.objects.filter(ProductId=val.ProductId,user=user,type=type).values()
     else:
-        stockproduct = StockModel.objects.create(ProductId=PId,user=user,type=type,ProductName=prd.ProductName,Category=prd.Category,Tax=prd.Tax,Unit=prd.Unit,PurchasePrice='0',PurchaseIncTax='0',MinQty=prd.MinQty,MaxQty=prd.MaxQty,BarcodeNo=prd.BarcodeNo,Quantity='0',Amount='0')
+        stockproduct = StockModel.objects.create(ProductId=PId,PID=PIDx,user=user,type=type,ProductName=prd.ProductName,Category=prd.Category,Tax=prd.Tax,Unit=prd.Unit,PurchasePrice='0',PurchaseIncTax='0',MinQty=prd.MinQty,MaxQty=prd.MaxQty,Quantity='0',Amount='0')
         stockproduct.save()
         get = StockModel.objects.filter(ProductId=PId,user=user,type=type).values()
     Sc = list(get)
@@ -1120,7 +1127,7 @@ def Stockswork(request,PN=None,id=None,id2=None,type=None,PID=None,Barcode=None)
         ms = MainStockModel.objects.get(id=id2)
     else:
         ms = MainStockModel.objects.get(BarcodeNo=Barcode)
-    PRD = ProductModel.objects.get(BarcodeNo=ms.BarcodeNo)
+    PRD = ProductModel.objects.get(ProductName=ms.ProductName)
     type = type
     if PID == None:
         ProductId = val.ProductId
@@ -1559,7 +1566,7 @@ def AddPurchaseReturnEntry(request):
         BiilNo = BN.BillNo
     stock = StockModel.objects.filter(ProductId=ProductId,user=user,type=type)
     Category=CategoryModel.objects.filter(user=request.user)
-    stokes=MainStockModel.objects.filter(user=request.user)
+    stokes=MainStockModel.objects.filter(user=request.user,out='0')
     productns={i.ProductName for i in stokes}
     Product = ProductModel.objects.filter(user=request.user)
     Party = PartyModel.objects.filter(user=request.user)
@@ -1624,7 +1631,7 @@ def AddPurchaseReturnEntry(request):
         dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,DueDate=DueDate,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
         dt.save()
         UAM=UserAmountModel.objects.get(user=request.user)
-        LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='PurchaseReturn',BiilNo=InvoiceNo,Debited='0',Cedited=PayableAmount,Balance=UAM.Amount)
+        LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='PurchaseReturn',BiilNo=Bill,Debited='0',Cedited=PayableAmount,Balance=UAM.Amount)
         LR.save()
         stock = StockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         for i in stock:
@@ -2675,16 +2682,18 @@ def SPDF(request):
    context = {
       'data':data
    }
-   pdf = render_to_pdf('admin/vbill.html',context)
+   pdf = render_to_pdf('admin/x.html',context)
    if pdf:
       response = HttpResponse(pdf,content_type='application/pdf')
       filename = "Bill123.pdf"
-      content = f"attachment; filename={filename}"
-    #   if download:
-    #     content = f"inline; filename={filename}"
+    #   content = f"attachment; filename={filename}"
+      content = f"inline; filename={filename}"
       response['Content-Disposition'] = content
       return response
    return HttpResponse("Not Found")
+
+def thtml(request):
+    return render(request,'admin/x.html')
 
 @login_required(login_url='Login')
 @csrf_exempt
@@ -2804,15 +2813,35 @@ def Link(request,name):
                 ld = list(ld)
                 return JsonResponse({'ld':ld,'mgs':mgs})
 
-def PageTest(request):
-        return render(request,'admin/test.html')
-
 @login_required(login_url='Login')
-def OutstandingReport(request):
+def OutstandingReport(request,name=None):
+    user=request.user
+    dt1 = ''
+    dt2 = ''
+    EndDate = ''
+    StartDate = ''
+    if request.method == 'POST':
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+    if name == 'Payable':
+        if StartDate != '' and  EndDate != '':
+            dt1 = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=user,Type='Purchase',status='1')
+            dt2 = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=user,Type='SalesReturn',status='1')
+        else:
+            dt1 = PurchaseEntryModel.objects.filter(user=user,Type='Purchase',status='1')
+            dt2 = SalesEntryModel.objects.filter(user=user,Type='SalesReturn',status='1')
+    elif name == 'Receivable':
+        if StartDate != '' and  EndDate != '':
+            dt1 = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=user,Type='PurchaseReturn',status='1')
+            dt2 = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=user,Type='Sales',status='1')
+        else:
+            dt1 = PurchaseEntryModel.objects.filter(user=user,Type='PurchaseReturn',status='1')
+            dt2 = SalesEntryModel.objects.filter(user=user,Type='Sales',status='1')
+    data={'dt1':dt1,'dt2':dt2,'StartDate':StartDate,'EndDate':EndDate}
     if is_admin(request.user):
-        return render(request,'admin/outstandingreport.html')
+        return render(request,'admin/outstandingreport.html',data)
     if is_user(request.user):
-        return render(request,'outstandingreport.html')
+        return render(request,'outstandingreport.html',data)
 
 @login_required(login_url='Login')
 def QuickPayment(request):
@@ -2896,22 +2925,245 @@ def QuickPaymentBill(request):
         return JsonResponse({'status':0})
 
 @login_required(login_url='Login')
-def QuickReceipt(request):
+def QPDetails(request,id):
+    dt = PendingAmountModel.objects.get(id=id)
+    PD = PartyModel.objects.get(PartyName=dt.PartyName)
+    data = {'dt':dt,'PD':PD}
     if is_admin(request.user):
-        return render(request,'admin/quickreceipt.html')
+        return render(request,'admin/qpdetails.html',data)
     if is_user(request.user):
-        return render(request,'quickreceipt.html')
+        return render(request,'qpdetails.html',data)
+
 
 @login_required(login_url='Login')
-def DebitNote(request):
+def QuickReceipt(request):
+    PAM = PendingAmountModel.objects.filter(user=request.user,Type='QuickReceipt')
+    data={'PAM':PAM}
+    if request.method == 'POST':
+        Date = request.POST.get('Date')
+        InvoiceNo = request.POST.get('InvoiceNo')
+        PartyName = request.POST.get('PartyName')
+        Id = request.POST.get('Id')
+        TypeofPayment = request.POST.get('TypeofPayment')
+        CeditedAmount = request.POST.get('CeditedAmount')
+        PayableAmount = request.POST.get('PayableAmount')
+        TransactionID = request.POST.get('TransactionID')
+        Description = request.POST.get('Description')
+        if eval(CeditedAmount) == eval(PayableAmount):
+            UAM=UserAmountModel.objects.get(user=request.user)
+            amount = eval(UAM.Amount) + eval(PayableAmount)
+            amount = "%.2f" % amount 
+            UAM.Amount = amount
+            UAM.save()
+            LR=LedgerReportModel.objects.create(user=request.user.username,PartyName=PartyName,Type='QuickReceipt',BiilNo=InvoiceNo,Debited='0',Cedited=PayableAmount,Balance=amount)
+            LR.save()
+            dt=SalesEntryModel.objects.get(id=Id)
+            dt.PendingAmount = '0'
+            dt.status = '0'
+            dt.save()
+            main = PendingAmountModel.objects.create(user=request.user.username,Type='QuickReceipt',Date=Date,PartyName=PartyName,Number=InvoiceNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+            main.save()
+            messages.success(request,'Quick Receipt Successfully.')
+            return redirect('/QuickReceipt')
+        elif eval(CeditedAmount) < eval(PayableAmount):
+            messages.success(request,'Payable Amount Is High To The Cedited Amount.')
+            return redirect('/QuickReceipt')
+        else:
+            UAM=UserAmountModel.objects.get(user=request.user)
+            amount = eval(UAM.Amount) + eval(PayableAmount)
+            amount = "%.2f" % amount 
+            UAM.Amount = amount
+            UAM.save()
+            LR=LedgerReportModel.objects.create(user=request.user.username,PartyName=PartyName,Type='QuickReceipt',BiilNo=InvoiceNo,Debited='0',Cedited=PayableAmount,Balance=amount)
+            LR.save()
+            dt=SalesEntryModel.objects.get(id=Id)
+            Pa = eval(CeditedAmount) - eval(PayableAmount)
+            dt.PendingAmount = "%.2f" % Pa 
+            dt.status = '1'
+            dt.save()
+            main = PendingAmountModel.objects.create(user=request.user.username,Type='QuickReceipt',Date=Date,PartyName=PartyName,Number=InvoiceNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+            main.save()
+            messages.success(request,'Quick Receipt Successfully.')
+            return redirect('/QuickReceipt')
     if is_admin(request.user):
-        return render(request,'admin/debitnote.html')
+        return render(request,'admin/quickreceipt.html',data)
     if is_user(request.user):
-        return render(request,'debitnote.html')
+        return render(request,'quickreceipt.html',data)
+
+@login_required(login_url='Login')
+@csrf_exempt
+def QuickReceiptInvoiceNo(request):
+    if request.method == 'POST':
+        InvoiceNo = request.POST.get('InvoiceNo')
+        try:
+            dt=SalesEntryModel.objects.get(user=request.user,Type='Sales',InvoiceNo=InvoiceNo,status='1')
+            PN = dt.PartyName
+            PA = dt.PendingAmount
+            Id = dt.id
+        except SalesEntryModel.DoesNotExist:
+            PN = ''
+            PA = ''
+            Id = ''
+        return JsonResponse({'status':1,'PN':PN,'PA':PA,'Id':Id})
+    else:
+        return JsonResponse({'status':0})
+    
+@login_required(login_url='Login')
+def DebitNote(request):
+    PAM = PendingAmountModel.objects.filter(user=request.user,Type='DebitNote')
+    data={'PAM':PAM}
+    if request.method == 'POST':
+        Date = request.POST.get('Date')
+        BillNo = request.POST.get('BillNo')
+        PartyName = request.POST.get('PartyName')
+        Id = request.POST.get('Id')
+        TypeofPayment = request.POST.get('TypeofPayment')
+        CeditedAmount = request.POST.get('CeditedAmount')
+        PayableAmount = request.POST.get('PayableAmount')
+        TransactionID = request.POST.get('TransactionID')
+        Description = request.POST.get('Description')
+        if eval(CeditedAmount) == eval(PayableAmount):
+            UAM=UserAmountModel.objects.get(user=request.user)
+            amount = eval(UAM.Amount) + eval(PayableAmount)
+            amount = "%.2f" % amount 
+            UAM.Amount = amount
+            UAM.save()
+            LR=LedgerReportModel.objects.create(user=request.user.username,PartyName=PartyName,Type='DebitNote',BiilNo=BillNo,Debited='0',Cedited=PayableAmount,Balance=amount)
+            LR.save()
+            dt=PurchaseEntryModel.objects.get(id=Id)
+            dt.PendingAmount = '0'
+            dt.status = '0'
+            dt.save()
+            main = PendingAmountModel.objects.create(user=request.user.username,Type='DebitNote',Date=Date,PartyName=PartyName,Number=BillNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+            main.save()
+            messages.success(request,'Debit Note Successfully.')
+            return redirect('/DebitNote')
+        elif eval(CeditedAmount) < eval(PayableAmount):
+            messages.success(request,'Payable Amount Is High To The Cedited Amount.')
+            return redirect('/DebitNote')
+        else:
+            UAM=UserAmountModel.objects.get(user=request.user)
+            amount = eval(UAM.Amount) + eval(PayableAmount)
+            amount = "%.2f" % amount 
+            UAM.Amount = amount
+            UAM.save()
+            LR=LedgerReportModel.objects.create(user=request.user.username,PartyName=PartyName,Type='DebitNote',BiilNo=BillNo,Debited='0',Cedited=PayableAmount,Balance=amount)
+            LR.save()
+            dt=PurchaseEntryModel.objects.get(id=Id)
+            Pa = eval(CeditedAmount) - eval(PayableAmount)
+            dt.PendingAmount = "%.2f" % Pa 
+            dt.status = '1'
+            dt.save()
+            main = PendingAmountModel.objects.create(user=request.user.username,Type='DebitNote',Date=Date,PartyName=PartyName,Number=BillNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+            main.save()
+            messages.success(request,'Debit Note Successfully.')
+            return redirect('/DebitNote')
+    if is_admin(request.user):
+        return render(request,'admin/debitnote.html',data)
+    if is_user(request.user):
+        return render(request,'debitnote.html',data)
+
+@login_required(login_url='Login')
+@csrf_exempt
+def DebitNoteBill(request):
+    if request.method == 'POST':
+        BillNo = request.POST.get('BillNo')
+        try:
+            dt=PurchaseEntryModel.objects.get(user=request.user,Type='PurchaseReturn',BillNo=BillNo,status='1')
+            PN = dt.PartyName
+            PA = dt.PendingAmount
+            Id = dt.id
+        except PurchaseEntryModel.DoesNotExist:
+            PN = ''
+            PA = ''
+            Id = ''
+        return JsonResponse({'status':1,'PN':PN,'PA':PA,'Id':Id})
+    else:
+        return JsonResponse({'status':0})
 
 @login_required(login_url='Login')
 def CreditNote(request):
+    PAM = PendingAmountModel.objects.filter(user=request.user,Type='CreditNote')
+    data={'PAM':PAM}
+    if request.method == 'POST':
+        Date = request.POST.get('Date')
+        InvoiceNo = request.POST.get('InvoiceNo')
+        PartyName = request.POST.get('PartyName')
+        Id = request.POST.get('Id')
+        TypeofPayment = request.POST.get('TypeofPayment')
+        CeditedAmount = request.POST.get('CeditedAmount')
+        PayableAmount = request.POST.get('PayableAmount')
+        TransactionID = request.POST.get('TransactionID')
+        Description = request.POST.get('Description')
+        if eval(CeditedAmount) == eval(PayableAmount):
+            UAM=UserAmountModel.objects.get(user=request.user)
+            if eval(UAM.Amount) >= eval(PayableAmount):
+                amount = eval(UAM.Amount) - eval(PayableAmount)
+                amount = "%.2f" % amount 
+                UAM.Amount = amount
+                UAM.save()
+                LR=LedgerReportModel.objects.create(user=request.user.username,PartyName=PartyName,Type='CreditNote',BiilNo=InvoiceNo,Debited=PayableAmount,Cedited='0',Balance=amount)
+                LR.save()
+                dt=SalesEntryModel.objects.get(id=Id)
+                dt.PendingAmount = '0'
+                dt.status = '0'
+                dt.save()
+                main = PendingAmountModel.objects.create(user=request.user.username,Type='CreditNote',Date=Date,PartyName=PartyName,Number=InvoiceNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+                main.save()
+                messages.success(request,'Credit Note Successfully.')
+                return redirect('/CreditNote')
+            else:
+                messages.success(request,'You Have Not Sufficient Balance.')
+                return redirect('/CreditNote')
+        elif eval(CeditedAmount) < eval(PayableAmount):
+            messages.success(request,'Payable Amount Is High To The Cedited Amount.')
+            return redirect('/CreditNote')
+        else:
+            UAM=UserAmountModel.objects.get(user=request.user)
+            if eval(UAM.Amount) >= eval(PayableAmount):
+                amount = eval(UAM.Amount) - eval(PayableAmount)
+                amount = "%.2f" % amount 
+                UAM.Amount = amount
+                UAM.save()
+                LR=LedgerReportModel.objects.create(user=request.user.username,PartyName=PartyName,Type='CreditNote',BiilNo=InvoiceNo,Debited=PayableAmount,Cedited='0',Balance=amount)
+                LR.save()
+                dt=SalesEntryModel.objects.get(id=Id)
+                Pa = eval(CeditedAmount) - eval(PayableAmount)
+                dt.PendingAmount = "%.2f" % Pa 
+                dt.status = '1'
+                dt.save()
+                main = PendingAmountModel.objects.create(user=request.user.username,Type='CreditNote',Date=Date,PartyName=PartyName,Number=InvoiceNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+                main.save()
+                messages.success(request,'Credit Note Successfully.')
+                return redirect('/CreditNote')
+            else:
+                messages.success(request,'You Have Not Sufficient Balance.')
+                return redirect('/CreditNote')
     if is_admin(request.user):
-        return render(request,'admin/creditnote.html')
+        return render(request,'admin/creditnote.html',data)
     if is_user(request.user):
-        return render(request,'creditnote.html')
+        return render(request,'creditnote.html',data)
+
+@login_required(login_url='Login')
+@csrf_exempt
+def CreditNoteInvoiceNo(request):
+    if request.method == 'POST':
+        InvoiceNo = request.POST.get('InvoiceNo')
+        try:
+            dt=SalesEntryModel.objects.get(user=request.user,Type='SalesReturn',InvoiceNo=InvoiceNo,status='1')
+            PN = dt.PartyName
+            PA = dt.PendingAmount
+            Id = dt.id
+        except SalesEntryModel.DoesNotExist:
+            PN = ''
+            PA = ''
+            Id = ''
+        return JsonResponse({'status':1,'PN':PN,'PA':PA,'Id':Id})
+    else:
+        return JsonResponse({'status':0})
+
+@login_required(login_url='Login')
+def Barcode(request,pid):
+    data = StockModel.objects.filter(user=request.user,ProductId=pid)
+    data={'data':data}
+    return render(request,'admin/x.html',data)

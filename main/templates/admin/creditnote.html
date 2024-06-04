@@ -3,6 +3,16 @@
 {% block content %}
 <div class="body-wrapper">
   <div class="container-fluid">
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-11 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{message}}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
     <div class="card card-body py-3">
       <div class="row align-items-center">
         <div class="col-12">
@@ -49,23 +59,23 @@
                   <th>Payable Amount</th>
                   <th>Transaction ID</th>
                   <th>Description</th>
+                  <th></th>
                 </tr>
                 <!-- end row -->
               </thead>
               <tbody>
-                {% for i in sales %}
+                {% for i in PAM %}
                 <tr>
-                  <td>{{i.date}}</td>
+                  <td>{{i.Date}}</td>
+                  <td>{{i.Number}}</td>
                   <td>{{i.PartyName}}</td>
-                  <td>{{i.InvoiceNo}}</td>
-                  <td>{{i.TypeOfBusiness}}</td>
-                  <td>{{i.DeliveryTime}}</td>
-                  <td>{{i.DeliveryBoyName}}</td>
-                  <td>{{i.Amount}}</td>
-                  <td>{{i.Amount}}</td>
-                  <td>
-                    <a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a><a class="btn btn-success mr-3" href="/EditSales/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-pencil'></i></a><a href="DeleteSales/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger"><i class='ti ti-trash'></i></a>
-                  </td>
+                  <td>{{i.TypeofPayment}}</td>
+                  <td>{{i.CeditedAmount}}</td>
+                  <td>{{i.PayableAmount}}</td>
+                  <td>{{i.TransactionID}}</td>
+                  <td>{{i.Description}}</td>
+                  <td><a class="btn btn-warning mr-3" href="/Details/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></td>
+
                 </tr>
                 {% endfor %}
               </tbody>
@@ -80,6 +90,7 @@
 <div class="modal fade" id="CreditNote" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
     <form class="modal-content" id="CreditNoteF" method="post">
+      {% csrf_token %}
       <div class="modal-header d-flex align-items-center">
         <h5 class="modal-title" id="myLargeModalLabel">Credit Note</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -94,15 +105,15 @@
           </div>
           <div class="col-md-3">
             <div class="mb-4">
-              <label for="exampleInputBillno" class="form-label">Bill No</label>
-              <input type="text" class="form-control " id="exampleInputBillno" name="BillNo" placeholder="Bill No" required>
+              <label for="exampleInputBillno" class="form-label">Invoice No.</label>
+              <input type="text" class="form-control" id="InvoiceNo" name="InvoiceNo" placeholder="Invoice No" required>
             </div>
           </div>
           <div class="col-md-6">
             <div class="mb-4">
               <label for="" class="form-label">Party Name</label>
-              <input type="text" class="form-control" id="PartyName" name="PartyName"
-                placeholder="Party Name" required>
+              <input type="text" class="form-control" id="PartyName" name="PartyName" placeholder="Party Name" readonly>
+              <input type="hidden" id="Id" name="Id">
             </div>
           </div>
           <div class="col-md-3">
@@ -121,7 +132,7 @@
             <div class="mb-4">
               <label class="form-label">Cedited Amount</label>
               <input type="text" class="form-control" id="CeditedAmount" name="CeditedAmount"
-                placeholder="Cedited Amount" disabled>
+                placeholder="Cedited Amount" readonly>
             </div>
           </div>
           <div class="col-md-3">
@@ -161,6 +172,28 @@
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
   DF = new Date()
-document.getElementById("Date").value = DF.toJSON().slice(0, 10);
+  document.getElementById("Date").value = DF.toJSON().slice(0, 10);
+  var $BillNo = $('#InvoiceNo');
+
+  $BillNo.on("keydown keyup", function () {
+    InvoiceNo = $BillNo.val()
+    mydata = { InvoiceNo: InvoiceNo }
+    $.ajax({
+      type: "POST",
+      url: '/CreditNoteInvoiceNo',
+      data: mydata,
+      success: function (resp) {
+        var $PartyName = $('#PartyName');
+        $PartyName.val(resp.PN);
+        var $Id = $('#Id');
+        $Id.val(resp.Id);
+        var $CeditedAmount = $('#CeditedAmount');
+        $CeditedAmount.val(resp.PA);
+      },
+      error: function (resp) {
+        console.log('Something went wrong');
+      }
+    });
+  });
 </script>
 {% endblock script %}

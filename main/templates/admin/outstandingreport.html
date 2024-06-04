@@ -25,8 +25,8 @@
               </div>
             </div>
             <div class="col-md-2 d-flex align-items-center">
-                <button class="btn btn-primary" formaction="OutstandingReport/Payable">Payable</button>
-                <button class="btn btn-primary ms-2" formaction="OutstandingReport/Receivable">Receivable</button>
+                <button class="btn btn-primary" formaction="/OutstandingReport/Payable">Payable</button>
+                <button class="btn btn-primary ms-2" formaction="/OutstandingReport/Receivable">Receivable</button>
             </div>
           </div>
         </form>
@@ -38,25 +38,33 @@
                 <!-- start row -->
                 <tr>
                   <th class="p-2">Date</th>
+                  <th class="p-2">Bill No. / Invoice No.</th>
                   <th class="p-2">Party Name</th>
                   <th class="p-2">Type</th>
-                  <th class="p-2">Bill</th>
-                  <th class="p-2">Debited</th>
-                  <th class="p-2">Cedited</th>
-                  <th class="p-2">Balance</th>
+                  <th class="p-2">Pending Amount</th>
+                  <th class="p-2">Total Bill Amount</th>
                 </tr>
                 <!-- end row -->
               </thead>
               <tbody id="tbody">
-                {% for i in Lr %}
+                {% for i in dt1 %}
                 <tr>
                   <td class="p-2">{{i.Date}}</td>
+                  <td class="p-2">{{i.BillNo}}</td>
                   <td class="p-2">{{i.PartyName}}</td>
                   <td class="p-2">{{i.Type}}</td>
-                  <td class="p-2">{{i.BiilNo}}</td>
-                  <td class="p-2">{{i.Debited}}</td>
-                  <td class="p-2">{{i.Cedited}}</td>
-                  <td class="p-2">{{i.Balance}}</td>
+                  <td class="p-2">{{i.PendingAmount}}</td>
+                  <td class="p-2">{{i.Amount}}</td>
+                </tr>
+                {% endfor %}
+                {% for i in dt2 %}
+                <tr>
+                  <td class="p-2">{{i.Date}}</td>
+                  <td class="p-2">{{i.InvoiceNo}}</td>
+                  <td class="p-2">{{i.PartyName}}</td>
+                  <td class="p-2">{{i.Type}}</td>
+                  <td class="p-2">{{i.PendingAmount}}</td>
+                  <td class="p-2">{{i.Amount}}</td>
                 </tr>
                 {% endfor %}
               </tbody>

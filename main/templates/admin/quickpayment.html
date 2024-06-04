@@ -59,6 +59,7 @@
                   <th>Payable Amount</th>
                   <th>Transaction ID</th>
                   <th>Description</th>
+                  <th></th>
                 </tr>
                 <!-- end row -->
               </thead>
@@ -73,6 +74,7 @@
                   <td>{{i.PayableAmount}}</td>
                   <td>{{i.TransactionID}}</td>
                   <td>{{i.Description}}</td>
+                  <td><a class="btn btn-warning mr-3" href="/Details/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></td>
                 </tr>
                 {% endfor %}
               </tbody>

@@ -417,7 +417,7 @@
   var $BillNo = $('#Barcode');
   function calcVal() {
   var bon = $BillNo.val()
-  if (bon.length == 24){
+  if (bon.length == 12){
     $.ajax({
         url: '/Stockswork/' + bon + '/Sales',
         type: 'GET',

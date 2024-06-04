@@ -1,6 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
+import barcode
+from barcode.writer import ImageWriter
+from io import BytesIO
+from django.core.files import File
+from django.utils.timezone import now
 
 class UserDetails(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
@@ -80,6 +85,7 @@ class BiilNoModel(models.Model):
 
 class StockModel(models.Model):
     ProductId = models.CharField(max_length=100,null=True,blank=True)
+    PID = models.CharField(max_length=100,null=True,blank=True)
     user = models.CharField(max_length=100,null=True, blank=True)
     type = models.CharField(max_length=100,null=True, blank=True)
     ProductName = models.CharField(max_length=100,null=True, blank=True)
@@ -91,9 +97,27 @@ class StockModel(models.Model):
     MinQty = models.CharField(max_length=100,blank=True)
     MaxQty = models.CharField(max_length=100,blank=True)
     BarcodeNo = models.CharField(max_length=100,blank=True)
+    # BarcodeImg = models.ImageField(upload_to='Barcode/', blank=True)
+    BarcodeImg = models.FileField(upload_to='Barcode/', blank=True)
     Quantity = models.CharField(max_length=100,blank=True)
     Amount = models.CharField(max_length=100,null=True, blank=True)
     sid = models.CharField(max_length=100,null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+            # EAN = barcode.get_barcode_class('code39')
+            year = now().year
+            PId = int(self.PID)
+            BCN = f'{year}FHOH{PId:04d}'
+            # ean = EAN(f'{year}FHOH{PId:04d}', writer=ImageWriter())
+            # buffer = BytesIO()
+            # ean.write(buffer)
+            self.BarcodeNo= BCN
+            # self.BarcodeImg.save(f'{BCN}.png',buffer,save=False)
+            return super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        self.BarcodeImg.delete()
+        super().delete(*args, **kwargs)
 
 class PurchaseEntryModel(models.Model):
     user = models.CharField(max_length=100,null=True, blank=True)
