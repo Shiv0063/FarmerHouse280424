@@ -2466,7 +2466,7 @@ def StockReport(request):
     
 @login_required(login_url='Login')
 def ProductsDetails(request,name):
-    stock = MainStockModel.objects.filter(user=request.user,ProductName=name,out='0')
+    stock = MainStockModel.objects.filter(user=request.user,ProductName=name)
     Quantity = 0
     Amount = 0
     for i in stock:
