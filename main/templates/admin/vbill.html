@@ -1,241 +1,217 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Tax Invoice</title>
-		<style>
-			table{
-				border: 1px silid black;
-				border-collapse: collapse;
-			}
-			tr,td{
-				border: 1px silid black;
-			}
-		</style>
-	</head>
-	<body style="padding: 0px 100px;">
-		<h2 style="text-align: center;">Tax Invoice</h2>
-		<table border="2" width="100%">
-			<tr>
-				<td colspan="4" rowspan="4" width="50%">
-					<h2>SHYAM SALES AGENCY</h2>
-					<p>Ankolwadi Gir <br>
-						Mandorana Road <br>
-						Ta-Talala Gir <br>
-						Dist-Gir Somnath-362150 <br>
-						GSTIN/UIN: 24BCFPS2469K1Z7 <br>
-						State Name : Gujarat, Code : 24</p>
-				</td>
-				<td colspan="2" width="25%">
-					<div style="display: flex;justify-content: space-between;">
-						<p>Invoice No.</p><p> e-Way Bill No.</p>
-					</div>
-					<div style="display: flex;justify-content: space-between;">
-						<b>16</b> <b>6417 2458 1822</b>
-					</div>
-				</td>
-				<td colspan="2" width="25%">
-					<p>Dated</p>
-					<p><b>13-May-24</b></p>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" width="25%">
-					<p>Delivery Note</p>
-				</td>
-				<td colspan="2" width="25%">
-					<p>Mode/Terms of Payment</p>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" width="25%">
-					<p>Reference No. &amp; Date.</p>
-				</td>
-				<td colspan="2" width="25%">
-					<p>Other References</p>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" width="25%">
-					<p>Buyer’s Order No.</p>
-				</td>
-				<td colspan="2" width="25%">
-					<p>Dated</p>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="4" rowspan="4" width="50%">
-					<h2>SHYAM SALES AGENCY</h2>
-					<p>Ankolwadi Gir <br>
-						Mandorana Road <br>
-						Ta-Talala Gir <br>
-						Dist-Gir Somnath-362150 <br>
-						GSTIN/UIN: 24BCFPS2469K1Z7 <br>
-						State Name : Gujarat, Code : 24</p>
-				</td>
-				<td colspan="2" width="25%">
-					<p>Dispatch Doc No.</p>
-				</td>
-				<td colspan="2" width="25%">
-					<p>Delivery Note Date</p>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" width="25%">
-					<p>Dispatched through</p>
-				</td>
-				<td colspan="2" width="25%">
-					<p>Destination</p>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="4" style="border-bottom: none;">
-					Terms of Delivery
-				</td>
-			</tr>
-			<tr>
-				<td colspan="4" style="border: none;">
 
-				</td>
-			</tr>
-			<tr>
-				<td colspan="4">
-					<h2>SHYAM SALES AGENCY</h2>
-					<p>Ankolwadi Gir <br>
-						Mandorana Road <br>
-						Ta-Talala Gir <br>
-						Dist-Gir Somnath-362150 <br>
-						GSTIN/UIN: 24BCFPS2469K1Z7 <br>
-						State Name : Gujarat, Code : 24</p>
-				</td>
-			</tr>
-			<tr>
-				<td width="10%">Sl No.</td>
-				<td width="30%">Description of Goods </td>
-				<td width="10%">HSN/SAC </td>
-				<td width="10%">GST <br> Rate</td>
-				<td width="10%">Quantity</td>
-				<td width="10%">Rate</td>
-				<td width="10%">per</td>
-				<td width="10%">Amount</td>
-			</tr>
-			<tr>
-				<td width="10%" style="border-bottom:none;">1</td>
-				<td width="30%" style="border-bottom:none;"><h3>ACC Cement Opc 53 Grade </h3></td>
-				<td width="10%" style="border-bottom:none;">2523</td>
-				<td width="10%" style="border-bottom:none;">28 %</td>
-				<td width="10%" style="border-bottom:none;"><h3>500 bag</h3></td>
-				<td width="10%" style="border-bottom:none;">312.50</td>
-				<td width="10%" style="border-bottom:none;">bag</td>
-				<td width="10%" style="border-bottom:none;"><h3>1,56,250.00</h3></td>
-			</tr>
-			<tr>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="30%" style="border-top:none;border-bottom:none;"><h3 style="text-align: end;">SGST</h3></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"><h3></h3></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"><h3>1,56,250.00</h3></td>
-			</tr>
-			<tr>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="30%" style="border-top:none;border-bottom:none;"><h3 style="text-align: end;">CGST</h3></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"><h3></h3></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"></td>
-				<td width="10%" style="border-top:none;border-bottom:none;"><h3>1,56,250.00</h3></td>
-			</tr>
-			<tr>
-				<td width="10%"></td>
-				<td width="30%">Total</td>
-				<td width="10%"></td>
-				<td width="10%"></td>
-				<td width="10%"><h3>500 bag</h3></td>
-				<td width="10%"></td>
-				<td width="10%"></td>
-				<td width="10%"><h3>1,56,250.00</h3></td>
-			</tr>
-			<tr>
-				<td colspan="8">
-					<div style="display: flex;justify-content: space-between;">
-						<p>Amount Chargeable (in words) </p>
-						<p>E. &amp; O.E</p>
-					</div>
-					<div>
-						<h3>INR Two Lakh Only</h3>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td rowspan="2" colspan="2">
-					<p style="text-align: center">HSN/SAC </p>
-				</td>
-				<td rowspan="2">
-					<p style="text-align: center;">
-						Taxable <br> Value
-					</p>
-				</td>
-				<td colspan="2">
-					<p>CGST</p>
-				</td>
-				<td colspan="2">
-					<p>SGST/UTGST</p>
-				</td>
-				<td rowspan="2">
-					<p style="text-align: center;">
-						Total <br> Tax Amount
-					</p>
-				</td>
-			</tr>
-			<tr>
-				<td>Rate</td>
-				<td>Amount</td>
-				<td>Rate</td>
-				<td>Amount</td>
-			</tr>
-			<tr>
-				<td colspan="2">2523</td>
-				<td>1,56,250.00</td>
-				<td>14%</td>
-				<td>21,875.00</td>
-				<td>14%</td>
-				<td>21,875.00</td>
-				<td>43,750.00</td>
-			</tr>
-			<tr>
-				<td colspan="2"><h3 style="text-align: end;">Total</h3></td>
-				<td><h3>1,56,250.00</h3></td>
-				<td></td>
-				<td><h3>21,875.00</h3></td>
-				<td></td>
-				<td><h3>21,875.00</h3></td>
-				<td><h3>43,750.00</h3></td>
-			</tr>
-			<tr>
-				<td colspan="8" style="border: none;">
-					<p>Tax Amount (in words) : <b>INR Forty Three Thousand Seven Hundred Fifty Only</b></p>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="4" style="border: none;">
-					<span style="border-bottom: 1px solid black;">Declaration</span>
-					<p>
-						We declare that this invoice shows the actual price of
-						the goods described and that all particulars are true
-						and correct.
-					</p>
-				</td>
-				<td colspan="4">
-				<h3 style="text-align: end">for SHYAM SALES AGENCY</h3>
-				<p style="text-align: end;margin-top: 50px;">Authorised Signatory</p>
-				</td>
-			</tr>
-		</table>
-		<p style="text-align:center">This is a Computer Generated Invoice</p>
-	</body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer House </title>
+    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+    <style>
+        #Ned12>.col-6 {
+            margin: 0px;
+            padding: 3px;
+            height: 50px;
+        }
+        .ddt{
+            height: 180px;
+        }
+        tr {
+            border-right: 2px solid black !important;
+            border-left: 2px solid black !important;
+        }
+
+        th {
+            border: 2px solid black !important;
+        }
+
+        tfoot>tr>td {
+            border: 2px solid black !important;
+        }
+
+        @media print {
+
+            #btn {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center mt-2">
+            <div class="col-11">
+                <div class="text-black mt-2 w-100">
+                    <div class="text-center mt-2 mb-2">
+                        <center>
+							<img src="http://127.0.0.1:8000/static/assets/images/logos/logo.png" width="100px">
+						</center>
+                    </div>
+                    <div class="row ">
+                        <div class="col-6 border border-black text-black">
+                            <div class="row">
+                                <div class="col-12 border border-black ddt">
+                                    <b>FARMER HOUSE</b><br>
+                                    SF Shop No. 207, Applewood City Mall, Nr. Madhuram Bus Stop, Opp. Nagarik Bank, Junagadh.<br>
+                                    Ta-Junagadh <br>
+                                    Gir Dist-Gir <br>
+                                    GSTIN/UIN: 24BLJPR6405D1Z8 <br>
+                                    State Name : Gujarat, Code : 24 <br>
+                                    Email : support@farmerhouseapp.com
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 border border-black text-black">
+                            <div class="row" id="Ned12">
+								<div class="col-12 border border-black ddt">
+                                    <b>{{PD.PartyName}}</b><br>
+                                    <div class="w-50">
+										{{PD.Address}}
+                                    </div>
+									City Name : {{PD.City}} <br>
+                                    GSTIN/UIN: {{PD.GSTNo}}<br>
+                                    State Name : Gujarat, Code : 24 <br>
+									Contact No. : {{PD.Number}} <br>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="col-12 border border-black text-black">
+                            <thead>
+                                <tr>
+									<th>Date</th>
+									<th>Bill No.</th>
+									<th>Type of Payment</th>
+									<th>Cedited Amount</th>
+									<th>Payable Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+									<td><b>{{dt.Date}}</b></td>
+									<td>{{dt.Number}}</td>
+									<td>{{dt.TypeofPayment}}</td>
+									<td>{{dt.CeditedAmount}}</td>
+									<td><b>{{dt.PayableAmount}}</b></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="8">
+                                        <div class="text-start">Amount Chargeable (in words) <br><b id="wrod" style="text-transform: capitalize"></b></div>
+                                    </td>
+                                </tr>
+								<tr>
+                                    <td colspan="8">
+                                        <div class="text-start"><b>Transaction ID </b>: {{dt.TransactionID}}<br>
+											<b>Description</b> : {{dt.Description}}</div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+							 <table>
+                                <thead>
+                                    <tr>
+                                        <td>
+                                            <u>Declaration</u>
+                                            <div class="w-50">
+                                                We declare that this invoice shows the actual price of
+                                                the goods described and that all particulars are true
+                                                and correct.
+                                            </div>
+                                        </td>
+                                        <!-- <th class="text-end" colspan="4"><b>for SHYAM SALES AGENCY</b></th> -->
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2" class="text-end"><b
+                                                style="margin-right: 12px !important;">Authorised Signatory <br><br></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-end" style="border-bottom: 2px solid #000 !important;"><b></b>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-3 mb-3" id="btn">
+            <a class="col-1 btn btn-success me-2" onclick="window.print()">Print</a>
+            <a class="col-1 btn btn-danger me-3" onclick="window.history.go(-1);">
+                Cancel
+            </a>
+        </div>
+    </div>
+</body>
+<script>
+    num = 0;
+    function Print() {
+        if (num == 0) {
+            window.print();
+        }
+        num = 1;
+    }
+    setInterval(Print, 500);
+    function convertToIndianWords(amount) {
+        const units = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+        const teens = ['eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+        const tens = ['', 'ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+        const scales = ['', 'thousand', 'lakh', 'crore'];
+
+        function convertToWordsLessThanThousand(n) {
+            if (n < 10) {
+                return units[n];
+            } else if (n < 20) {
+                return teens[n - 11];
+            } else if (n < 100) {
+                return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + units[n % 10] : '');
+            } else {
+                return units[Math.floor(n / 100)] + ' hundred' + (n % 100 !== 0 ? ' and ' + convertToWordsLessThanThousand(n % 100) : '');
+            }
+        }
+
+        function convertAmountToWords(amount) {
+            let wholePart = Math.floor(amount);
+            const decimalPart = Math.round((amount - wholePart) * 100); // considering up to two decimal places
+
+            const wholeWords = convertToWordsLessThanThousand(wholePart);
+            const decimalWords = decimalPart > 0 ? 'and ' + convertToWordsLessThanThousand(decimalPart) + ' paise' : '';
+
+            if (wholeWords === 'zero') {
+                return 'zero rupees only';
+            }
+
+            const words = [];
+            let scaleIndex = 0;
+
+            while (wholePart > 0) {
+                const chunk = wholePart % 1000;
+                if (chunk !== 0) {
+                    words.unshift(convertToWordsLessThanThousand(chunk) + ' ' + scales[scaleIndex]);
+                }
+                wholePart = Math.floor(wholePart / 1000);
+                scaleIndex++;
+            }
+
+            return words.join(' ') + ' rupees ' + decimalWords + ' only';
+        }
+
+        return convertAmountToWords(amount);
+    }
+
+    // Example usage:
+    const amount = {{dt.PayableAmount}};
+    const amountInWords = convertToIndianWords(amount);
+    var tamount2 = document.getElementById("wrod");
+      tamount2.innerText = amountInWords;
+
+</script>
+
 </html>

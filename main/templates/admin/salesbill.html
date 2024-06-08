@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer House </title>
+    <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+    <style>
+        #Ned12>.col-6 {
+            margin: 0px;
+            padding: 3px;
+            height: 50px;
+        }
+        .ddt{
+            height: 180px;
+        }
+        tr {
+            border-right: 2px solid black !important;
+            border-left: 2px solid black !important;
+        }
+
+        th {
+            border: 2px solid black !important;
+        }
+
+        tfoot>tr>td {
+            border: 2px solid black !important;
+        }
+
+        @media print {
+
+            #btn {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center mt-2">
+            <div class="col-11">
+                <div class="text-black mt-2 w-100">
+                    <div class="text-center">
+                        <h5>Farmer House</h5>
+                    </div>
+                    <div class="row ">
+                        <div class="col-6 border border-black text-black">
+                            <div class="row">
+                                <div class="col-12 border border-black ddt">
+                                    <b>FARMER HOUSE</b><br>
+                                    SF Shop No. 207, Applewood City Mall, Nr. Madhuram Bus Stop, Opp. Nagarik Bank, Junagadh.<br>
+                                    Ta-Junagadh <br>
+                                    Gir Dist-Gir <br>
+                                    GSTIN/UIN: 24BLJPR6405D1Z8 <br>
+                                    State Name : Gujarat, Code : 24 <br>
+                                    Email : support@farmerhouseapp.com
+                                </div>
+                                <div class="col-12 border border-black ddt">
+                                    <b>{{data.PartyName}}</b><br>
+                                    <div class="w-50">
+                                        {{party.Address}}
+                                    </div>
+                                    GSTIN/UIN: {{party.GSTNo}} <br>
+                                    City Name : {{party.City}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6 border border-black text-black">
+                            <div class="row" id="Ned12">
+                                <div class="col-6 border border-black">Invoice No. <br><b>{{data.InvoiceNo}}</b></div>
+                                <div class="col-6 border border-black">Dated <br><b>{{data.date}}</b></div>
+                                <div class="col-6 border border-black">Delivery Note</div>
+                                <div class="col-6 border border-black">Mode/Terms of Payment</div>
+                                <div class="col-6 border border-black">Reference No. & Date.</div>
+                                <div class="col-6 border border-black">Other References</div>
+                                <div class="col-6 border border-black">Order No. <br><b>{{data.OrderNo}}</b></div>
+                                <div class="col-6 border border-black">Dated</div>
+                                <div class="col-6 border border-black">Dispatch Doc No.</div>
+                                <div class="col-6 border border-black">Delivery Note Date</div>
+                                <div class="col-6 border border-black">Dispatched through</div>
+                                <div class="col-6 border border-black">Destination</div>
+                                <div class="col-12 border-top border-black">Terms of Delivery</div>
+                            </div>
+                        </div>
+                        <table class="col-12 border border-black text-black">
+                            <thead>
+                                <tr>
+                                    <th>Sl No</th>
+                                    <th>Description of Goods</th>
+                                    <th>HSN/SAC</th>
+                                    <th>GST</th>
+                                    <th>Quantity</th>
+                                    <th>Rate</th>
+                                    <th>per</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in stock %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{i.ProductName}}</td>
+                                    <td>{% for j in product %}{%if i.ProductName == j.ProductName %}{{j.HSNCode}} {% endif %}{% endfor %}</td>
+                                    <td>{% for j in product %}{%if i.ProductName == j.ProductName %}{% if j.Tax != 'TaxFree' %}{{j.Tax}} % {%else%} 0 % {% endif %}{% endif %}{% endfor %}</td>
+                                    <td>{{i.Quantity}}</td>
+                                    <td>{{i.IncSalesPrice}}</td>
+                                    <td>{% for j in product %}{%if i.ProductName == j.ProductName %}{{j.Unit}} {% endif %}{% endfor %}</td>
+                                    <td class="text-end">{{i.TotalSales}}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td></td>
+                                    <td class="text-end"><b>{% if Charges %}Charges :{% endif %}</b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                {% for i in Charges %}
+                                <tr>
+                                    <td></td>
+                                    <td class="text-end">{{i.Charges}}</td>
+                                    <td></td>
+                                    <td>{% if i.Tax == '' or i.Tax == 'TaxFree' %} 0 %{% else%}{{i.Tax}} %{% endif %}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-end">{{i.TotalAmount}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td>Total</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>{{quantity}}</td>
+                                    <td>{{IncSalesPrice}}</td>
+                                    <td></td>
+                                    <td>{{tamonut}}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8">
+                                        <div class="text-start">Amount Chargeable (in words) <br><b id="wrod" style="text-transform: capitalize"></b></div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                            <!-- <table>
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">HSN/SAC</th>
+                                        <th rowspan="2">Taxable Value</th>
+                                        <th colspan="2">CGST</th>
+                                        <th colspan="2">SGST/UTGST</th>
+                                        <th rowspan="2">Total Tax Amount</th>
+                                    </tr>
+                                    <tr>
+                                        <th>Rate</th>
+                                        <th>Amount</th>
+                                        <th>Rate</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                    <tr>
+                                        <th>2523</th>
+                                        <th>1,56,250.00</th>
+                                        <th>14%</th>
+                                        <th>21,875.00</th>
+                                        <th>14%</th>
+                                        <th>21,875.00</th>
+                                        <th>43,750.00</th>
+                                    </tr>
+                                    <tr>
+                                        <th><b>Total</b></th>
+                                        <th>1,56,250.00</th>
+                                        <th></th>
+                                        <th>21,875.00</th>
+                                        <th></th>
+                                        <th>21,875.00</th>
+                                        <th>43,750.00</th>
+                                    </tr>
+                                </thead>
+                            </table> -->
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <td>
+                                            <u>Declaration</u>
+                                            <div class="w-50">
+                                                We declare that this invoice shows the actual price of
+                                                the goods described and that all particulars are true
+                                                and correct.
+                                            </div>
+                                        </td>
+                                        <!-- <th class="text-end" colspan="4"><b>for SHYAM SALES AGENCY</b></th> -->
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2" class="text-end"><b
+                                                style="margin-right: 12px !important;">Authorised Signatory <br><br></b>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-end" style="border-bottom: 2px solid #000 !important;"><b></b>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-3 mb-3" id="btn">
+            <a class="col-1 btn btn-success me-2" onclick="window.print()">Print</a>
+            <a class="col-1 btn btn-danger me-3" onclick="window.history.go(-1);">
+                Cancel
+            </a>
+        </div>
+    </div>
+</body>
+<script>
+    num = 0;
+    function Print() {
+        if (num == 0) {
+            window.print();
+        }
+        num = 1;
+    }
+    setInterval(Print, 500);
+    function convertToIndianWords(amount) {
+        const units = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+        const teens = ['eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+        const tens = ['', 'ten', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+        const scales = ['', 'thousand', 'lakh', 'crore'];
+
+        function convertToWordsLessThanThousand(n) {
+            if (n < 10) {
+                return units[n];
+            } else if (n < 20) {
+                return teens[n - 11];
+            } else if (n < 100) {
+                return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + units[n % 10] : '');
+            } else {
+                return units[Math.floor(n / 100)] + ' hundred' + (n % 100 !== 0 ? ' and ' + convertToWordsLessThanThousand(n % 100) : '');
+            }
+        }
+
+        function convertAmountToWords(amount) {
+            let wholePart = Math.floor(amount);
+            const decimalPart = Math.round((amount - wholePart) * 100); // considering up to two decimal places
+
+            const wholeWords = convertToWordsLessThanThousand(wholePart);
+            const decimalWords = decimalPart > 0 ? 'and ' + convertToWordsLessThanThousand(decimalPart) + ' paise' : '';
+
+            if (wholeWords === 'zero') {
+                return 'zero rupees only';
+            }
+
+            const words = [];
+            let scaleIndex = 0;
+
+            while (wholePart > 0) {
+                const chunk = wholePart % 1000;
+                if (chunk !== 0) {
+                    words.unshift(convertToWordsLessThanThousand(chunk) + ' ' + scales[scaleIndex]);
+                }
+                wholePart = Math.floor(wholePart / 1000);
+                scaleIndex++;
+            }
+
+            return words.join(' ') + ' rupees ' + decimalWords + ' only';
+        }
+
+        return convertAmountToWords(amount);
+    }
+
+    // Example usage:
+    const amount = {{tamonut}};
+    const amountInWords = convertToIndianWords(amount);
+    var tamount2 = document.getElementById("wrod");
+      tamount2.innerText = amountInWords;
+
+</script>
+
+</html>

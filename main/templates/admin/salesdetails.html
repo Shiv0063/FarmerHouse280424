@@ -173,6 +173,10 @@
                       <tr>
                         <td>{{i.Charges}}</td>
                         <td>{{i.Amount}}</td>
+                        {% if i.Tax == '' %}
+                        <td class="p-2">0</td>
+                        <td class="p-2">0</td>
+                        {% endif %}
                         {% if i.Tax == '5' %}
                         <td class="p-2">2.5 %</td>
                         <td class="p-2">2.5 %</td>

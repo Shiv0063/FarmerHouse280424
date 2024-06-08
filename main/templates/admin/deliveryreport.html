@@ -143,8 +143,9 @@
             output += "<td class='p-2'>"+ x[i].TypeOfBusiness +"</td>";
             output += "<td class='p-2'>"+ x[i].DeliveryTime +"</td>";
             output += "<td class='p-2'>"+ x[i].DeliveryBoyName +"</td>";
+            output += "<td class='p-2'>"+ x[i].TypeofPayment +"</td>";
             output += "<td class='p-2'>"+ x[i].Amount +"</td>";
-            output += "<td class='p-2'><a class='btn btn-warning mr-3' href='/SalesDetails/"+ x[i].id +"' style='margin-left: 5px;'>Details</a></td></tr>"; 
+            output += "<td class='p-2'><a class='btn btn-warning mr-3' href='/SalesDetails/"+ x[i].id +"' style='margin-left: 5px;'><i class='ti ti-view-360'></i></a></td></tr>"; 
             ta += parseFloat(x[i].Amount);
           };
           $('#tbody').html(output);

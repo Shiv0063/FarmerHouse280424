@@ -223,6 +223,7 @@ class SalesEntryModel(models.Model):
     PayableAmount = models.CharField(max_length=100,null=True, blank=True)
     status = models.CharField(default='0',max_length=100,null=True, blank=True)
     PendingAmount = models.CharField(max_length=100,null=True, blank=True)
+    OrderNo = models.CharField(max_length=100,null=True, blank=True)
 
     def DDate(self):
         return self.Date.strftime('%Y-%m-%d')

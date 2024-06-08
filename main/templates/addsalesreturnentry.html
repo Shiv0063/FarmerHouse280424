@@ -3,17 +3,17 @@
 {% block content %}
 <div class="body-wrapper">
   <div class="container-fluid">
-    <div class="row">
-      {% for message in messages %}
+    {% for message in messages %}
       {% if message.tags == 'success' %}
       <div class="row justify-content-center">
-        <div class="col-md-6 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+        <div class="col-md-6 col-11 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
           <strong>{{message}}</strong>
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       </div>
       {% endif %}
       {% endfor %}
+    <div class="row">
       <div class="col-12">
         <div class="card">
           <div class="px-4 py-3 border-bottom">
@@ -54,32 +54,8 @@
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
-                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo"
-                    value="{{Invoice}}" disabled>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" value="{{Invoice}}" disabled>
                   <input type="hidden" name="ProductId" value="{{ProductId}}">
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="mb-4">
-                  <label for="exampleInputtype" class="form-label">Terms</label>
-                  <select class="form-select" id="exampleInputtype" name="Terms" tabindex="1" required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Debit">Debit</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="mb-4">
-                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
-                  <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Case">Case</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Gpay">Gpay</option>
-                    <option value="UPI">UPI</option>
-                    <option value="Net banking">Net banking</option>
-                  </select>
                 </div>
               </div>
               <div class="col-md-2">
@@ -99,7 +75,7 @@
                         <optgroup label="">
                           {% for i in Party %}
                           {% if i.Type == 'Customer' or i.Type == 'Hotel & Restaurant' %}
-                          <option value="{{i.PartyName}}">{{i.PartyName}} ({{i.Number}})</option>
+                          <option value="{{i.Number}}">{{i.PartyName}} ( {{i.Number}} )</option>
                           {% endif %}
                           {% endfor %}
                         </optgroup>
@@ -107,7 +83,7 @@
                     </div>
                   </div>
                   <div class="col-1 d-flex align-items-center"><a data-bs-toggle="modal" data-bs-target="#AddParty"
-                      class="btn btn-success btn-lg"><i class='ti ti-plus'></i></a></div>
+                    class="btn btn-success btn-lg"><i class='ti ti-plus'></i></a></div>
                 </div>
               </div>
               <div class="col-md-4">
@@ -121,100 +97,130 @@
                       {% endfor %}
                     </select>
                   </div>
-                  <div class="col-1 d-flex align-items-center"><a class="btn btn-success btn-lg mt-3"
-                      data-bs-toggle="modal" data-bs-target="#AddProduct"><i class='ti ti-plus'></i></a></div>
+                  <div class="col-1 d-flex align-items-center"><a class="btn btn-success btn-lg mt-3" data-bs-toggle="modal"
+                    data-bs-target="#AddProduct"><i class='ti ti-plus'></i></a></div>
+                  </div>
+              </div>
+              <div class="col-12 table-responsive p-1">
+                <table class="table table-striped table-bordered display text-nowrap" id="thad">
+                  <thead>
+                    <tr class="p-0">
+                      <th class="p-2">Prodect <br> Name</th>
+                      <th class="p-2">Quantity</th>
+                      <th class="p-2">Purchase <br>Inc. <br> Tax Price</th>
+                      <th class="p-2">Profit <br> Margin <br>( % )</th>
+                      <th class="p-2">Basic Sales <br> Price <br> ( Per. Unit )</th>
+                      <th class="p-2">Discount <br> ( % )</th>
+                      <th class="p-2">Sales price <br> After Discount <br> ( Per. Unit )</th>
+                      <th class="p-2">Tax <br> ( % )</th>
+                      <th class="p-2">Inc. Sales <br> Price</th>
+                      <th class="p-2">Total Sales</th>
+                      <!-- <th class="p-2">MRP</th> -->
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody">
+                    {% for i in stock %}
+                    <tr>
+                      <td class="p-2">
+                        <div class="mt-2">{{i.ProductName}}</div>
+                      </td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="Quantity"
+                          id="Quantity{{i.id}}" onkeydown="onstocks('Quantity','{{i.id}}');"
+                          onkeyup="onstocks('Quantity','{{i.id}}');" value="{{i.Quantity}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="PurchaseIncTax"
+                          id="PurchaseIncTax{{i.id}}" onkeydown="onstocks('PurchaseIncTax','{{i.id}}');"
+                          onkeyup="onstocks('PurchaseIncTax','{{i.id}}');" value="{{i.PurchaseIncTax}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" id="ProfitMargin{{i.id}}"
+                          onkeydown="onstocks('ProfitMargin','{{i.id}}');"
+                          onkeyup="onstocks('ProfitMargin','{{i.id}}');" value="{{i.ProfitMargin}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="BasicSalesPrice"
+                          id="BasicSalesPrice{{i.id}}" value="{{i.BasicSalesPrice}}" disabled></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="Discount"
+                          id="Discount{{i.id}}" onkeydown="onstocks('Discount','{{i.id}}');"
+                          onkeyup="onstocks('Discount','{{i.id}}');" value="{{i.Discount}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="SalesPriceAfterDiscount"
+                          id="SalesPriceAfterDiscount{{i.id}}" value="{{i.SalesPriceAfterDiscount}}" disabled></td>
+                      <td class="p-2">
+                        <div class="mt-2">{{i.Tax}}</div>
+                      </td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="IncSalesPrice"
+                          id="IncSalesPrice{{i.id}}" value="{{i.IncSalesPrice}}" disabled></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" name="TotalSales"
+                          id="TotalSales{{i.id}}" value="{{i.TotalSales}}"></td>
+                      <!-- <td class="p-2"><input type="text" class="form-control text-center" name="Amount"
+                          id="Amount{{i.id}}" onkeydown="onstocks('Amount','{{i.id}}');"
+                          onkeyup="onstocks('Amount','{{i.id}}');" value="{{i.Amount}}"></td> -->
+                      <td class="p-2">
+                        <div class="mt-1"><a type='button' class='btn btn-danger bg-danger btn-del ms-2'
+                            data-sid='{{i.id}}'><i class='ti ti-trash'></i></a></div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                  <tbody class="bg-white">
+                    <tr class="bg-white">
+                      <td colspan="12" class="bg-white"><span>
+                          <center><b id="mes" class="text-danger"></b></center>
+                        </span></td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="9">
+                        Total Amount :
+                      </th>
+                      <th colspan="3">
+                        <span id="tamount2">{{tamonut}}</span>
+                      </th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4" id="Ts">
+                  <label for="exampleInputtype" class="form-label">Terms</label>
+                  <select class="form-select" id="Terms" name="Terms" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Debit">Debit</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
+                  <select class="form-select" id="TypeofPayment" name="TypeofPayment" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Case">Case</option>
+                    <option value="Credit" hidden>Credit</option>
+                    <option value="Gpay">Gpay</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Net banking">Net banking</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputInvoiceNo" class="form-label">Payable Amount</label>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="PayableAmount" placeholder=""
+                    required>
+                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="gap-3">
+                  <button class="btn btn-success" type="submit">Save</button>
+                  <button class="btn btn-success" type="submit">Save & Print</button>
+                  <a class="btn btn-danger" href="/SRCancel/{{ProductId}}">Cancel</a>
                 </div>
               </div>
             </div>
-            <div class="col-12 table-responsive p-1">
-              <table class="table table-striped table-bordered display text-nowrap" id="thad">
-                <thead>
-                  <tr class="p-0">
-                    <th class="p-2">Prodect <br> Name</th>
-                    <th class="p-2">Quantity</th>
-                    <th class="p-2">Purchase <br>Inc. <br> Tax Price</th>
-                    <th class="p-2">Profit <br> Margin <br>( % )</th>
-                    <th class="p-2">Basic Sales <br> Price <br> ( Per. Unit )</th>
-                    <th class="p-2">Discount <br> ( % )</th>
-                    <th class="p-2">Sales price <br> After Discount <br> ( Per. Unit )</th>
-                    <th class="p-2">Tax <br> ( % )</th>
-                    <th class="p-2">Inc. Sales <br> Price</th>
-                    <th class="p-2">Total Sales</th>
-                    <!-- <th class="p-2">MRP</th> -->
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="tbody">
-                  {% for i in stock %}
-                  <tr>
-                    <td class="p-2">
-                      <div class="mt-2">{{i.ProductName}}</div>
-                    </td>
-                    <td class="p-2"><input type="text" class="form-control text-center" name="Quantity"
-                        id="Quantity{{i.id}}" onkeydown="onstocks('Quantity','{{i.id}}');"
-                        onkeyup="onstocks('Quantity','{{i.id}}');" value="{{i.Quantity}}"></td>
-                    <td class="p-2"><input type="text" class="form-control text-center" name="PurchaseIncTax"
-                        id="PurchaseIncTax{{i.id}}" onkeydown="onstocks('PurchaseIncTax','{{i.id}}');"
-                        onkeyup="onstocks('PurchaseIncTax','{{i.id}}');" value="{{i.PurchaseIncTax}}"></td>
-                    <td class="p-2"><input type="text" class="form-control text-center" id="ProfitMargin{{i.id}}"
-                        onkeydown="onstocks('ProfitMargin','{{i.id}}');" onkeyup="onstocks('ProfitMargin','{{i.id}}');"
-                        value="{{i.ProfitMargin}}"></td>
-                    <td class="p-2"><input type="text" class="form-control text-center" name="BasicSalesPrice"
-                        id="BasicSalesPrice{{i.id}}" value="{{i.BasicSalesPrice}}" disabled></td>
-                    <td class="p-2"><input type="text" class="form-control text-center" name="Discount"
-                        id="Discount{{i.id}}" onkeydown="onstocks('Discount','{{i.id}}');"
-                        onkeyup="onstocks('Discount','{{i.id}}');" value="{{i.Discount}}"></td>
-                    <td class="p-2"><input type="text" class="form-control text-center" name="SalesPriceAfterDiscount"
-                        id="SalesPriceAfterDiscount{{i.id}}" value="{{i.SalesPriceAfterDiscount}}" disabled></td>
-                    <td class="p-2">
-                      <div class="mt-2">{{i.Tax}}</div>
-                    </td>
-                    <td class="p-2"><input type="text" class="form-control text-center" name="IncSalesPrice"
-                        id="IncSalesPrice{{i.id}}" value="{{i.IncSalesPrice}}" disabled></td>
-                    <td class="p-2"><input type="text" class="form-control text-center" name="TotalSales"
-                        id="TotalSales{{i.id}}" value="{{i.TotalSales}}"></td>
-                    <!-- <td class="p-2"><input type="text" class="form-control text-center" name="Amount"
-                          id="Amount{{i.id}}" onkeydown="onstocks('Amount','{{i.id}}');"
-                          onkeyup="onstocks('Amount','{{i.id}}');" value="{{i.Amount}}"></td> -->
-                    <td class="p-2">
-                      <div class="mt-1"><a type='button' class='btn btn-danger bg-danger btn-del ms-2'
-                          data-sid='{{i.id}}'><i class='ti ti-trash'></i></a></div>
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-                <tbody class="bg-white">
-                  <tr class="bg-white">
-                    <td colspan="12" class="bg-white"><span>
-                        <center><b id="mes" class="text-danger"></b></center>
-                      </span></td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <th colspan="9">
-                      Total Amount :
-                    </th>
-                    <th colspan="3">
-                      <span id="tamount2">{{tamonut}}</span>
-                    </th>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-            <div class="col-12">
-              <div class="gap-3">
-                <button class="btn btn-success" type="submit">Save</button>
-                <button class="btn btn-success" type="submit">Save & Print</button>
-                <a class="btn bg-danger-subtle text-danger" href="/SRCancel/{{ProductId}}">Cancel</a>
-              </div>
-            </div>
+          </form>
         </div>
-        </form>
       </div>
     </div>
   </div>
-</div>
 </div>
 <div class="modal fade" id="AddParty" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
@@ -244,7 +250,7 @@
           </div>
           <div class="col-md-4">
             <div class="mb-4">
-              <label for="exampleInputnumber" class="form-label">Phone Namber</label>
+              <label for="exampleInputnumber" class="form-label">Phone Number</label>
               <input type="text" class="form-control" id="exampleInputnumber" name="Number" placeholder="1234567890"
                 required>
             </div>
@@ -282,7 +288,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -392,7 +398,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -403,6 +409,28 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
+  $("#Ts select[name='Terms']").on('change', function () {
+    var Terms = $('#Terms').val();
+    if(Terms == 'Credit'){
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('Credit');
+    }
+    else{
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('');
+      const button = document.querySelector("#TypeofPayment");
+      button.removeAttribute("disabled", "");
+      var TypeofPayment = document.querySelector("#TypeofPayment");
+      var options;
+      for (var i=0; i<TypeofPayment.options.length;i++){
+        options = TypeofPayment.options[i];
+        if (options.value == 'Credit'){
+          options.setAttribute('hidden','');
+          return;
+        }
+      }
+    }
+   });
   DF = new Date()
   document.getElementById("Date").value = DF.toJSON().slice(0, 10);
 
@@ -510,6 +538,7 @@
     var form = $(this);
     dt = form.serialize();
     $("#Prodectselect2 select[name='Product2']").find('.after2').nextAll().remove();
+
     $.ajax({
       type: "POST",
       url: '/Link/Products',
@@ -518,7 +547,7 @@
         x = data.ld
         output = ''
         for (i = 0; i < x.length; i++) {
-          output += "<option value=" + x[i].ProductName + '/' + x[i].id + ">" + x[i].ProductName + "</option>";
+          output += "<option value="+x[i].ProductName+'/'+ x[i].id + ">" + x[i].ProductName + "</option>";
         };
         $("#Prodectselect2 select[name='Product2']").find('.after2').after(output);
         $('#AddProductF').trigger("reset");
@@ -536,28 +565,28 @@
       url: '/Link/Party',
       data: dt,
       success: function (data) {
-        if (data.ld != 0) {
+        if(data.ld != 0){
           x = data.ld
           output = ''
           for (i = 0; i < x.length; i++) {
-            if (x[i].Type == 'Customer' || x[i].Type == 'Hotel & Restaurant') {
-              output += "<option value=" + x[i].PartyName + ">" + x[i].PartyName + ' (' + x[i].Number + ")</option>";
+            if(x[i].Type == 'Customer' || x[i].Type == 'Hotel & Restaurant'){
+              output += "<option value="+x[i].Number+">" + x[i].PartyName +' ( '+x[i].Number+" )</option>";
             }
           };
           $("#Partyselect2 select[name='PartyName']").find('.after3').after(output);
           $('#AddPartyF').trigger("reset");
           $('#AddParty').modal('hide');
         }
-        else {
-          if (data.NUM) {
+        else{
+          if(data.NUM){
             alert(data.NUM)
           }
-          else {
+          else{
             alert(data.EM)
           }
-
+          
         }
-
+        
       }
     });
   });

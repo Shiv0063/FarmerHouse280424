@@ -4,15 +4,15 @@
 <div class="body-wrapper">
   <div class="container-fluid">
     {% for message in messages %}
-    {% if message.tags == 'success' %}
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-11 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
-        <strong>{{message}}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      {% if message.tags == 'success' %}
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-11 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
       </div>
-    </div>
-    {% endif %}
-    {% endfor %}
+      {% endif %}
+      {% endfor %}
     <div class="row">
       <div class="col-12">
         <div class="card">
@@ -52,32 +52,9 @@
               <div class="col-md-2">
                 <div class="mb-4">
                   <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
-                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" placeholder=""
+                  <input type="text" class="form-control" id="exampleInputInvoiceNo" name="InvoiceNo" placeholder=""
                     required>
                   <input type="hidden" name="ProductId" value="{{ProductId}}">
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="mb-4">
-                  <label for="exampleInputtype" class="form-label">Terms</label>
-                  <select class="form-select" id="exampleInputtype" name="Terms" tabindex="1" required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Debit">Debit</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="mb-4">
-                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
-                  <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1" required>
-                    <option value="" selected>-- Selet --</option>
-                    <option value="Case">Case</option>
-                    <option value="Credit">Credit</option>
-                    <option value="Gpay">Gpay</option>
-                    <option value="UPI">UPI</option>
-                    <option value="Net banking">Net banking</option>
-                  </select>
                 </div>
               </div>
               <div class="col-md-2">
@@ -96,8 +73,8 @@
                         <optgroup label="">
                           {% for i in Party %}
                           {% if i.Type != 'Customer' and i.Type != 'Hotel & Restaurant' %}
-                          {% if i.Type != 'Expanse' %}
-                          <option value="{{i.PartyName}}">{{i.PartyName}} ( {{i.Number}} )</option>
+                          {% if i.Type != 'Expanse' and i.Type != 'Assets' %}
+                          <option value="{{i.Number}}">{{i.PartyName}} ( {{i.Number}} )</option>
                           {% endif %}
                           {% endif %}
                           {% endfor %}
@@ -131,7 +108,7 @@
                       <th>Prodect Name</th>
                       <th>Quantity</th>
                       <th>Purchase Price <br>( Per. Unit)</th>
-                      <th>Tax</th>
+                      <th><span class="ms-4 mx-4">Tax ( % )</span></th>
                       <th>Purchase Inc. Tax <br>( Per. Unit)</th>
                       <th>Grand Total</th>
                       <th></th>
@@ -191,6 +168,9 @@
                       </div>
                     </div>
                   </div>
+                  <div class="col d-flex justify-content-end align-items-center">
+                    <a href="/Barcode/{{ProductId}}" class="btn btn-danger">Barcode</a>
+                  </div>
                 </div>
               </div>
               <div class="col-12 table-responsive p-1">
@@ -199,7 +179,7 @@
                     <tr>
                       <th class="p-2">Charge Name</th>
                       <th class="p-2">Amount</th>
-                      <th class="p-2">Tax</th>
+                      <th class="p-2 "><span class="ms-4 mx-4">Tax ( % )</span></th>
                       <th class="p-2">Total Amount</th>
                       <th class="p-2"></th>
                     </tr>
@@ -213,7 +193,7 @@
                           onkeyup="onCharges('Amount','{{i.id}}');" value="{{i.Amount}}"></td>
                       <td class="p-2"><select class="form-select" name="Tax" onchange="onCharges('Tax','{{i.id}}');"
                           id="Tax{{i.id}}" aria-label="Default select example" required>
-                          <option selected>--select--</option>
+                          <option selected value="TaxFree">--select--</option>
                           <option value="5" {% if i.Tax == '5' %} selected {% endif %}>5%</option>
                           <option value="12" {% if i.Tax == '12' %} selected {% endif %}>12%</option>
                           <option value="18" {% if i.Tax == '18' %} selected {% endif %}>18%</option>
@@ -249,11 +229,42 @@
                   </tfoot>
                 </table>
               </div>
+              <div class="col-md-2">
+                <div class="mb-4" id="Ts">
+                  <label for="exampleInputtype" class="form-label">Terms</label>
+                  <select class="form-select" id="Terms" name="Terms" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Credit">Credit</option>
+                    <option value="Debit">Debit</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
+                  <select class="form-select" id="TypeofPayment" name="TypeofPayment" tabindex="1" required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Case">Case</option>
+                    <option value="Credit" hidden>Credit</option>
+                    <option value="Gpay">Gpay</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Net banking">Net banking</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputInvoiceNo" class="form-label">Payable Amount</label>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="PayableAmount" placeholder=""
+                    required>
+                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                </div>
+              </div>
               <div class="col-12">
                 <div class="gap-3">
                   <button class="btn btn-success" type="submit">Save</button>
-                  <button class="btn btn-success" type="submit">Save & Print</button>
-                  <a class="btn bg-danger-subtle text-danger" href="/PurchaseCancel/{{ProductId}}">Cancel</a>
+                  <!-- <button class="btn btn-success" type="submit">Save & Print</button> -->
+                  <a class="btn btn-danger" href="/PurchaseCancel/{{ProductId}}">Cancel</a>
                 </div>
               </div>
             </div>
@@ -293,7 +304,7 @@
           </div>
           <div class="col-md-4">
             <div class="mb-4">
-              <label for="exampleInputnumber" class="form-label">Phone Namber</label>
+              <label for="exampleInputnumber" class="form-label">Phone Number</label>
               <input type="text" class="form-control" id="exampleInputnumber" name="Number" placeholder="1234567890"
                 required>
             </div>
@@ -331,7 +342,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -441,7 +452,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -466,10 +477,10 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="submit" class="btn bg-success-subtle text-success  waves-effect text-start">
+        <button type="submit" class="btn btn-success">
           Submit
         </button>
-        <button type="button" class="btn bg-danger-subtle text-danger  waves-effect text-start" data-bs-dismiss="modal">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Close
         </button>
       </div>
@@ -480,6 +491,28 @@
 {% block script %}
 <script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
 <script>
+  $("#Ts select[name='Terms']").on('change', function () {
+    var Terms = $('#Terms').val();
+    if(Terms == 'Credit'){
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('Credit');
+    }
+    else{
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('');
+      const button = document.querySelector("#TypeofPayment");
+      button.removeAttribute("disabled", "");
+      var TypeofPayment = document.querySelector("#TypeofPayment");
+      var options;
+      for (var i=0; i<TypeofPayment.options.length;i++){
+        options = TypeofPayment.options[i];
+        if (options.value == 'Credit'){
+          options.setAttribute('hidden','');
+          return;
+        }
+      }
+    }
+   });
   function Amount() {
     var TA = document.getElementById('tamount2').innerText;
     var TCA = document.getElementById('tamount3').innerText;
@@ -694,7 +727,7 @@
         x = data.ld
         output = ''
         for (i = 0; i < x.length; i++) {
-          output += "<option value=" + x[i].ProductName + '/' + x[i].id + ">" + x[i].ProductName + "</option>";
+          output += "<option value="+x[i].ProductName+'/'+ x[i].id + ">" + x[i].ProductName + "</option>";
         };
         $("#Prodectselect2 select[name='Product2']").find('.after2').after(output);
         $('#AddProductF').trigger("reset");
@@ -712,14 +745,16 @@
       url: '/Link/Party',
       data: dt,
       success: function (data) {
-        if (data.ld != 0) {
+        if(data.ld != 0){
           x = data.ld
           output = ''
           for (i = 0; i < x.length; i++) {
             if (x[i].Type != 'Customer') {
               if (x[i].Type != 'Hotel & Restaurant') {
                 if (x[i].Type != 'Expanse') {
-                  output += "<option value=" + x[i].PartyName + ">" + x[i].PartyName + ' ( ' + x[i].Number + ") </option>";
+                  if (x[i].Type != 'Assets'){
+                  output += "<option value=" + x[i].Number + ">" + x[i].PartyName + ' ( ' + x[i].Number + ") </option>";
+                  }
                 }
               }
             }
@@ -728,16 +763,16 @@
           $('#AddPartyF').trigger("reset");
           $('#AddParty').modal('hide');
         }
-        else {
-          if (data.NUM) {
+        else{
+          if(data.NUM){
             alert(data.NUM)
           }
-          else {
+          else{
             alert(data.EM)
           }
-
+          
         }
-
+        
       }
     });
   });

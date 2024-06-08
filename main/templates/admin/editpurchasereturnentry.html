@@ -1,0 +1,443 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-11 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Edit Purchase Return Entery</h4>
+          </div>
+          <form class="card-body p-4" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label class="form-label">Date</label>
+                  <input type="date" class="form-control " name="Date" id="Date" required>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Source of Purchase</label>
+                  <select class="form-select form-control-sm" id="exampleInputtype" name="TypeofPurchase" tabindex="1"
+                    required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Local Market" {% if dt.TypeofPurchase == 'Local Market' %} selected {% endif %}>Local Market</option>
+                    <option value="Vendor" {% if dt.TypeofPurchase == 'Vendor' %} selected {% endif %}>Vendor</option>
+                    <option value="Market Yard" {% if dt.TypeofPurchase == 'Market Yard' %} selected {% endif %}>Market Yard</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputBillno" class="form-label">Bill No</label>
+                  <input type="text" class="form-control " id="exampleInputBillno" name="BillNo2" value="{{BiilNo}}"
+                    disabled>
+                  <input type="hidden" name="BillNo" value="{{BiilNo}}">
+                  <input type="hidden" name="Amount" value="{{tamonut}}">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" value="{{dt.InvoiceNo}}"
+                    required>
+                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="row" id="Partyselect2">
+                  <div class="col-9">
+                    <label for="exampleInputtype" class="form-label">Party Name</label>
+                    <div class="mb-4">
+                      <select class="select2 form-control  custom-select" name="PartyName" required>
+                        <option class="after3">Select</option>
+                        <optgroup label="">
+                          {% for i in Party %}
+                          {% if i.Type != 'Customer' and i.Type != 'Hotel & Restaurant' %}
+                          {% if i.Type != 'Expanse' and i.Type != 'Assets' %}
+                          <option value="{{i.Number}}" {% if dt.PartyName == i.PartyName %} selected {% endif %}>{{i.PartyName}} ( {{i.Number}} )</option>
+                          {% endif %}
+                          {% endif %}
+                          {% endfor %}
+                        </optgroup>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-1 d-flex align-items-center"><a data-bs-toggle="modal" data-bs-target="#AddParty"
+                    class="btn btn-success btn-lg"><i class='ti ti-plus'></i></a></div>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="mb-2 row" id="Prodectselect2">
+                  <div class="col-md-4 mb-4">
+                    <label class="form-label">Product Name</label>
+                    <select class="select form-control" name="Product" disabled>
+                      <option>Product Name</option>
+                      {% for i in productns %}
+                      <option value="{{i}}">{{i}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="col-md-4 mb-4">
+                    <label class="form-label">Product List</label>
+                    <select class="select form-control" name="Product2" disabled>
+                      <option class="after" value="">Products</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 table-responsive p-1">
+                <table class="table table-striped table-bordered display text-nowrap" id="thad">
+                  <thead>
+                    <tr>
+                      <th>Prodect Name</th>
+                      <th>Quantity</th>
+                      <th>Purchase Price <br>( Per. Unit)</th>
+                      <th>Tax ( % )</th>
+                      <th>Purchase Inc. Tax <br>( Per. Unit)</th>
+                      <th>Grand Total</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody">
+                    {% for i in stock %}
+                    <tr>
+                      <td class="mt-5">{{i.ProductName}}</td>
+                      <td><input type="text" class="form-control text-center"
+                          onkeydown="onstocks('Quantity','{{i.id}}');" onkeyup="onstocks('Quantity','{{i.id}}');"
+                          name="Quantity" id="Quantity{{i.id}}" value="{{i.Quantity}}" readonly></td>
+                      <td><input type="text" class="form-control text-center"
+                          onkeydown="onstocks('PurchasePrice','{{i.id}}');"
+                          onkeyup="onstocks('PurchasePrice','{{i.id}}');" name="PurchasePrice"
+                          id="PurchasePrice{{i.id}}" value="{{i.PurchasePrice}}" disabled></td>
+                      <td><input type="text" class="form-control text-center " value="{{i.Tax}} %" disabled></td>
+                      <td><input type="text" class="form-control text-center" id="PurchaseIncTax{{i.id}}"
+                          value="{{i.PurchaseIncTax}}" disabled>
+                      </td>
+                      <td><input type="text" class="form-control text-center " name="Amount" id="Amount{{i.id}}"
+                          value="{{i.Amount}}" readonly></td>
+                      <td>
+                        <a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='{{i.id}}'disabled><i
+                            class='ti ti-trash'></i></a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="5">
+                        Total Amount :
+                      </th>
+                      <th colspan="2">
+                        <span id="tamount2">{{tamonut}}</span>
+                      </th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4" id="Ts">
+                  <label for="exampleInputtype" class="form-label">Terms</label>
+                  <select class="form-select" id="Terms" name="Terms" tabindex="1" disabled>
+                    <option value="">-- Selet --</option>
+                    <option value="Credit" {% if dt.Terms == "Credit" %} selected {% endif %}>Credit</option>
+                    <option value="Debit" {% if dt.Terms == "Debit" %} selected {% endif %}>Debit</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type of Payment</label>
+                  <select class="form-select" id="TypeofPayment" name="TypeofPayment" tabindex="1" disabled>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Credit" {% if dt.TypeofPayment == "Credit" %} selected {% endif %} hidden>Credit</option>
+                    <option value="Gpay" {% if dt.TypeofPayment == "Gpay" %} selected {% endif %}>Gpay</option>
+                    <option value="UPI" {% if dt.TypeofPayment == "UPI" %} selected {% endif %}>UPI</option>
+                    <option value="Net banking" {% if dt.TypeofPayment == "Net banking" %} selected {% endif %}>Net banking</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputInvoiceNo" class="form-label">Payable Amount</label>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="PayableAmount" value="{{dt.PayableAmount}}" readonly >
+                  <input type="hidden" name="ProductId" value="{{ProductId}}">
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="gap-3">
+                  <button class="btn btn-success" type="submit">Save</button>
+                  <!-- <button class="btn btn-success" type="submit">Save & Print</button> -->
+                  <a class="btn btn-danger" onclick="window.history.go(-1);">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="AddParty" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <form class="modal-content" id="AddPartyF">
+      <div class="modal-header d-flex align-items-center">
+        <h5 class="modal-title" id="myLargeModalLabel">Add Party</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputtype" class="form-label">Type Of Party</label>
+              <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1" required>
+                <option value="" selected>-- Selet --</option>
+                <option value="Market Yard">Market Yard</option>
+                <option value="Local Market">Local Market</option>
+                <option value="Vendor">Vendor</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputPartyName" class="form-label">Party Name</label>
+              <input type="text" class="form-control" id="exampleInputPartyName" name="PartyName"
+                placeholder="Party Name" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputnumber" class="form-label">Phone Number</label>
+              <input type="text" class="form-control" id="exampleInputnumber" name="Number" placeholder="1234567890"
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputGSTNo" class="form-label">GST No.</label>
+              <input type="text" class="form-control" id="exampleInputGSTNo" name="GSTNo" placeholder="GST No."
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputGmail" class="form-label">Email</label>
+              <input type="email" class="form-control" id="exampleInputGmail" name="Email" placeholder="xyz@gmail.com"
+                required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="mb-4">
+              <label for="exampleInputcity" class="form-label">City</label>
+              <select id="inputState" class="form-select" name="City" required>
+                <option selected>Choose...</option>
+                {% include "city.html" %}
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-4">
+              <label class="form-label">Address</label>
+              <textarea class="form-control p-7" name="Address" rows="1" placeholder="" required></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" type="submit">Submit</button>
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
+<script>
+  $("#Ts select[name='Terms']").on('change', function () {
+    var Terms = $('#Terms').val();
+    if(Terms == 'Credit'){
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('Credit');
+    }
+    else{
+      var TypeofPayment = $('#TypeofPayment');
+      TypeofPayment.val('');
+      const button = document.querySelector("#TypeofPayment");
+      button.removeAttribute("disabled", "");
+      var TypeofPayment = document.querySelector("#TypeofPayment");
+      var options;
+      for (var i=0; i<TypeofPayment.options.length;i++){
+        options = TypeofPayment.options[i];
+        if (options.value == 'Credit'){
+          options.setAttribute('hidden','');
+          return;
+        }
+      }
+    }
+   });
+  DF = new Date()
+  document.getElementById("Date").value = DF.toJSON().slice(0, 10);
+
+  $("#Prodectselect2 select[name='Product']").on('change', function () {
+    var $this = $(this);
+    if ($this.val() != '') {
+      $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+      $.ajax({
+        url: '/StockDetails/' + $this.val(),
+        type: 'GET',
+        success: function (resp) {
+          x = resp.Ms
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<option value=";
+            pn = x[i].ProductName;
+            pn = pn.replace(' ','%20');
+            output += pn;
+            output += "/";
+            output += x[i].OldProductId + "/" + x[i].id + '>' + "Price: " + x[i].PurchaseIncTax + "  Quantity :" + x[i].Quantity + '</option>';
+          };
+          $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
+        },
+        error: function (resp) {
+          console.log('Something went wrong');
+        }
+      });
+    } else {
+      $("#Prodectselect2 select[name='Product2']").find('.after').nextAll().remove();
+    }
+  });
+  $("#Prodectselect2 select[name='Product2']").on('change', function () {
+    var $Productname = $(this);
+    var $Productid = $("input[name='Productid']").val();
+    if ($Productname.val() != '') {
+      $.ajax({
+        url: '/PRStock/' + $Productname.val() + '/PurchaseReturn',
+        type: 'GET',
+        success: function (resp) {
+          x = resp.Sc
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            output += "<tr><td class='mt-5'>" + x[i].ProductName + "</td>";
+            output += "<td><input type='text' class='form-control text-center' onkeydown=onstocks('Quantity','" + x[i].id + "'); onkeyup=onstocks('Quantity','" + x[i].id + "'); name='Quantity' id='Quantity" + x[i].id + "' value='" + x[i].Quantity + "'></td>";
+            output += "<td><input type='text' class='form-control text-center' onkeydown=onstocks('PurchasePrice','" + x[i].id + "'); onkeyup=onstocks('PurchasePrice','" + x[i].id + "'); name='PurchasePrice' id='PurchasePrice" + x[i].id + "' value='" + x[i].PurchasePrice + "' disabled></td>";
+            output += "<td><input type='text' class='form-control text-center' value='" + x[i].Tax + " %' disabled></td>";
+            output += "<td><input type='text' class='form-control text-center' id='PurchaseIncTax" + x[i].id + "' value='" + x[i].PurchaseIncTax + "' disabled></td>";
+            output += "<td><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' value='" + x[i].Amount + "'></td>";
+            output += "<td><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></td></tr>"
+          };
+          $('#tbody').html(output);
+          var tamount2 = document.getElementById("tamount2");
+          tamount2.innerText = resp.tamonut;
+        },
+        error: function (resp) {
+          console.log('Something went wrong');
+        }
+      });
+    } else {
+      console.log('Something went wrong');
+    }
+  });
+  function onstocks(name, id) {
+    let val = '#' + name + id;
+    let va = $(val).val();
+    mydata = { name: name, id: id, val: va, type: 'PurchaseReturn' };
+    $.ajax({
+      type: "POST",
+      url: '/ProductE',
+      data: mydata,
+      success: function (resp) {
+        x = resp.Sc;
+        for (i = 0; i < x.length; i++) {
+          var $PIT = $('#PurchaseIncTax' + x[i].id);
+          $PIT.val(parseFloat(x[i].PurchaseIncTax).toFixed(2));
+          var $PIT = $('#Amount' + x[i].id);
+          $PIT.val(parseFloat(x[i].Amount).toFixed(2));
+        }
+        var $tamount2 = document.getElementById("tamount2");
+        $tamount2.innerText = resp.tamonut;
+      },
+      error: function (resp) {
+        console.log('Something went wrong');
+      }
+    });
+  }
+  // delete data
+  $("tbody").on('click', '.btn-del', function () {
+    // console.log('delete btn clicked');
+    let id = $(this).attr('data-sid');
+    // console.log(id);
+    mydata = { sid: id, type: 'PurchaseReturn' };
+    mythis = this;
+    $.ajax({
+      type: "POST",
+      url: '/PRSDelete',
+      data: mydata,
+      success: function (data) {
+        if (data.status == 1) {
+          $(mythis).closest("tr").fadeOut();
+        }
+        var tamount2 = document.getElementById("tamount2");
+        tamount2.innerText = data.tamonut;
+      }
+    });
+  });
+  $("#AddPartyF").submit(function (e) {
+    e.preventDefault();
+    var form = $(this);
+    dt = form.serialize();
+    $("#Partyselect2 select[name='PartyName']").find('.after3').nextAll().remove();
+    $.ajax({
+      type: "POST",
+      url: '/Link/Party',
+      data: dt,
+      success: function (data) {
+        if(data.ld != 0){
+          x = data.ld
+          output = ''
+          for (i = 0; i < x.length; i++) {
+            if (x[i].Type != 'Customer') {
+              if (x[i].Type != 'Hotel & Restaurant') {
+                if (x[i].Type != 'Expanse') {
+                  if (x[i].Type != 'Assets'){
+                    output += "<option value=" + x[i].Number + ">" + x[i].PartyName + ' ( ' + x[i].Number + ") </option>";
+                  }
+                }
+              }
+            }
+          };
+          $("#Partyselect2 select[name='PartyName']").find('.after3').after(output);
+          $('#AddPartyF').trigger("reset");
+          $('#AddParty').modal('hide');
+        }
+        else{
+          if(data.NUM){
+            alert(data.NUM)
+          }
+          else{
+            alert(data.EM)
+          }
+          
+        }
+        
+      }
+    });
+  });
+</script>
+{% endblock script %}

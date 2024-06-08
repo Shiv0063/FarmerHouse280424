@@ -73,7 +73,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'FarmerHouse.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -81,6 +80,17 @@ WSGI_APPLICATION = 'FarmerHouse.wsgi.application'
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'FarmerHouse',
+#         'USER': 'FarmerHouse',
+#         'PASSWORD': 'M)8MaM$$q7y1',
+#         'HOST':'localhost',
+#         'PORT':'3306',
 #     }
 # }
 

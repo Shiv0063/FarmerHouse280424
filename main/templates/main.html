@@ -1,6 +1,6 @@
 ﻿{% load static %}
 <!DOCTYPE html>
-<html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="horizontal">
+<html lang="en" dir="ltr" data-bs-theme="light">
 
 <head>
   <!-- Required meta tags -->
@@ -12,13 +12,13 @@
   <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/logo.png' %}">
   <!-- Core Css -->
   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.35.0/iconfont/tabler-icons.min.css"
-    rel="stylesheet">
-
+  
   <title>Farmer House</title>
   <link rel="stylesheet" href="{% static 'assets/libs/select2/dist/css/select2.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/js/buttons/2.4.2/css/buttons.dataTables.min.css' %}">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.35.0/iconfont/tabler-icons.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
   <style>
     input {
       background: #E8F0FE !important;
@@ -99,7 +99,7 @@
                 <img src="{% static 'assets/images/logos/logo.png' %}" width="80px" alt="Logo">
               </a>
             </div>
-            <nav class="sidebar-nav" id="menu-right-mini-1"style="margin-top: 15px;"  data-simplebar="">
+            <nav class="sidebar-nav d-block simplebar-scrollable-y" id="menu-right-mini-1"style="margin-top: 15px;"  data-simplebar="">
               <ul class="sidebar-menu" id="sidebarnav">
                 <li class="sidebar-item" style="margin-top: 10px;" >
                   <a class="sidebar-link" href="/" aria-expanded="false">
@@ -118,19 +118,25 @@
                   </a>
                   <ul aria-expanded="false" class="collapse first-level">
                     <li class="sidebar-item">
-                      <a href="/Party" class="sidebar-link">
+                      <a href="/Party" class="sidebar-link" data-tabname="Party2">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Party</span>
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="/Product" class="sidebar-link">
+                      <a href="/Product" class="sidebar-link" data-tabname="Product2">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Product</span>
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="/DeliveryBoy" class="sidebar-link">
+                      <a href="/Amount" class="sidebar-link" data-tabname="Amount">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Amount</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/DeliveryBoy" class="sidebar-link" data-tabname="DeliveryBoy2">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Delivery Boy</span>
                       </a>
@@ -194,13 +200,25 @@
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="#" class="sidebar-link">
+                      <a href="/QuickPayment" class="sidebar-link">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Quick Payment</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/QuickReceipt" class="sidebar-link">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Quick Receipt</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/DebitNote" class="sidebar-link">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Debit Note</span>
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="#" class="sidebar-link">
+                      <a href="/CreditNote" class="sidebar-link">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Credit Note</span>
                       </a>
@@ -227,7 +245,7 @@
                         <span class="hide-menu">Sales Stock Report</span>
                       </a>
                     </li>
-                    <li class="sidebar-item">
+                    <!-- <li class="sidebar-item">
                       <a href="#" class="sidebar-link">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Item Wise Stock Report</span>
@@ -244,7 +262,7 @@
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Expiry Register</span>
                       </a>
-                    </li>
+                    </li> -->
                   </ul>
                 </li>
                 <li class="sidebar-item">
@@ -298,9 +316,9 @@
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="/ProfileReport" class="sidebar-link">
+                      <a href="/Profiteport" class="sidebar-link">
                         <i class="ti ti-circle"></i>
-                        <span class="hide-menu">Profile Report</span>
+                        <span class="hide-menu">Profit Report</span>
                       </a>
                     </li>
                     <li class="sidebar-item">
@@ -362,7 +380,7 @@
     <!--  Sidebar End -->
     <div class="page-wrapper">
       <!--  Header Start -->
-      <header class="topbar">
+      <header class="topbar" id="D1">
         <div class="with-vertical">
         
           <nav class="navbar navbar-expand-lg p-0">
@@ -532,7 +550,7 @@
       </header>
       <!--  Header End -->
 
-      <aside class="left-sidebar with-horizontal">
+      <aside class="left-sidebar with-horizontal" id="D2">
         <!-- Sidebar scroll-->
         <div>
           <!-- Sidebar navigation-->
@@ -559,37 +577,43 @@
                 </a>
                 <ul aria-expanded="false" class="collapse first-level">
                   <li class="sidebar-item">
-                    <a href="/Party" class="sidebar-link">
+                    <a href="/Party" class="sidebar-link" data-tabname="Party">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Party</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/Product" class="sidebar-link">
+                    <a href="/Product" class="sidebar-link" data-tabname="Product">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Product</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/DeliveryBoy" class="sidebar-link">
+                    <a href="/Amount" class="sidebar-link" data-tabname="Amount">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Amount</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/DeliveryBoy" class="sidebar-link" data-tabname="DeliveryBoy">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Delivery Boy</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/Category" class="sidebar-link">
+                    <a href="/Category" class="sidebar-link" data-tabname="Category">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Category</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/Expanse" class="sidebar-link">
+                    <a href="/Expanse" class="sidebar-link" data-tabname="Expanse">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Expanse</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/Charges" class="sidebar-link">
+                    <a href="/Charges" class="sidebar-link" data-tabname="Charges">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Charges</span>
                     </a>
@@ -609,43 +633,55 @@
                 </a>
                 <ul aria-expanded="false" class="collapse first-level">
                   <li class="sidebar-item">
-                    <a href="/Sales" class="sidebar-link">
+                    <a href="/Sales" class="sidebar-link" data-tabname="Sales">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Sales Entry</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/SalesReturn" class="sidebar-link">
+                    <a href="/SalesReturn" class="sidebar-link" data-tabname="SalesReturn">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Sales Return Entry</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/Purchase" class="sidebar-link">
+                    <a href="/Purchase" class="sidebar-link" data-tabname="Purchase">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Purchase Entry</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/PurchaseReturn" class="sidebar-link">
+                    <a href="/PurchaseReturn" class="sidebar-link" data-tabname="PurchaseReturn">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Purchase Return Entry</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/ExpensesEntry" class="sidebar-link">
+                    <a href="/ExpensesEntry" class="sidebar-link" data-tabname="ExpensesEntry">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Expenses Entry</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="/QuickPayment" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Quick Payment</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/QuickReceipt" class="sidebar-link">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Quick Receipt</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/DebitNote" class="sidebar-link">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Debit Note</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="/CreditNote" class="sidebar-link">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Credit Note</span>
                     </a>
@@ -665,35 +701,35 @@
                 </a>
                 <ul aria-expanded="false" class="collapse first-level">
                   <li class="sidebar-item">
-                    <a href="/StockReport" class="sidebar-link">
+                    <a href="/StockReport" class="sidebar-link" data-tabname="StockReport">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Stock Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/SalesStockReport" class="sidebar-link">
+                    <a href="/SalesStockReport" class="sidebar-link" data-tabname="SalesStockReport">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Sales Stock Report</span>
                     </a>
                   </li>
-                  <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                  <!-- <li class="sidebar-item">
+                    <a href="#" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Item Wise Stock Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Rate List</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Expiry Register</span>
                     </a>
-                  </li>
+                  </li> -->
                 </ul>
               </li>
               <li class="nav-small-cap">
@@ -709,67 +745,67 @@
                 </a>
                 <ul aria-expanded="false" class="collapse first-level">
                   <li class="sidebar-item">
-                    <a href="/SalesEntry" class="sidebar-link">
+                    <a href="/SalesEntry" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Sales Register</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/PurchaseEntry" class="sidebar-link">
+                    <a href="/PurchaseEntry" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Purchase Register</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/SalesReturnEntry" class="sidebar-link">
+                    <a href="/SalesReturnEntry" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Sales Return<br>Register</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/PurchaseReturnEntry" class="sidebar-link">
+                    <a href="/PurchaseReturnEntry" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Purchase Return<br>Register</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/DeliveryReport" class="sidebar-link">
+                    <a href="/DeliveryReport" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Delivery Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/LedgerReport" class="sidebar-link">
+                    <a href="/LedgerReport" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Ledger Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/OutstandingReport" class="sidebar-link">
+                    <a href="/OutstandingReport" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Outstanding Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/ProfileReport" class="sidebar-link">
+                    <a href="/ProfitReport" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
-                      <span class="hide-menu">Profile Report</span>
+                      <span class="hide-menu">Profit Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Balance Sheet</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Daily Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="#" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Expense Report</span>
                     </a>
@@ -969,11 +1005,74 @@
           </div>
         </div>
       </div> 
-
+      <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+      <script src="{% static 'assets/libs/iconify-icon/dist/iconify-icon.min.js' %}"></script>
       <script>
-  function handleColorTheme(e) {
-    document.documentElement.setAttribute("data-color-theme", e);
-  }
+        let PathNameObj2 = {
+              "AddParty": 'Party2',
+              "PartyDetails": 'Party2',
+              "EditParty": 'Party2',
+            }
+            let patName2;
+            if (PathNameObj2[location.pathname.split("/")[1]]) {
+              patName2 = PathNameObj2[location.pathname.split("/")[1]]
+            } else {
+              patName2 = location.pathname.slice(1)
+            }
+            document.querySelector(`[data-tabname='${patName2}']`)?.classList.add("active");
+      </script>
+<script>
+  let PathNameObj = {
+        "AddParty": 'Party',
+        "PartyDetails": 'Party',
+        "EditParty": 'Party',
+        "AddProduct": 'Product',
+        "EditProduct": 'Product',
+        "AddDeliveryBoy": 'DeliveryBoy',
+        "DeliveryBoyDetails": 'DeliveryBoy',
+        "EditDeliveryBoy": 'DeliveryBoy',
+        "AddUserAccount": 'UserAccount',
+        "EditUser": 'UserAccount',
+        "AddCategory": 'Category',
+        "EditCategory": 'Category',
+        "AddExpanse": 'Expanse',
+        "EditExpanse": 'Expanse',
+        "AddCharges": 'Charges',
+        "EditCharges": 'Charges',
+        "AddSalesEntry": 'Sales',
+        "SalesDetails": 'Sales',
+        "EditSales": 'Sales',
+        "AddSalesReturnEntry": 'SalesReturn',
+        "SRDetails": 'SalesReturn',
+        "EditSR": 'SalesReturn',
+        "AddPurchaseEntry": 'Purchase',
+        "PurchaseDetails": 'Purchase',
+        "EditPurchase": 'Purchase',
+        "AddPurchaseReturnEntry": 'PurchaseReturn',
+        "PRDetails": 'PurchaseReturn',
+        "AddExpensesEntry": 'ExpensesEntry',
+        "EXDetails": 'ExpensesEntry',
+        "EditEx": 'ExpensesEntry',
+        "DebitNote": 'DebitNote',
+        "CreditNote": 'CreditNote',
+        "ProductsDetails": 'StockReport',
+        "ProductsDetail": 'SalesStockReport',
+      }
+
+      let patName;
+      if (PathNameObj[location.pathname.split("/")[1]]) {
+        patName = PathNameObj[location.pathname.split("/")[1]]
+      } else {
+        patName = location.pathname.slice(1)
+      }
+      // alert(patName);
+      document.querySelector(`[data-tabname='${patName}']`)?.classList.add("active");
+</script>
+
+<script>
+      function handleColorTheme(e) {
+        document.documentElement.setAttribute("data-color-theme", e);
+      }
 </script>
     </div>
   </div>
@@ -989,7 +1088,6 @@
   <script src="{% static 'assets/js/theme/sidebarmenu.js' %}"></script>
 
   <!-- solar icons -->
-  <script src="{% static 'assets/libs/iconify-icon%401.0.8/dist/iconify-icon.min.js' %}"></script>
   <script src="{% static 'assets/libs/fullcalendar/index.global.min.js' %}"></script>
   <script src="{% static 'assets/js/apps/calendar-init.js' %}"></script>
   <script src="{% static 'assets/js/vendor.min.js' %}"></script>

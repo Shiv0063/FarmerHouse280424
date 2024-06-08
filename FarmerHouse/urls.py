@@ -65,6 +65,7 @@ urlpatterns = [
     path('ProductE',views.ProductE,name='ProductE'),
     path('ProductsDelete',views.ProductsDelete,name='Products Delete'),
     path('PurchaseCancel/<int:id>',views.PurchaseCancel,name='Purchase Cancel'),
+    path('PurchaseRCancel/<int:id>',views.PurchaseRCancel,name='Purchase Cancel'),
     path('PurchaseDetails/<int:id>',views.PurchaseDetails,name='Products Details'),
     path('DeletePurchase/<int:id>',views.DeletePurchase,name='Delete Purchase'),
     path('EditPurchase/<int:id>',views.EditPurchase,name='Edit Purchase'),
@@ -85,6 +86,8 @@ urlpatterns = [
     path('DeleteSales/<int:id>',views.DeleteSales,name='Delete Sales'),
     path('PurchaseReturnEntry',views.PurchaseReturnEntry,name="Purchase Return Entry"),
     path('PurchaseReturn',views.PurchaseReturn,name='Purchase Return'),
+    path('PREdit/<int:id>',views.PREdit,name='Edit Purchase Return'),
+    path('PRDelete/<int:id>',views.PRDelete,name='Delete Purchase Return'),
     path('AddPurchaseReturnEntry',views.AddPurchaseReturnEntry,name='Add Purchase Return Entry'),
     path('PRStock/<str:PN>/<int:id>/<int:id2>/<str:type>',views.PRStock,name='PRStock'),
     path('StockReport',views.StockReport,name='Stock Report'),
@@ -137,6 +140,9 @@ urlpatterns = [
     path('Barcode/<str:pid>',views.Barcode,name=""),
     path('t',views.thtml,name=""),
     path('Link/<str:name>',views.Link,name=""),
+    path('SalesBill/<int:id>',views.salesbill),
+    path('Bill/<int:id>',views.Bill),
+
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -9,45 +9,25 @@
         <div class="px-4 py-3 border-bottom">
           <h4 class="card-title mb-0">Purchase Register</h4>
         </div>
-        <form class="card-body p-4 pb-0 mb-0" enctype="multipart/form-data" method="post">
+        <form class="card-body p-4 pb-0 mb-0" method="post">
           {% csrf_token %}
           <div class="row mb-0">
             <div class="col-md-2">
               <div class="mb-4">
-                <label for="exampleInputtype" class="form-label">Type of Purchase</label>
-                <select class="form-select form-control-sm" id="exampleInputtype" name="TypeofPurchase" tabindex="1">
-                  <option value="" selected>-- Selet --</option>
-                  <option value="Market Yard">Market Yard</option>
-                  <option value="Vendor">Vendor</option>
-                  <option value="Local Market">Local Market</option>
-                </select>
+                <label for="exampleInput" class="form-label">To</label>
+                <input type="date" class="form-control" name="StartDate" id="StartDate" value="{{StartDate}}" >
               </div>
             </div>
             <div class="col-md-2">
               <div class="mb-4">
-                <label for="exampleInputBillno" class="form-label">Bill No</label>
-                <input type="text" class="form-control " id="exampleInputBillno" name="BillNo" placeholder="">
-                <input type="hidden" name="Amount" value="{{tamonut}}">
+                <label for="exampleInput" class="form-label">From</label>
+                <input type="date" class="form-control" name="EndDate" id="EndDate" value="{{EndDate}}">
               </div>
             </div>
             <div class="col-md-2">
               <div class="mb-4">
-                <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
-                <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" placeholder="">
-                <input type="hidden" name="ProductId" value="{{ProductId}}">
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="mb-4">
-                <label for="exampleInputtype" class="form-label">Type of Payment</label>
-                <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1">
-                  <option value="" selected>-- Selet --</option>
-                  <option value="Case">Case</option>
-                  <option value="Credit">Credit</option>
-                  <option value="Gpay">Gpay</option>
-                  <option value="UPI">UPI</option>
-                  <option value="Net banking">Net banking</option>
-                </select>
+                <label for="exampleInput" class="form-label">Bill No.</label>
+                <input type="text" class="form-control" name="BillNo" id="BillNo" value="{{BillNo}}">
               </div>
             </div>
             <div class="col-md-2">
@@ -56,15 +36,15 @@
                 <select class="select2 form-control  custom-select" name="PartyName">
                   <option>Select</option>
                   <optgroup label="">
-                    {% for i in Party %}
-                    <option value="{{i.PartyName}}">{{i.PartyName}}</option>
+                    {% for i in sp %}
+                    <option value="{{i}}" {% if PartyName == i %} selected {% endif %}>{{i}}</option>
                     {% endfor %}
                   </optgroup>
                 </select>
               </div>
             </div>
             <div class="col-md-2 d-flex align-items-center">
-                <button class="btn btn-primary" type="submit">Search</button>
+                <button class="btn btn-success" type="submit">Search</button>
             </div>
           </div>
         </form>
@@ -89,14 +69,14 @@
               <tbody>
                 {% for i in Purchase %}
                 <tr>
-                  <td>{{i.date}}</td>
+                  <td>{{i.Date}}</td>
                   <td>{{i.PartyName}}</td>
                   <td>{{i.InvoiceNo}}</td>
                   <td>{{i.BillNo}}</td>
                   <td>{{i.TypeofPurchase}}</td>
                   <td>{{i.TypeofPayment}}</td>
                   <td>{{i.Amount}}</td>
-                  <td></td>
+                  <td><a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;">Details</a></div></td>
                 </tr>
                 {% endfor %}
               </tbody>

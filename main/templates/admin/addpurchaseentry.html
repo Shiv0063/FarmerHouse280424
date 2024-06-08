@@ -169,7 +169,7 @@
                     </div>
                   </div>
                   <div class="col d-flex justify-content-end align-items-center">
-                    <a href="Barcode/{{ProductId}}" class="btn btn-danger">Barcode</a>
+                    <a href="/Barcode/{{ProductId}}" class="btn btn-danger">Barcode</a>
                   </div>
                 </div>
               </div>
@@ -193,7 +193,7 @@
                           onkeyup="onCharges('Amount','{{i.id}}');" value="{{i.Amount}}"></td>
                       <td class="p-2"><select class="form-select" name="Tax" onchange="onCharges('Tax','{{i.id}}');"
                           id="Tax{{i.id}}" aria-label="Default select example" required>
-                          <option selected>--select--</option>
+                          <option selected value="TaxFree" >--select--</option>
                           <option value="5" {% if i.Tax == '5' %} selected {% endif %}>5%</option>
                           <option value="12" {% if i.Tax == '12' %} selected {% endif %}>12%</option>
                           <option value="18" {% if i.Tax == '18' %} selected {% endif %}>18%</option>
@@ -263,7 +263,7 @@
               <div class="col-12">
                 <div class="gap-3">
                   <button class="btn btn-success" type="submit">Save</button>
-                  <button class="btn btn-success" type="submit">Save & Print</button>
+                  <!-- <button class="btn btn-success" type="submit">Save & Print</button> -->
                   <a class="btn btn-danger" href="/PurchaseCancel/{{ProductId}}">Cancel</a>
                 </div>
               </div>

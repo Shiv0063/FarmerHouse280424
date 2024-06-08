@@ -21,12 +21,14 @@
                   <th>Tax</th>
                   <th>Unit</th>
                   <th>Quantity</th>
+                  <th>Purchase price</th>
                   <th>Amount</th>
                 </tr>
                 <!-- end row -->
               </thead>
               <tbody>
                 {% for i in stock %}
+                {% if i.out == 0 %}
                 <tr>
                   <td>{{forloop.counter}}</td>
                   <td>{{i.ProductName}}</td>
@@ -34,8 +36,10 @@
                   <td>{{i.Tax}}</td>
                   <td>{{i.Unit}}</td>
                   <td>{{i.Quantity}}</td>
+                  <td>{{i.PurchaseIncTax}}</td>
                   <td>{{i.Amount}}</td>
                 </tr>
+                {% endif %}
                 {% endfor %}
               </tbody>
               <tfoot>

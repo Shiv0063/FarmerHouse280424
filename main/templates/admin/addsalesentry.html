@@ -65,6 +65,12 @@
                     required>
                 </div>
               </div>
+              <div class="col-md-2">
+                <div class="mb-4">
+                  <label for="exampleInputInvoiceNo" class="form-label">Order No.</label>
+                  <input type="text" class="form-control " id="exampleInputInvoiceNo" name="OrderNo">
+                </div>
+              </div>
               <div class="col-md-4">
                 <div class="row" id="Partyselect2">
                   <div class="col-9">
@@ -227,7 +233,7 @@
                       <td class="p-2"><input type="text" class="form-control text-center" name="Amount" id="Amount{{i.id}}" onkeydown="onCharges('Amount','{{i.id}}');"
                         onkeyup="onCharges('Amount','{{i.id}}');" value="{{i.Amount}}"></td>
                       <td class="p-2"><select class="form-select" name="Tax" onchange="onCharges('Tax','{{i.id}}');" id="Tax{{i.id}}" aria-label="Default select example" required>
-                        <option selected>--select--</option>
+                        <option selected value="TaxFree">--select--</option>
                         <option value="5" {% if i.Tax == '5' %} selected {% endif %}>5%</option>
                         <option value="12" {% if i.Tax == '12' %} selected {% endif %}>12%</option>
                         <option value="18" {% if i.Tax == '18' %} selected {% endif %}>18%</option>

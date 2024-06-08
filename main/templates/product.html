@@ -50,14 +50,14 @@
                 <!-- start row -->
                 <tr>
                   <th>No</th>
+                  <th>MFG Date</th>
+                  <th>Expiry Date</th>
                   <th>Product Name</th>
                   <th>Category</th>
                   <th>Tax</th>
                   <th>Unit</th>
                   <th>MinQty</th>
                   <th>MaxQty</th>
-                  <th>Barcode No</th>
-                  <th>HSNCode</th>
                   <th>MRP</th>
                 </tr>
                 <!-- end row -->
@@ -66,14 +66,14 @@
                 {% for i in data %}
                 <tr>
                   <td>{{forloop.counter}}</td>
+                  <td>{{i.MFGDate}}</td>
+                  <td>{{i.ExpiryDate}}</td>
                   <td>{{i.ProductName}}</td>
                   <td>{{i.Category}}</td>
                   <td>{{i.Tax}}</td>
                   <td>{{i.Unit}}</td>
                   <td>{{i.MinQty}}</td>
                   <td>{{i.MaxQty}}</td>
-                  <td>{{i.BarcodeNo}}</td>
-                  <td>{{i.HSNCode}}</td>
                   <td>{{i.MRP}}</td>
                 </tr>
                 {% endfor %}

@@ -1,0 +1,104 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper"> 
+  <div class="container-fluid">
+    <div class="card">
+      <form class="">
+        <div class="form-body">
+          <div class="">
+            <div class="row justify-content-center mt-3">
+              <div class="col-12">
+                <center>
+                  <img src="http://127.0.0.1:8000/static/assets/images/logos/logo.png" width="100px">
+              </center>
+              </div>
+              <div class="col-11 mt-2">
+                <table class="table table-striped table-bordered display text-nowrap" id="thad">
+                  <thead>
+                    <tr>
+                      <th colspan="3"><b class="h5">Farmer House</b><br>
+                        <div>
+                          SF Shop No. 207,<br> Applewood City Mall,<br> Nr. Madhuram Bus Stop,<br> Opp. Nagarik Bank, Junagadh. <br><b>GSTIN/UIN</b>: 24BLJPR6405D1Z8 <br><b>State Name</b> : Gujarat, Code : 24
+                        </div>
+                      </th>
+                      <th colspan="2">
+                        <b class="h5">{{dt.PartyName}}</b><br>
+                        {{PD.Address}}<br>
+                        Phone No. : {{PD.Number}}<br>
+                        GSTIN/UIN: {{PD.GSTNo}} <br>
+                        State Name : Gujarat, Code : 24
+                      </th>
+                    </tr>
+                    <tr>
+                      <th>Date</th>
+                      <th>Bill No.</th>
+                      <th>Type of Payment</th>
+                      <th>Cedited Amount</th>
+                      <th>Payable Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody">
+                      <tr>
+                        <td>{{dt.Date}}</td>
+                        <td>{{dt.Number}}</td>
+                        <td>{{dt.TypeofPayment}}</td>
+                        <td>{{dt.CeditedAmount}}</td>
+                        <td>{{dt.PayableAmount}}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="3"><b>Transaction ID</b></td>
+                        <td colspan="2"><b>Description</b></td>
+                      </tr>
+                      <tr>
+                        <td colspan="3">{{dt.TransactionID}}</td>
+                  <td colspan="2">{{dt.Description}}</td>
+                      </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions border-top">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col d-flex justify-content-end">
+                      <a href="/Bill/{{dt.id}}" class="btn btn-warning text-white">
+                        <i class="ti ti-printer fs-5"></i>
+                        Print
+                      </a>
+                      <a class="btn bg-danger text-white ms-6" onclick="window.history.go(-1);">
+                        Cancel
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- start -->
+  </div>
+</div>
+<style>
+  @media print {
+  #D1,#D2{
+    display: none !important;
+  }
+  .form-actions{
+    display:none !important;
+  }
+}
+
+@page {
+  size: A4 l;
+}
+
+
+
+</style>
+{% endblock content %}
