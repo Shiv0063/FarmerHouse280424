@@ -1310,7 +1310,7 @@ def ProductE2(request):
             else:
                 gh = pt - eval(dt.Discount) 
                 dt.SalesPriceAfterDiscount = "%.2f" % gh
-        dt.LossMargin = '0'        
+        # dt.LossMargin = '0'        
         dt.save()
     if name == 'LossMargin':
         if val != '':
@@ -1327,7 +1327,7 @@ def ProductE2(request):
                 gh = pt - eval(dt.Discount) 
                 dt.SalesPriceAfterDiscount = "%.2f" % gh
         else : 
-            dt.LossMargin = '0'
+            # dt.LossMargin = '0'
             pt = eval(dt.PurchaseIncTax)
             dt.BasicSalesPrice= "%.2f" % pt
             if dt.Discount == '0':
