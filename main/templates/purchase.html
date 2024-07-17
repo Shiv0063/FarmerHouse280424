@@ -45,6 +45,7 @@
                   <th>Bill No.</th>
                   <th>Source of <br> Purchase</th>
                   <th>Type of <br> Payment</th>
+                  <th>Pending Amount</th>
                   <th>Amount</th>
                   <th></th>
                 </tr>
@@ -53,12 +54,13 @@
               <tbody>
                 {% for i in purchase %}
                 <tr>
-                  <td>{{i.date}}</td>
+                  <td>{{i.ndate}}</td>
                   <td>{{i.PartyName}}</td>
                   <td>{{i.InvoiceNo}}</td>
                   <td>{{i.BillNo}}</td>
                   <td>{{i.TypeofPurchase}}</td>
                   <td>{{i.TypeofPayment}}</td>
+                  <td>{{i.PendingAmount}}</td>
                   <td>{{i.Amount}}</td>
                   <td>
                     <a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a>

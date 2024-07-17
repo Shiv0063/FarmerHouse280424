@@ -1,0 +1,96 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-11 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Edit Party</h4>
+          </div>
+          <form class="card-body p-4" method="post">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-4">
+                <div class="mb-4">
+                  <label for="exampleInputtype" class="form-label">Type Of Party</label>
+                  <select class="form-select form-control-sm" id="exampleInputtype" name="Type" tabindex="1"
+                    required>
+                    <option value="" selected>-- Selet --</option>
+                    <option value="Market Yard" {% if data.Type == 'Market Yard' %} selected {% endif %}>Market Yard</option>
+                    <option value="Local Market" {% if data.Type == 'Local Market' %} selected {% endif %}>Local Market</option>
+                    <option value="Vendor" {% if data.Type == 'Vendor' %} selected {% endif %}>Vendor</option>
+                    <option value="Hotel & Restaurant" {% if data.Type == 'Hotel & Restaurant' %} selected {% endif %}>Hotel & Restaurant</option>
+                    <option value="Customer" {% if data.Type == 'Customer' %} selected {% endif %}>Customer</option>
+                    
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-4">
+                  <label for="exampleInputPartyName" class="form-label">Party Name</label>
+                  <input type="text" class="form-control" id="exampleInputPartyName" name="PartyName"
+                    value="{{data.PartyName}}" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-4">
+                  <label for="exampleInputnumber" class="form-label">Phone Number</label>
+                  <input type="text" class="form-control" id="exampleInputnumber" name="Number"
+                  value="{{data.Number}}" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label class="form-label">Address</label>
+                  <textarea class="form-control p-7" name="Address" id="" cols="20" rows="1" required>{{data.Address}}</textarea>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputGSTNo" class="form-label">GST No.</label>
+                  <input type="text" class="form-control" id="exampleInputGSTNo" name="GSTNo" value="{{data.GSTNo}}" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputGmail" class="form-label" >Email</label>
+                  <input type="email" class="form-control" id="exampleInputGmail" name="Email"
+                  value="{{data.Email}}" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputcity" class="form-label">City</label>
+                  <select id="inputState" class="form-select" name="City" required>
+                    <option selected value="{{data.City}}">{{data.City}}</option>
+                    {% include "city.html" %}
+                  </select>
+                  <!-- <input type="text" class="form-control" id="exampleInputcity" placeholder="City"> -->
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-3">
+                  <button class="btn btn-success" type="submit">Submit</button>
+                  <a class="btn bg-danger-subtle text-danger" href="/Party">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

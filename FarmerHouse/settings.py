@@ -51,7 +51,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+]   
+
+# AUTO_LOGOUT_DELAY = 1
 
 ROOT_URLCONF = 'FarmerHouse.urls'
 
@@ -76,12 +78,12 @@ WSGI_APPLICATION = 'FarmerHouse.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # DATABASES = {
 #     'default': {
@@ -94,19 +96,19 @@ WSGI_APPLICATION = 'FarmerHouse.wsgi.application'
 #     }
 # }
 
-import dj_database_url
+# import dj_database_url
 
-RENDER_EXTERNAL_HOSTNAME = "postgres://farmerhouse01_user:p5caAscI5Lt1HcjvNcsF1kCIiv4TQXps@dpg-cpg7mc6ct0pc73d8uovg-a.singapore-postgres.render.com/farmerhouse01"
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+# RENDER_EXTERNAL_HOSTNAME = "postgres://farmerhouse01_user:p5caAscI5Lt1HcjvNcsF1kCIiv4TQXps@dpg-cpg7mc6ct0pc73d8uovg-a.singapore-postgres.render.com/farmerhouse01"
+# if RENDER_EXTERNAL_HOSTNAME:
+#     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-DATABASES = {
-    'default': dj_database_url.config(
-        # Feel free to alter this value to suit your needs.
-        default='postgres://farmerhouse01_user:p5caAscI5Lt1HcjvNcsF1kCIiv4TQXps@dpg-cpg7mc6ct0pc73d8uovg-a.singapore-postgres.render.com/farmerhouse01',
-        conn_max_age=600
-    )
-}
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         # Feel free to alter this value to suit your needs.
+#         default='postgres://farmerhouse01_user:p5caAscI5Lt1HcjvNcsF1kCIiv4TQXps@dpg-cpg7mc6ct0pc73d8uovg-a.singapore-postgres.render.com/farmerhouse01',
+#         conn_max_age=600
+#     )
+# }
 
 
 # Password validation
@@ -142,8 +144,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 STATIC_URL = '/static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_ROOT = os.path.join(BASE_DIR, 'main/static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'main/static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'main/static')]
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
@@ -154,3 +156,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL=''
 LOGOUT_REDIRECT_URL='/login'
+
+# SECURE_SSL_REDIRECT = True
+
+# SESSION_COOKIE_SECURE = True
+
+# CSRF_COOKIE_SECURE = True
+
+# SESSION AGE 5 Minutes
+# SESSION_COOKIE_AGE = 1*60
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_SAVE_EVERY_REQUEST = True

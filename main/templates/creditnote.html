@@ -1,4 +1,4 @@
-﻿{% extends 'admin/main.html' %}
+﻿{% extends 'main.html' %}
 {% load static %}
 {% block content %}
 <div class="body-wrapper">
@@ -66,7 +66,7 @@
               <tbody>
                 {% for i in PAM %}
                 <tr>
-                  <td>{{i.Date}}</td>
+                  <td>{{i.ndate}}</td>
                   <td>{{i.Number}}</td>
                   <td>{{i.PartyName}}</td>
                   <td>{{i.TypeofPayment}}</td>
@@ -74,7 +74,7 @@
                   <td>{{i.PayableAmount}}</td>
                   <td>{{i.TransactionID}}</td>
                   <td>{{i.Description}}</td>
-                  <td><a class="btn btn-warning mr-3" href="/Details/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></td>
+                  <td><a class="btn btn-warning me-2" href="/Details/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a><a href="/Bill/{{i.id}}" class="btn btn-success"><i class="ti ti-printer"></i></a></td>
 
                 </tr>
                 {% endfor %}

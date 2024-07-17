@@ -1,0 +1,101 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="datatables">
+      <!-- start File export -->
+      <div class="card">
+        <div class="px-4 py-3 border-bottom">
+          <h4 class="card-title mb-0">User Outstanding Report</h4>
+        </div>
+        <form class="card-body p-4 pb-0 mb-0" method="post">
+          {% csrf_token %}
+          <div class="row mb-0">
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInputInvoiceNo" class="form-label">From</label>
+                <input type="date" class="form-control" name="EndDate" id="EndDate" value="{{EndDate}}">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInputInvoiceNo" class="form-label">To</label>
+                <input type="date" class="form-control" name="StartDate" id="StartDate" value="{{StartDate}}" >
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label for="exampleInputtype" class="form-label">Username</label>
+              <div class="mb-4">
+                <select class="select2 form-control  custom-select" name="Username">
+                  <option>Select</option>
+                  <optgroup label="">
+                    {% for i in user %}
+                    <option value="{{i.username}}" {% if Username == i.username %} selected {% endif %}>{{i.username}}</option>
+                    {% endfor %}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button class="btn btn-success" formaction="/UserOutstandingReport/Payable">Payable</button>
+                <button class="btn btn-success ms-2" formaction="/UserOutstandingReport/Receivable">Receivable</button>
+            </div>
+          </div>
+        </form>
+        <hr>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+              <thead>
+                <!-- start row -->
+                <tr>
+                  <th class="p-2">Date</th>
+                  <th class="p-2">Username</th>
+                  <th class="p-2">Bill No. / Invoice No.</th>
+                  <th class="p-2">Party Name</th>
+                  <th class="p-2">Type</th>
+                  <th class="p-2">Pending Amount</th>
+                  <th class="p-2">Total Bill Amount</th>
+                </tr>
+                <!-- end row -->
+              </thead>
+              <tbody id="tbody">
+                {% for i in dt1 %}
+                <tr>
+                  <td class="p-2">{{i.Date}}</td>
+                  <td class="p-2">{{i.user}}</td>
+                  <td class="p-2">{{i.BillNo}}</td>
+                  <td class="p-2">{{i.PartyName}}</td>
+                  <td class="p-2">{{i.Type}}</td>
+                  <td class="p-2">{{i.PendingAmount}}</td>
+                  <td class="p-2">{{i.Amount}}</td>
+                </tr>
+                {% endfor %}
+                {% for i in dt2 %}
+                <tr>
+                  <td class="p-2">{{i.Date}}</td>
+                  <td class="p-2">{{i.user}}</td>
+                  <td class="p-2">{{i.InvoiceNo}}</td>
+                  <td class="p-2">{{i.PartyName}}</td>
+                  <td class="p-2">{{i.Type}}</td>
+                  <td class="p-2">{{i.PendingAmount}}</td>
+                  <td class="p-2">{{i.Amount}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- end File export -->
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
+<script>
+
+</script>
+{% endblock script %}

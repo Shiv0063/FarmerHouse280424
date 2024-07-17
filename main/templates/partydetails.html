@@ -1,0 +1,108 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <!-- start -->
+    <div class="card">
+      <div class="card-header text-bg-success">
+        <h5 class="mb-0 text-white">Party Details</h5>
+      </div>
+      <form class="form-horizontal">
+        <div class="form-body">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Party Type:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">{{data.Type}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Party Name:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">{{data.PartyName}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Phone Number:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">{{data.Number}}</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">GST Number:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">{{data.GSTNo}}</p>
+                  </div>
+                </div>
+              </div>
+              <!--/span-->
+            </div>
+            <!--/row-->
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Address:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">
+                      {{data.Address}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">City:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">
+                      {{data.City}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group row">
+                  <label class="form-label text-md-end col-md-3">Email:</label>
+                  <div class="col-md-9">
+                    <p class="form-control-static">{{data.Email}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions border-top">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col d-flex justify-content-end">
+                      <a href="/EditParty/{{data.id}}" class="btn btn-success">
+                        <i class="ti ti-edit fs-5"></i>
+                        Edit
+                      </a>
+                      <a class="btn bg-danger-subtle text-danger ms-6" href="/Party">
+                        Cancel
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- start -->
+  </div>
+</div>
+{% endblock content %}

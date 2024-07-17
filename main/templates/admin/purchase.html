@@ -33,69 +33,6 @@
     <div class="datatables">
       <!-- start File export -->
       <div class="card">
-        <!-- <div class="px-4 py-3 border-bottom">
-          <h4 class="card-title mb-0">Purchase Register</h4>
-        </div>
-        <form class="card-body p-4 pb-0 mb-0" enctype="multipart/form-data" method="post">
-          {% csrf_token %}
-          <div class="row mb-0">
-            <div class="col-md-2">
-              <div class="mb-4">
-                <label for="exampleInputtype" class="form-label">Type of Purchase</label>
-                <select class="form-select form-control-sm" id="exampleInputtype" name="TypeofPurchase" tabindex="1">
-                  <option value="" selected>-- Selet --</option>
-                  <option value="Market Yard">Market Yard</option>
-                  <option value="Vendor">Vendor</option>
-                  <option value="Local Market">Local Market</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="mb-4">
-                <label for="exampleInputBillno" class="form-label">Bill No</label>
-                <input type="text" class="form-control " id="exampleInputBillno" name="BillNo" placeholder="">
-                <input type="hidden" name="Amount" value="{{tamonut}}">
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="mb-4">
-                <label for="exampleInputInvoiceNo" class="form-label">Invoice No.</label>
-                <input type="text" class="form-control " id="exampleInputInvoiceNo" name="InvoiceNo" placeholder="">
-                <input type="hidden" name="ProductId" value="{{ProductId}}">
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="mb-4">
-                <label for="exampleInputtype" class="form-label">Type of Payment</label>
-                <select class="form-select" id="exampleInputtype" name="TypeofPayment" tabindex="1">
-                  <option value="" selected>-- Selet --</option>
-                  <option value="Case">Case</option>
-                  <option value="Credit">Credit</option>
-                  <option value="Gpay">Gpay</option>
-                  <option value="UPI">UPI</option>
-                  <option value="Net banking">Net banking</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <label for="exampleInputtype" class="form-label">Party Name</label>
-              <div class="mb-4">
-                <select class="select2 form-control  custom-select" name="PartyName">
-                  <option>Select</option>
-                  <optgroup label="">
-                    {% for i in Party %}
-                    <option value="{{i.PartyName}}">{{i.PartyName}}</option>
-                    {% endfor %}
-                  </optgroup>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-2 d-flex align-items-center">
-                <button class="btn btn-primary" type="submit">Search</button>
-            </div>
-          </div>
-        </form>
-        <hr> -->
         <div class="card-body">
           <div class="table-responsive">
             <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
@@ -108,6 +45,7 @@
                   <th>Bill No.</th>
                   <th>Source of <br> Purchase</th>
                   <th>Type of <br> Payment</th>
+                  <th>Pending Amount</th>
                   <th>Amount</th>
                   <th></th>
                 </tr>
@@ -116,15 +54,16 @@
               <tbody>
                 {% for i in purchase %}
                 <tr>
-                  <td>{{i.date}}</td>
+                  <td>{{i.ndate}}</td>
                   <td>{{i.PartyName}}</td>
                   <td>{{i.InvoiceNo}}</td>
                   <td>{{i.BillNo}}</td>
                   <td>{{i.TypeofPurchase}}</td>
                   <td>{{i.TypeofPayment}}</td>
+                  <td>{{i.PendingAmount}}</td>
                   <td>{{i.Amount}}</td>
                   <td>
-                    <a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a><a class="btn btn-success mr-3" href="/EditPurchase/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-pencil'></i></a><a href="DeletePurchase/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger"><i class='ti ti-trash'></i></a>
+                    <a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a><a href="DeletePurchase/{{i.id}}" style="margin-left: 5px;" class="btn btn-danger"><i class='ti ti-trash'></i></a>
                   </td>
                 </tr>
                 {% endfor %}

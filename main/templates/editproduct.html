@@ -1,0 +1,142 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+      <div class="row justify-content-center">
+        <div class="col-md-6 col-11 mt-1 mb=1 alert alert-success alert-dismissible fade show" role="alert">
+          <strong>{{message}}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="px-4 py-3 border-bottom">
+            <h4 class="card-title mb-0">Edit Product</h4>
+          </div>
+          <form class="card-body p-4" method="post" id="formAdd">
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputProductName" class="form-label">Product Name</label>
+                  <input type="text" class="form-control" id="exampleInputProductName" name="ProductName" value="{{data.ProductName}}" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label class="form-label">Product Tax</label>
+                  <select class="form-select" name="Tax" aria-label="Default select example" required>
+                    <option value="5" {% if data.Tax == '5' %} selected {% endif %}>5%</option>
+                    <option value="12" {% if data.Tax == '12' %} selected {% endif %}>12%</option>
+                    <option value="18" {% if data.Tax == '18' %} selected {% endif %}>18%</option>
+                    <option value="28" {% if data.Tax == '28' %} selected {% endif %}>28%</option>
+                    <option value="TaxFree" {% if data.Tax == 'TaxFree' %} selected {% endif %}>Tax Free</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label class="form-label">Category</label>
+                  <select class="form-select" name="Category" tabindex="1" required>
+                    {% for i in Category %}
+                    <option value="{{i.Category}}" {% if data.Category == i.Category %} selected {% endif %}>{{i.Category}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label class="form-label">Product Unit</label>
+                  <select class="form-select" name="Unit" aria-label="Default select example" value="{{data.Unit}}" required>
+                    <option selected>--select--</option>
+                    <option value="KG" {% if data.Unit == 'KG' %} selected {% endif %}>KG</option>
+                    <option value="GM" {% if data.Unit == 'GM' %} selected {% endif %}>GM</option>
+                    <option value="PC" {% if data.Unit == 'PC' %} selected {% endif %}>PC</option>
+                    <option value="LIT" {% if data.Unit == 'LIT' %} selected {% endif %}>LIT</option>
+                    <option value="Box" {% if data.Unit == 'Box' %} selected {% endif %}>Box</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputMinQty" class="form-label">Min Qty</label>
+                  <input type="number" class="form-control" id="exampleInputMinQty" name="MinQty" value="{{data.MinQty}}" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputMaxQty" class="form-label">Max Qty</label>
+                  <input type="number" class="form-control" id="exampleInputMaxQty" name="MaxQty" value="{{data.MaxQty}}" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputBarcode" class="form-label">HSN Code</label>
+                  <input type="text" class="form-control" id="exampleInputBarcode" name="HSNCode" value="{{data.HSNCode}}" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label for="exampleInputBarcode" class="form-label">MRP</label>
+                  <input type="text" class="form-control" id="exampleInputBarcode" name="MRP" value="{{data.MRP}}" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label class="form-label">Manufacturing Date</label>
+                  <input type="date" class="form-control " name="MFGDate" value="{{data.MFGDate}}" required>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="mb-4">
+                  <label class="form-label">Expiry Date</label>
+                  <input type="date" class="form-control " name="ExpiryDate" value="{{data.ExpiryDate}}" required>
+                </div>
+              </div>
+              <div class="col-12">
+                <div class="d-flex justify-content-end gap-3">
+                  <button class="btn btn-success" type="submit">Submit</button>
+                  <a class="btn btn-danger" href="/Product">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
+<script>
+  $("#formAdd select[name='Category']").on('change', function(){
+    var $this = $(this);
+    if($this.val() !=''){
+        $("#formAdd select[name='SubCategory']").find('.after').nextAll().remove();
+        $.ajax({
+            url: '/SCategory/'+$this.val(),
+            type: 'GET',
+            success: function(resp){
+                let options = '';
+                resp.Sc.forEach(Sc => {
+                    options+='<option value='+Sc+'>'+Sc +'</option>';
+                });
+                $("#formAdd select[name='SubCategory']").find('.after').after(options);
+            }, 
+            error: function(resp){
+                console.log('Something went wrong');
+            }
+        });
+    }else{
+        $("#formAdd select[name='SubCategory']").find('.after').nextAll().remove();
+    }
+   });
+</script>
+{% endblock script %}

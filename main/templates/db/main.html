@@ -1,0 +1,579 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-bs-theme="light">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Favicon icon-->
+  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/saurashtra.png' %}">
+  <!-- Core Css -->
+  <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+  
+  <title>Farmer House</title>
+  <link rel="stylesheet" href="{% static 'assets/libs/select2/dist/css/select2.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/js/buttons/2.4.2/css/buttons.dataTables.min.css' %}">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.35.0/iconfont/tabler-icons.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+  <style>
+    input {
+      background: #E8F0FE !important;
+    }
+
+    select {
+      background: #E8F0FE !important;
+    }
+
+    textarea {
+      background: #E8F0FE !important;
+    }
+
+    .table-bordered {
+      border: 0.5px solid #E8F0FE !important;
+      box-shadow: #E8F0FE;
+      color: black !important;
+    }
+    table{
+      border-radius: 12px !important;
+    }
+    thead{
+      border-radius: 12px !important;
+      border-radius: 12px !important;
+    }
+    th {
+      border: 0.5px solid #E8F0FE !important;
+      padding: 8px !important;
+      border-top-left-radius: 12px !important;
+      border-top-right-radius: 12px !important;
+      
+    }
+    td{
+      border: 0.5px solid #E8F0FE !important;
+      padding: 8px !important;
+      color: rgb(20, 20, 20) !important;
+    }
+    tbody
+    {
+      border-bottom-left-radius: 12px !important;
+      border-bottom-right-radius: 12px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Preloader -->
+  <div class="preloader">
+    <a href="/">
+      <img src="{% static 'assets/images/logos/saurashtra.png' %}" alt="loader" class="lds-ripple img-fluid">
+    </a>
+  </div>
+  <div id="main-wrapper">
+    <!-- Sidebar Start -->
+    <aside class="side-mini-panel with-vertical">
+      <!-- ---------------------------------- -->
+      <!-- Start Vertical Layout Sidebar -->
+      <!-- ---------------------------------- -->
+      <div class="iconbar">
+        <div>
+          <div class="mini-nav">
+            <div class="brand-logo d-flex align-items-center justify-content-center">
+              <a class="nav-link sidebartoggler" id="headerCollapse" id="javascript:void(0)">
+                <iconify-icon icon="solar:hamburger-menu-line-duotone" class="fs-7"></iconify-icon>
+              </a>
+            </div>
+            <ul class="mini-nav-ul" data-simplebar="">
+             <li class="mini-nav-item" id="mini-1">
+                <a id="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="right" data-bs-title="Dashboards">
+                  <iconify-icon icon="solar:layers-line-duotone" class="fs-7"></iconify-icon>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="sidebarmenu">
+            <div class="brand-logo d-flex align-items-center nav-logo">
+              <a id="index" href="/" class="text-nowrap logo-img p-1">
+                <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="Logo">
+              </a>
+            </div>
+            <nav class="sidebar-nav d-block simplebar-scrollable-y" id="menu-right-mini-1" data-simplebar="">
+              <ul class="sidebar-menu" id="sidebarnav">
+                <li class="sidebar-item" style="margin-top: 10px;" >
+                  <a class="sidebar-link" href="/" aria-expanded="false">
+                    <span>
+                      <iconify-icon icon="solar:layers-line-duotone" class="ti"></iconify-icon>
+                    </span>
+                    <span class="hide-menu">Dashboard</span>
+                  </a>
+                </li>
+                <li class="sidebar-item">
+                  <a class="sidebar-link" href="/AllInvoice">
+                    <span>
+                      <iconify-icon icon="solar:widget-line-duotone" class="ti"></iconify-icon>
+                    </span>
+                    <span class="">All Invoice</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <!--  Sidebar End -->
+    <div class="page-wrapper">
+      <!--  Header Start -->
+      <header class="topbar" id="D1">
+        <div class="with-vertical">
+        
+          <nav class="navbar navbar-expand-lg p-0">
+            <ul class="navbar-nav">
+              <li class="nav-item d-flex d-xl-none">
+                <a class="nav-link nav-icon-hover-bg rounded-circle  sidebartoggler " id="headerCollapse" id="javascript:void(0)">
+                  <iconify-icon icon="solar:hamburger-menu-line-duotone" class="fs-6"></iconify-icon>
+                </a>
+              </li>
+            </ul>
+            <div class="d-block d-lg-none py-9 py-xl-0">
+              <a href="/">
+                <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="matdash-img">
+              </a>
+            </div>
+            <a class="navbar-toggler p-0 border-0 nav-icon-hover-bg rounded-circle" id="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <iconify-icon icon="solar:menu-dots-bold-duotone" class="fs-6"></iconify-icon>
+            </a>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+              <div class="d-flex align-items-center justify-content-between">
+                <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
+                 
+                  <li class="nav-item">
+                    <a class="nav-link moon dark-layout nav-icon-hover-bg rounded-circle" id="javascript:void(0)">
+                      <iconify-icon icon="solar:moon-line-duotone" class="moon fs-6"></iconify-icon>
+                    </a>
+                    <a class="nav-link sun light-layout nav-icon-hover-bg rounded-circle" id="javascript:void(0)" style="display: none">
+                      <iconify-icon icon="solar:sun-2-line-duotone" class="sun fs-6"></iconify-icon>
+                    </a>
+                  </li>
+                  <!-- ------------------------------- -->
+                  <!-- start profile Dropdown -->
+                  <!-- ------------------------------- -->
+                  <li class="nav-item dropdown">
+                    <a class="nav-link" id="javascript:void(0)" id="drop1" aria-expanded="false">
+                      <div class="d-flex align-items-center gap-2 lh-base">
+                        <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="35" height="35" alt="matdash-img">
+                        <iconify-icon icon="solar:alt-arrow-down-bold" class="fs-2"></iconify-icon>
+                      </div>
+                    </a>
+                    <div class="dropdown-menu profile-dropdown dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop1">
+                      <div class="position-relative px-4 pt-3 pb-2">
+                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom gap-6">
+                          <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="56" height="56" alt="matdash-img">
+                          <div>
+                            <h5 class="mb-0 fs-12">DB
+                            </h5>
+                            <p class="mb-0 text-dark">
+                              Email
+                            </p>
+                          </div>
+                        </div>
+                        <div class="message-body">
+                          <a href="/logout" id="authentication-login2"  class="p-2 dropdown-item h6 rounded-1">
+                            Sign Out
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- ------------------------------- -->
+                  <!-- end profile Dropdown -->
+                  <!-- ------------------------------- -->
+                </ul>
+              </div>
+            </div>
+          </nav>
+          <!-- ---------------------------------- -->
+          <!-- End Vertical Layout Header -->
+          <!-- ---------------------------------- -->
+
+          <!-- ------------------------------- -->
+          <!-- apps Dropdown in Small screen -->
+          <!-- ------------------------------- -->
+          
+
+        </div>
+        <div class="app-header with-horizontal">
+          <nav class="navbar navbar-expand-xl container-fluid p-0">
+            <ul class="navbar-nav align-items-center">
+              <li class="nav-item d-flex d-xl-none">
+                <a class="nav-link sidebartoggler nav-icon-hover-bg rounded-circle" id="sidebarCollapse" id="javascript:void(0)">
+                  <iconify-icon icon="solar:hamburger-menu-line-duotone" class="fs-7"></iconify-icon>
+                </a>
+              </li>
+              <li class="nav-item d-none d-xl-flex align-items-center">
+                <a id="index" class="text-nowrap nav-link" href="/">
+                  <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="matdash-img">
+                </a>
+              </li>
+            </ul>
+            <div class="d-block d-xl-none">
+              <a id="index" class="text-nowrap nav-link"  href="/">
+                <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="matdash-img">
+              </a>
+            </div>
+            <a class="navbar-toggler nav-icon-hover p-0 border-0 nav-icon-hover-bg rounded-circle" id="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="p-2">
+                <i class="ti ti-dots fs-7"></i>
+              </span>
+            </a>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+              <div class="d-flex align-items-center justify-content-between px-0 px-xl-8">
+                <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
+                  <li class="nav-item dropdown">
+                    <a id="javascript:void(0)" class="nav-link nav-icon-hover-bg rounded-circle d-flex d-lg-none align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobilenavbar" aria-controls="offcanvasWithBothOptions">
+                      <iconify-icon icon="solar:sort-line-duotone" class="fs-6"></iconify-icon>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link nav-icon-hover-bg rounded-circle moon dark-layout" id="javascript:void(0)">
+                      <iconify-icon icon="solar:moon-line-duotone" class="moon fs-6"></iconify-icon>
+                    </a>
+                    <a class="nav-link nav-icon-hover-bg rounded-circle sun light-layout" id="javascript:void(0)" style="display: none">
+                      <iconify-icon icon="solar:sun-2-line-duotone" class="sun fs-6"></iconify-icon>
+                    </a>
+                  </li>
+                  <li class="nav-item d-block d-xl-none">
+                    <a class="nav-link nav-icon-hover-bg rounded-circle" id="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                      <iconify-icon icon="solar:magnifer-line-duotone" class="fs-6"></iconify-icon>
+                    </a>
+                  </li>
+                  <!-- ------------------------------- -->
+                  <!-- start profile Dropdown -->
+                  <!-- ------------------------------- -->
+                  <li class="nav-item dropdown">
+                    <a class="nav-link" id="javascript:void(0)" id="drop1" aria-expanded="false">
+                      <div class="d-flex align-items-center gap-2 lh-base">
+                        <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="35" height="35" alt="matdash-img">
+                        <iconify-icon icon="solar:alt-arrow-down-bold" class="fs-2"></iconify-icon>
+                      </div>
+                    </a>
+                    <div class="dropdown-menu profile-dropdown dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop1">
+                      <div class="position-relative px-4 pt-3 pb-2">
+                        <div class="d-flex align-items-center mb-3 pb-3 border-bottom gap-6">
+                          <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="56" height="56" alt="matdash-img">
+                          <div>
+                            <h5 class="mb-0 fs-12">DB
+                            </h5>
+                            <p class="mb-0 text-dark">
+                             Email
+                            </p>
+                          </div>
+                        </div>
+                        <div class="message-body">
+                          <a href="/logout" id="authentication-login2" class="p-2 dropdown-item h6 rounded-1">
+                            Sign Out
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                  <!-- ------------------------------- -->
+                  <!-- end profile Dropdown -->
+                  <!-- ------------------------------- -->
+                </ul>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </header>
+      <!--  Header End -->
+
+      <aside class="left-sidebar with-horizontal" id="D2">
+        <!-- Sidebar scroll-->
+        <div>
+          <!-- Sidebar navigation-->
+          <nav id="sidebarnavh" class="sidebar-nav scroll-sidebar container-fluid">
+            <ul id="sidebarnav" style="margin-top: 17px;">
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="/" aria-expanded="false">
+                  <span>
+                    <iconify-icon icon="solar:layers-line-duotone" class="ti"></iconify-icon>
+                  </span>
+                  <span class="hide-menu">Dashboard</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="/AllInvoice">
+                  <span>
+                    <iconify-icon icon="solar:widget-line-duotone" class="ti"></iconify-icon>
+                  </span>
+                  <span class="">All Invoice</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="/CompletInvoice">
+                  <span>
+                    <iconify-icon icon="solar:chart-square-line-duotone" class="ti"></iconify-icon>
+                  </span>
+                  <span class="">Complet Invoice</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <!-- End Sidebar navigation -->
+        </div>
+        <!-- End Sidebar scroll-->
+      </aside>
+
+      {% block content %}
+      {% endblock content %}
+      <!-- <button class="btn btn-danger p-3 rounded-circle d-flex align-items-center justify-content-center customizer-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+        <i class="icon ti ti-settings fs-7"></i>
+      </button>-->
+
+      <div class="offcanvas customizer offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+        <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+          <h4 class="offcanvas-title fw-semibold" id="offcanvasExampleLabel">
+            Settings
+          </h4>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body" data-simplebar="" style="height: calc(100vh - 80px)">
+          <h6 class="fw-semibold fs-4 mb-2">Theme</h6>
+
+          <div class="d-flex flex-row gap-3 customizer-box" role="group">
+            <input type="radio" class="btn-check light-layout" name="theme-layout" id="light-layout" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2" for="light-layout">
+              <i class="icon ti ti-brightness-up fs-7 me-2"></i>Light
+            </label>
+
+            <input type="radio" class="btn-check dark-layout" name="theme-layout" id="dark-layout" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2" for="dark-layout">
+              <i class="icon ti ti-moon fs-7 me-2"></i>Dark
+            </label>
+          </div>
+
+          <h6 class="mt-5 fw-semibold fs-4 mb-2">Theme Direction</h6>
+          <div class="d-flex flex-row gap-3 customizer-box" role="group">
+            <input type="radio" class="btn-check" name="direction-l" id="ltr-layout" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2" for="ltr-layout">
+              <i class="icon ti ti-text-direction-ltr fs-7 me-2"></i>LTR
+            </label>
+
+            <input type="radio" class="btn-check" name="direction-l" id="rtl-layout" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2" for="rtl-layout">
+              <i class="icon ti ti-text-direction-rtl fs-7 me-2"></i>RTL
+            </label>
+          </div>
+
+          <h6 class="mt-5 fw-semibold fs-4 mb-2">Theme Colors</h6>
+
+          <div class="d-flex flex-row flex-wrap gap-3 customizer-box color-pallete" role="group">
+            <input type="radio" class="btn-check" name="color-theme-layout" id="Blue_Theme" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Blue_Theme')" for="Blue_Theme" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="BLUE_THEME">
+              <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-1">
+                <i class="ti ti-check text-white d-flex icon fs-5"></i>
+              </div>
+            </label>
+
+            <input type="radio" class="btn-check" name="color-theme-layout" id="Aqua_Theme" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Aqua_Theme')" for="Aqua_Theme" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="AQUA_THEME">
+              <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-2">
+                <i class="ti ti-check text-white d-flex icon fs-5"></i>
+              </div>
+            </label>
+
+            <input type="radio" class="btn-check" name="color-theme-layout" id="Purple_Theme" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Purple_Theme')" for="Purple_Theme" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="PURPLE_THEME">
+              <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-3">
+                <i class="ti ti-check text-white d-flex icon fs-5"></i>
+              </div>
+            </label>
+
+            <input type="radio" class="btn-check" name="color-theme-layout" id="green-theme-layout" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Green_Theme')" for="green-theme-layout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="GREEN_THEME">
+              <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-4">
+                <i class="ti ti-check text-white d-flex icon fs-5"></i>
+              </div>
+            </label>
+
+            <input type="radio" class="btn-check" name="color-theme-layout" id="cyan-theme-layout" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Cyan_Theme')" for="cyan-theme-layout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="CYAN_THEME">
+              <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-5">
+                <i class="ti ti-check text-white d-flex icon fs-5"></i>
+              </div>
+            </label>
+
+            <input type="radio" class="btn-check" name="color-theme-layout" id="orange-theme-layout" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Orange_Theme')" for="orange-theme-layout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="ORANGE_THEME">
+              <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-6">
+                <i class="ti ti-check text-white d-flex icon fs-5"></i>
+              </div>
+            </label>
+          </div>
+
+          <h6 class="mt-5 fw-semibold fs-4 mb-2">Layout Type</h6>
+          <div class="d-flex flex-row gap-3 customizer-box" role="group">
+            <div>
+              <input type="radio" class="btn-check" name="page-layout" id="vertical-layout" autocomplete="off">
+              <label class="btn p-9 btn-outline-primary rounded-2" for="vertical-layout">
+                <i class="icon ti ti-layout-sidebar-right fs-7 me-2"></i>Vertical
+              </label>
+            </div>
+            <div>
+              <input type="radio" class="btn-check" name="page-layout" id="horizontal-layout" autocomplete="off">
+              <label class="btn p-9 btn-outline-primary rounded-2" for="horizontal-layout">
+                <i class="icon ti ti-layout-navbar fs-7 me-2"></i>Horizontal
+              </label>
+            </div>
+          </div>
+
+          <h6 class="mt-5 fw-semibold fs-4 mb-2">Container Option</h6>
+
+          <div class="d-flex flex-row gap-3 customizer-box" role="group">
+            <input type="radio" class="btn-check" name="layout" id="boxed-layout" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2" for="boxed-layout">
+              <i class="icon ti ti-layout-distribute-vertical fs-7 me-2"></i>Boxed
+            </label>
+
+            <input type="radio" class="btn-check" name="layout" id="full-layout" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2" for="full-layout">
+              <i class="icon ti ti-layout-distribute-horizontal fs-7 me-2"></i>Full
+            </label>
+          </div>
+
+          <h6 class="fw-semibold fs-4 mb-2 mt-5">Sidebar Type</h6>
+          <div class="d-flex flex-row gap-3 customizer-box" role="group">
+            <a id="javascript:void(0)" class="fullsidebar">
+              <input type="radio" class="btn-check" name="sidebar-type" id="full-sidebar" autocomplete="off">
+              <label class="btn p-9 btn-outline-primary rounded-2" for="full-sidebar">
+                <i class="icon ti ti-layout-sidebar-right fs-7 me-2"></i>Full
+              </label>
+            </a>
+            <div>
+              <input type="radio" class="btn-check" name="sidebar-type" id="mini-sidebar" autocomplete="off">
+              <label class="btn p-9 btn-outline-primary rounded-2" for="mini-sidebar">
+                <i class="icon ti ti-layout-sidebar fs-7 me-2"></i>Collapse
+              </label>
+            </div>
+          </div>
+
+          <h6 class="mt-5 fw-semibold fs-4 mb-2">Card With</h6>
+
+          <div class="d-flex flex-row gap-3 customizer-box" role="group">
+            <input type="radio" class="btn-check" name="card-layout" id="card-with-border" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2" for="card-with-border">
+              <i class="icon ti ti-border-outer fs-7 me-2"></i>Border
+            </label>
+
+            <input type="radio" class="btn-check" name="card-layout" id="card-without-border" autocomplete="off">
+            <label class="btn p-9 btn-outline-primary rounded-2" for="card-without-border">
+              <i class="icon ti ti-border-none fs-7 me-2"></i>Shadow
+            </label>
+          </div>
+        </div>
+      </div> 
+      <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
+      <script src="{% static 'assets/libs/iconify-icon/dist/iconify-icon.min.js' %}"></script>
+      <script>
+        let PathNameObj2 = {
+              "AddParty": 'Party2',
+              "PartyDetails": 'Party2',
+              "EditParty": 'Party2',
+            }
+            let patName2;
+            if (PathNameObj2[location.pathname.split("/")[1]]) {
+              patName2 = PathNameObj2[location.pathname.split("/")[1]]
+            } else {
+              patName2 = location.pathname.slice(1)
+            }
+            document.querySelector(`[data-tabname='${patName2}']`)?.classList.add("active");
+      </script>
+<script>
+  let PathNameObj = {
+        "AddParty": 'Party',
+        "PartyDetails": 'Party',
+        "EditParty": 'Party',
+        "AddProduct": 'Product',
+        "EditProduct": 'Product',
+        "AddDeliveryBoy": 'DeliveryBoy',
+        "DeliveryBoyDetails": 'DeliveryBoy',
+        "EditDeliveryBoy": 'DeliveryBoy',
+        "AddUserAccount": 'UserAccount',
+        "EditUser": 'UserAccount',
+        "AddCategory": 'Category',
+        "EditCategory": 'Category',
+        "AddExpanse": 'Expanse',
+        "EditExpanse": 'Expanse',
+        "AddCharges": 'Charges',
+        "EditCharges": 'Charges',
+        "AddSalesEntry": 'Sales',
+        "SalesDetails": 'Sales',
+        "EditSales": 'Sales',
+        "AddSalesReturnEntry": 'SalesReturn',
+        "SRDetails": 'SalesReturn',
+        "EditSR": 'SalesReturn',
+        "AddPurchaseEntry": 'Purchase',
+        "PurchaseDetails": 'Purchase',
+        "EditPurchase": 'Purchase',
+        "AddPurchaseReturnEntry": 'PurchaseReturn',
+        "PRDetails": 'PurchaseReturn',
+        "AddExpensesEntry": 'ExpensesEntry',
+        "EXDetails": 'ExpensesEntry',
+        "EditEx": 'ExpensesEntry',
+        "DebitNote": 'DebitNote',
+        "CreditNote": 'CreditNote',
+        "ProductsDetails": 'StockReport',
+        "ProductsDetail": 'SalesStockReport',
+      }
+
+      let patName;
+      if (PathNameObj[location.pathname.split("/")[1]]) {
+        patName = PathNameObj[location.pathname.split("/")[1]]
+      } else {
+        patName = location.pathname.slice(1)
+      }
+      // alert(patName);
+      document.querySelector(`[data-tabname='${patName}']`)?.classList.add("active");
+</script>
+
+<script>
+      function handleColorTheme(e) {
+        document.documentElement.setAttribute("data-color-theme", e);
+      }
+</script>
+    </div>
+  </div>
+  <div class="dark-transparent sidebartoggler"></div>
+  <!-- Import Js Files -->
+  {% block script %}
+  {% endblock script %}
+  <script src="{% static 'assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/libs/simplebar/dist/simplebar.min.js' %}"></script>
+  <script src="{% static 'assets/js/theme/app.horizontal.init.js' %}"></script>
+  <script src="{% static 'assets/js/theme/theme.js' %}"></script>
+  <script src="{% static 'assets/js/theme/app.min.js' %}"></script>
+  <script src="{% static 'assets/js/theme/sidebarmenu.js' %}"></script>
+
+  <!-- solar icons -->
+  <script src="{% static 'assets/libs/fullcalendar/index.global.min.js' %}"></script>
+  <script src="{% static 'assets/js/apps/calendar-init.js' %}"></script>
+  <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+  <script src="{% static 'assets/js/dashboards/dashboard3.js' %}"></script>
+  <script src="{% static 'assets/libs/select2/dist/js/select2.full.min.js' %}"></script>
+  <script src="{% static 'assets/libs/select2/dist/js/select2.min.js' %}"></script>
+  <script src="{% static 'assets/js/forms/select2.init.js' %}"></script>
+  <script src="{% static 'assets/libs/jquery-steps/build/jquery.steps.min.js' %}"></script>
+  <script src="{% static 'assets/libs/jquery-validation/dist/jquery.validate.min.js' %}"></script>
+  <script src="{% static 'assets/js/forms/form-wizard.js' %}"></script>
+  <script src="{% static 'assets/libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'assets/js/buttons/2.4.2/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'assets/js/ajax/libs/jszip/3.10.1/jszip.min.js' %}"></script>
+  <script src="{% static 'assets/js/ajax/libs/pdfmake/0.1.53/pdfmake.min.js' %}"></script>
+  <script src="{% static 'assets/js/ajax/libs/pdfmake/0.1.53/vfs_fonts.js' %}"></script>
+  <script src="{% static 'assets/js/buttons/2.4.2/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'assets/js/buttons/2.4.2/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'assets/js/datatable/datatable-advanced.init.js' %}"></script>
+</body>

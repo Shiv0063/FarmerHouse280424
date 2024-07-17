@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Favicon icon-->
-  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/logo.png' %}">
+  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/saurashtra.png' %}">
   <!-- Core Css -->
   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
   
@@ -68,7 +68,7 @@
   <!-- Preloader -->
   <div class="preloader">
     <a href="/">
-      <img src="{% static 'assets/images/logos/logo.png' %}" alt="loader" class="lds-ripple img-fluid">
+      <img src="{% static 'assets/images/logos/saurashtra.png' %}" alt="loader" class="lds-ripple img-fluid">
     </a>
   </div>
   <div id="main-wrapper">
@@ -96,10 +96,10 @@
           <div class="sidebarmenu">
             <div class="brand-logo d-flex align-items-center nav-logo">
               <a id="index" href="/" class="text-nowrap logo-img p-1">
-                <img src="{% static 'assets/images/logos/logo.png' %}" width="80px" alt="Logo">
+                <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="Logo">
               </a>
             </div>
-            <nav class="sidebar-nav d-block simplebar-scrollable-y" id="menu-right-mini-1"style="margin-top: 15px;"  data-simplebar="">
+            <nav class="sidebar-nav d-block simplebar-scrollable-y" id="menu-right-mini-1"  data-simplebar="">
               <ul class="sidebar-menu" id="sidebarnav">
                 <li class="sidebar-item" style="margin-top: 10px;" >
                   <a class="sidebar-link" href="/" aria-expanded="false">
@@ -363,14 +363,6 @@
                     </li>
                   </ul>
                 </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link" href="/AllDelete" aria-expanded="false">
-                    <span>
-                      <iconify-icon icon="solar:layers-minimalistic-line-duotone" class="ti"></iconify-icon>
-                    </span>
-                    <span class="hide-menu">All Delete</span>
-                  </a>
-                </li>
               </ul>
             </nav>
           </div>
@@ -393,7 +385,7 @@
             </ul>
             <div class="d-block d-lg-none py-9 py-xl-0">
               <a href="/">
-                <img src="{% static 'assets/images/logos/logo.png' %}" width="80px" alt="matdash-img">
+                <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="matdash-img">
               </a>
             </div>
             <a class="navbar-toggler p-0 border-0 nav-icon-hover-bg rounded-circle" id="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -417,19 +409,19 @@
                   <li class="nav-item dropdown">
                     <a class="nav-link" id="javascript:void(0)" id="drop1" aria-expanded="false">
                       <div class="d-flex align-items-center gap-2 lh-base">
-                        <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="35" height="35" alt="matdash-img">
+                        <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle border" width="35" height="35" alt="matdash-img">
                         <iconify-icon icon="solar:alt-arrow-down-bold" class="fs-2"></iconify-icon>
                       </div>
                     </a>
                     <div class="dropdown-menu profile-dropdown dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop1">
                       <div class="position-relative px-4 pt-3 pb-2">
                         <div class="d-flex align-items-center mb-3 pb-3 border-bottom gap-6">
-                          <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="56" height="56" alt="matdash-img">
+                          <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle border" width="56" height="56" alt="matdash-img">
                           <div>
-                            <h5 class="mb-0 fs-12">Super Admin
+                            <h5 class="mb-0 fs-12">{{request.user}}
                             </h5>
                             <p class="mb-0 text-dark">
-                              Admin@super.com
+                              {{request.user.email}}
                             </p>
                           </div>
                         </div>
@@ -471,13 +463,13 @@
               </li>
               <li class="nav-item d-none d-xl-flex align-items-center">
                 <a id="index" class="text-nowrap nav-link" href="/">
-                  <img src="{% static 'assets/images/logos/logo.png' %}" width="80px" alt="matdash-img">
+                  <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="matdash-img">
                 </a>
               </li>
             </ul>
             <div class="d-block d-xl-none">
               <a id="index" class="text-nowrap nav-link"  href="/">
-                <img src="{% static 'assets/images/logos/logo.png' %}" width="80px" alt="matdash-img">
+                <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="matdash-img">
               </a>
             </div>
             <a class="navbar-toggler nav-icon-hover p-0 border-0 nav-icon-hover-bg rounded-circle" id="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -512,19 +504,19 @@
                   <li class="nav-item dropdown">
                     <a class="nav-link" id="javascript:void(0)" id="drop1" aria-expanded="false">
                       <div class="d-flex align-items-center gap-2 lh-base">
-                        <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="35" height="35" alt="matdash-img">
+                        <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle border" width="35" height="35" alt="matdash-img">
                         <iconify-icon icon="solar:alt-arrow-down-bold" class="fs-2"></iconify-icon>
                       </div>
                     </a>
                     <div class="dropdown-menu profile-dropdown dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop1">
                       <div class="position-relative px-4 pt-3 pb-2">
                         <div class="d-flex align-items-center mb-3 pb-3 border-bottom gap-6">
-                          <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="56" height="56" alt="matdash-img">
+                          <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle border" width="56" height="56" alt="matdash-img">
                           <div>
-                            <h5 class="mb-0 fs-12">Super Admin
+                            <h5 class="mb-0 fs-12">{{request.user}}
                             </h5>
                             <p class="mb-0 text-dark">
-                              Admin@Super.com
+                              {{request.user.email}}
                             </p>
                           </div>
                         </div>
@@ -838,18 +830,6 @@
                   </li>
                 </ul>
               </li>
-              <li class="nav-small-cap">
-                <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span class="hide-menu">Home2</span>
-              </li>
-              <li class="sidebar-item">
-                <a class="sidebar-link" href="/AllDelete" aria-expanded="false">
-                  <span>
-                    <iconify-icon icon="solar:layers-minimalistic-line-duotone" class="ti"></iconify-icon>
-                  </span>
-                  <span class="hide-menu">All Delete</span>
-                </a>
-              </li>
             </ul>
           </nav>
           <!-- End Sidebar navigation -->
@@ -1020,6 +1000,15 @@
               patName2 = location.pathname.slice(1)
             }
             document.querySelector(`[data-tabname='${patName2}']`)?.classList.add("active");
+
+            $(document).ready(function () {
+          $(window).on("beforeunload", function (e) {
+            $.ajax({
+              url: 'logout',
+              method: 'GET',
+            })
+          });
+        });
       </script>
 <script>
   let PathNameObj = {

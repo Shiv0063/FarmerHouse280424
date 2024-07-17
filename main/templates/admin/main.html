@@ -9,15 +9,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Favicon icon-->
-  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/logo.png' %}">
+  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/saurashtra.png' %}">
   <!-- Core Css -->
   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
-  
+
   <title>Farmer House</title>
   <link rel="stylesheet" href="{% static 'assets/libs/select2/dist/css/select2.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/libs/datatables.net-bs5/css/dataTables.bootstrap5.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/js/buttons/2.4.2/css/buttons.dataTables.min.css' %}">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.35.0/iconfont/tabler-icons.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/1.35.0/iconfont/tabler-icons.min.css"
+    rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
   <style>
     input {
@@ -37,27 +38,31 @@
       box-shadow: #E8F0FE;
       color: black !important;
     }
-    table{
+
+    table {
       border-radius: 12px !important;
     }
-    thead{
+
+    thead {
       border-radius: 12px !important;
       border-radius: 12px !important;
     }
+
     th {
       border: 0.5px solid #E8F0FE !important;
       padding: 8px !important;
       border-top-left-radius: 12px !important;
       border-top-right-radius: 12px !important;
-      
+
     }
-    td{
+
+    td {
       border: 0.5px solid #E8F0FE !important;
       padding: 8px !important;
       color: rgb(20, 20, 20) !important;
     }
-    tbody
-    {
+
+    tbody {
       border-bottom-left-radius: 12px !important;
       border-bottom-right-radius: 12px !important;
     }
@@ -68,7 +73,7 @@
   <!-- Preloader -->
   <div class="preloader">
     <a href="/">
-      <img src="{% static 'assets/images/logos/logo.png' %}" alt="loader" class="lds-ripple img-fluid">
+      <img src="{% static 'assets/images/logos/saurashtra.png' %}" alt="loader" class="lds-ripple img-fluid">
     </a>
   </div>
   <div id="main-wrapper">
@@ -86,8 +91,9 @@
               </a>
             </div>
             <ul class="mini-nav-ul" data-simplebar="">
-             <li class="mini-nav-item" id="mini-1">
-                <a id="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="right" data-bs-title="Dashboards">
+              <li class="mini-nav-item" id="mini-1">
+                <a id="javascript:void(0)" data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip"
+                  data-bs-placement="right" data-bs-title="Dashboards">
                   <iconify-icon icon="solar:layers-line-duotone" class="fs-7"></iconify-icon>
                 </a>
               </li>
@@ -96,12 +102,12 @@
           <div class="sidebarmenu">
             <div class="brand-logo d-flex align-items-center nav-logo">
               <a id="index" href="/" class="text-nowrap logo-img p-1">
-                <img src="{% static 'assets/images/logos/logo.png' %}" width="80px" alt="Logo">
+                <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="Logo">
               </a>
             </div>
-            <nav class="sidebar-nav d-block simplebar-scrollable-y" id="menu-right-mini-1"style="margin-top: 15px;"  data-simplebar="">
+            <nav class="sidebar-nav d-block simplebar-scrollable-y" id="menu-right-mini-1" data-simplebar="">
               <ul class="sidebar-menu" id="sidebarnav">
-                <li class="sidebar-item" style="margin-top: 10px;" >
+                <li class="sidebar-item" style="margin-top: 10px;">
                   <a class="sidebar-link" href="/" aria-expanded="false">
                     <span>
                       <iconify-icon icon="solar:layers-line-duotone" class="ti"></iconify-icon>
@@ -248,7 +254,7 @@
                     <li class="sidebar-item">
                       <a href="/SalesStockReport" class="sidebar-link">
                         <i class="ti ti-circle"></i>
-                        <span class="hide-menu">Sales Stock Report</span>
+                        <span class="hide-menu">Sales Return Stock Report</span>
                       </a>
                     </li>
                     <!-- <li class="sidebar-item">
@@ -304,12 +310,6 @@
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="/DeliveryReport" class="sidebar-link">
-                        <i class="ti ti-circle"></i>
-                        <span class="hide-menu">Delivery Report</span>
-                      </a>
-                    </li>
-                    <li class="sidebar-item">
                       <a href="/LedgerReport" class="sidebar-link">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Ledger Report</span>
@@ -322,25 +322,25 @@
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="/Profiteport" class="sidebar-link">
+                      <a href="/" class="sidebar-link">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Profit Report</span>
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="#" class="sidebar-link">
+                      <a href="/" class="sidebar-link">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Balance Sheet</span>
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="#" class="sidebar-link">
+                      <a href="/DailyReport" class="sidebar-link">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Daily Report</span>
                       </a>
                     </li>
                     <li class="sidebar-item">
-                      <a href="#" class="sidebar-link">
+                      <a href="/ExpanseEntryReport" class="sidebar-link">
                         <i class="ti ti-circle"></i>
                         <span class="hide-menu">Expense Report</span>
                       </a>
@@ -369,14 +369,74 @@
                     </li>
                   </ul>
                 </li>
-                <!-- <li class="sidebar-item">
-                  <a class="sidebar-link" href="/AllDelete" aria-expanded="false">
-                    <span>
-                      <iconify-icon icon="solar:layers-minimalistic-line-duotone" class="ti"></iconify-icon>
+                <li class="nav-small-cap">
+                  <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                  <span class="hide-menu">User Report</span>
+                </li>
+                <li class="sidebar-item">
+                  <a class="sidebar-link two-column has-arrow" href="javascript:void(0)" aria-expanded="false">
+                    <span class="rounded-3">
+                      <iconify-icon icon="solar:airbuds-case-minimalistic-line-duotone" class="ti"></iconify-icon>
                     </span>
-                    <span class="hide-menu">All Delete</span>
+                    <span class="hide-menu">User Report</span>
                   </a>
-                </li> -->
+                  <ul aria-expanded="false" class="collapse first-level">
+                    <li class="sidebar-item">
+                      <a href="/UserSalesEntry" class="sidebar-link" data-tabname="#">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Sales Register</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/UserPurchaseEntry" class="sidebar-link" data-tabname="#">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Purchase Register</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/UserSalesReturnEntry" class="sidebar-link" data-tabname="#">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Sales Return<br>Register</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/UserPurchaseReturnEntry" class="sidebar-link" data-tabname="#">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Purchase Return<br>Register</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/UserDeliveryReport" class="sidebar-link" data-tabname="#">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Delivery Report</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/UserLedgerReport" class="sidebar-link" data-tabname="#">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Ledger Report</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/UserOutstandingReport" class="sidebar-link" data-tabname="#">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Outstanding Report</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/UserExpanseEntryReport" class="sidebar-link" data-tabname="#">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Expense Report</span>
+                      </a>
+                    </li>
+                    <li class="sidebar-item">
+                      <a href="/UserStockReport" class="sidebar-link">
+                        <i class="ti ti-circle"></i>
+                        <span class="hide-menu">Stock Report</span>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
               </ul>
             </nav>
           </div>
@@ -388,32 +448,36 @@
       <!--  Header Start -->
       <header class="topbar" id="D1">
         <div class="with-vertical">
-        
+
           <nav class="navbar navbar-expand-lg p-0">
             <ul class="navbar-nav">
               <li class="nav-item d-flex d-xl-none">
-                <a class="nav-link nav-icon-hover-bg rounded-circle  sidebartoggler " id="headerCollapse" id="javascript:void(0)">
+                <a class="nav-link nav-icon-hover-bg rounded-circle  sidebartoggler " id="headerCollapse"
+                  id="javascript:void(0)">
                   <iconify-icon icon="solar:hamburger-menu-line-duotone" class="fs-6"></iconify-icon>
                 </a>
               </li>
             </ul>
             <div class="d-block d-lg-none py-9 py-xl-0">
               <a href="/">
-                <img src="{% static 'assets/images/logos/logo.png' %}" width="80px" alt="matdash-img">
+                <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="matdash-img">
               </a>
             </div>
-            <a class="navbar-toggler p-0 border-0 nav-icon-hover-bg rounded-circle" id="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-toggler p-0 border-0 nav-icon-hover-bg rounded-circle" id="javascript:void(0)"
+              data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+              aria-label="Toggle navigation">
               <iconify-icon icon="solar:menu-dots-bold-duotone" class="fs-6"></iconify-icon>
             </a>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
               <div class="d-flex align-items-center justify-content-between">
                 <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
-                 
+
                   <li class="nav-item">
                     <a class="nav-link moon dark-layout nav-icon-hover-bg rounded-circle" id="javascript:void(0)">
                       <iconify-icon icon="solar:moon-line-duotone" class="moon fs-6"></iconify-icon>
                     </a>
-                    <a class="nav-link sun light-layout nav-icon-hover-bg rounded-circle" id="javascript:void(0)" style="display: none">
+                    <a class="nav-link sun light-layout nav-icon-hover-bg rounded-circle" id="javascript:void(0)"
+                      style="display: none">
                       <iconify-icon icon="solar:sun-2-line-duotone" class="sun fs-6"></iconify-icon>
                     </a>
                   </li>
@@ -423,19 +487,22 @@
                   <li class="nav-item dropdown">
                     <a class="nav-link" id="javascript:void(0)" id="drop1" aria-expanded="false">
                       <div class="d-flex align-items-center gap-2 lh-base">
-                        <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="35" height="35" alt="matdash-img">
+                        <img src="{% static 'assets/images/logos/saurashtra.png' %}" class="rounded-circle border"
+                          width="35" height="35" alt="matdash-img">
                         <iconify-icon icon="solar:alt-arrow-down-bold" class="fs-2"></iconify-icon>
                       </div>
                     </a>
-                    <div class="dropdown-menu profile-dropdown dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop1">
+                    <div class="dropdown-menu profile-dropdown dropdown-menu-end dropdown-menu-animate-up"
+                      aria-labelledby="drop1">
                       <div class="position-relative px-4 pt-3 pb-2">
                         <div class="d-flex align-items-center mb-3 pb-3 border-bottom gap-6">
-                          <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="56" height="56" alt="matdash-img">
+                          <img src="{% static 'assets/images/logos/saurashtra.png' %}" class="rounded-circle border"
+                            width="56" height="56" alt="matdash-img">
                           <div>
-                            <h5 class="mb-0 fs-12">Super Admin
+                            <h5 class="mb-0 fs-12">{{request.user}}
                             </h5>
                             <p class="mb-0 text-dark">
-                              Admin@super.com
+                              {{request.user.email}}
                             </p>
                           </div>
                         </div>
@@ -443,7 +510,7 @@
                           <a href="/MyProfile" id="" class="p-2 dropdown-item h6 rounded-1">
                             My Profile
                           </a>
-                          <a href="/logout" id="authentication-login2"  class="p-2 dropdown-item h6 rounded-1">
+                          <a href="/logout" id="authentication-login2" class="p-2 dropdown-item h6 rounded-1">
                             Sign Out
                           </a>
                         </div>
@@ -464,29 +531,32 @@
           <!-- ------------------------------- -->
           <!-- apps Dropdown in Small screen -->
           <!-- ------------------------------- -->
-          
+
 
         </div>
         <div class="app-header with-horizontal">
           <nav class="navbar navbar-expand-xl container-fluid p-0">
             <ul class="navbar-nav align-items-center">
               <li class="nav-item d-flex d-xl-none">
-                <a class="nav-link sidebartoggler nav-icon-hover-bg rounded-circle" id="sidebarCollapse" id="javascript:void(0)">
+                <a class="nav-link sidebartoggler nav-icon-hover-bg rounded-circle" id="sidebarCollapse"
+                  id="javascript:void(0)">
                   <iconify-icon icon="solar:hamburger-menu-line-duotone" class="fs-7"></iconify-icon>
                 </a>
               </li>
               <li class="nav-item d-none d-xl-flex align-items-center">
                 <a id="index" class="text-nowrap nav-link" href="/">
-                  <img src="{% static 'assets/images/logos/logo.png' %}" width="80px" alt="matdash-img">
+                  <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="matdash-img">
                 </a>
               </li>
             </ul>
             <div class="d-block d-xl-none">
-              <a id="index" class="text-nowrap nav-link"  href="/">
-                <img src="{% static 'assets/images/logos/logo.png' %}" width="80px" alt="matdash-img">
+              <a id="index" class="text-nowrap nav-link" href="/">
+                <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="80px" alt="matdash-img">
               </a>
             </div>
-            <a class="navbar-toggler nav-icon-hover p-0 border-0 nav-icon-hover-bg rounded-circle" id="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-toggler nav-icon-hover p-0 border-0 nav-icon-hover-bg rounded-circle"
+              id="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
+              aria-expanded="false" aria-label="Toggle navigation">
               <span class="p-2">
                 <i class="ti ti-dots fs-7"></i>
               </span>
@@ -495,7 +565,10 @@
               <div class="d-flex align-items-center justify-content-between px-0 px-xl-8">
                 <ul class="navbar-nav flex-row mx-auto ms-lg-auto align-items-center justify-content-center">
                   <li class="nav-item dropdown">
-                    <a id="javascript:void(0)" class="nav-link nav-icon-hover-bg rounded-circle d-flex d-lg-none align-items-center justify-content-center" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobilenavbar" aria-controls="offcanvasWithBothOptions">
+                    <a id="javascript:void(0)"
+                      class="nav-link nav-icon-hover-bg rounded-circle d-flex d-lg-none align-items-center justify-content-center"
+                      type="button" data-bs-toggle="offcanvas" data-bs-target="#mobilenavbar"
+                      aria-controls="offcanvasWithBothOptions">
                       <iconify-icon icon="solar:sort-line-duotone" class="fs-6"></iconify-icon>
                     </a>
                   </li>
@@ -503,12 +576,14 @@
                     <a class="nav-link nav-icon-hover-bg rounded-circle moon dark-layout" id="javascript:void(0)">
                       <iconify-icon icon="solar:moon-line-duotone" class="moon fs-6"></iconify-icon>
                     </a>
-                    <a class="nav-link nav-icon-hover-bg rounded-circle sun light-layout" id="javascript:void(0)" style="display: none">
+                    <a class="nav-link nav-icon-hover-bg rounded-circle sun light-layout" id="javascript:void(0)"
+                      style="display: none">
                       <iconify-icon icon="solar:sun-2-line-duotone" class="sun fs-6"></iconify-icon>
                     </a>
                   </li>
                   <li class="nav-item d-block d-xl-none">
-                    <a class="nav-link nav-icon-hover-bg rounded-circle" id="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <a class="nav-link nav-icon-hover-bg rounded-circle" id="javascript:void(0)" data-bs-toggle="modal"
+                      data-bs-target="#exampleModal">
                       <iconify-icon icon="solar:magnifer-line-duotone" class="fs-6"></iconify-icon>
                     </a>
                   </li>
@@ -518,19 +593,22 @@
                   <li class="nav-item dropdown">
                     <a class="nav-link" id="javascript:void(0)" id="drop1" aria-expanded="false">
                       <div class="d-flex align-items-center gap-2 lh-base">
-                        <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="35" height="35" alt="matdash-img">
+                        <img src="{% static 'assets/images/logos/saurashtra.png' %}" class="rounded-circle border"
+                          width="35" height="35" alt="matdash-img">
                         <iconify-icon icon="solar:alt-arrow-down-bold" class="fs-2"></iconify-icon>
                       </div>
                     </a>
-                    <div class="dropdown-menu profile-dropdown dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop1">
+                    <div class="dropdown-menu profile-dropdown dropdown-menu-end dropdown-menu-animate-up"
+                      aria-labelledby="drop1">
                       <div class="position-relative px-4 pt-3 pb-2">
                         <div class="d-flex align-items-center mb-3 pb-3 border-bottom gap-6">
-                          <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="56" height="56" alt="matdash-img">
+                          <img src="{% static 'assets/images/logos/saurashtra.png' %}" class="rounded-circle border"
+                            width="56" height="56" alt="matdash-img">
                           <div>
-                            <h5 class="mb-0 fs-12">Super Admin
+                            <h5 class="mb-0 fs-12">{{request.user}}
                             </h5>
                             <p class="mb-0 text-dark">
-                              Admin@Super.com
+                              {{request.user.email}}
                             </p>
                           </div>
                         </div>
@@ -721,7 +799,7 @@
                   <li class="sidebar-item">
                     <a href="/SalesStockReport" class="sidebar-link" data-tabname="SalesStockReport">
                       <i class="ti ti-circle"></i>
-                      <span class="hide-menu">Sales Stock Report</span>
+                      <span class="hide-menu">Sales Return Stock Report</span>
                     </a>
                   </li>
                   <!-- <li class="sidebar-item">
@@ -799,25 +877,25 @@
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="/ProfitReport" class="sidebar-link" data-tabname="#">
+                    <a href="/" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Profit Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link" data-tabname="#">
+                    <a href="/" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Balance Sheet</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link" data-tabname="#">
+                    <a href="/DailyReport" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Daily Report</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link" data-tabname="#">
+                    <a href="/ExpanseEntryReport" class="sidebar-link" data-tabname="#">
                       <i class="ti ti-circle"></i>
                       <span class="hide-menu">Expense Report</span>
                     </a>
@@ -850,6 +928,68 @@
                   </li>
                 </ul>
               </li>
+              <li class="nav-small-cap">
+                <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                <span class="hide-menu">User Report</span>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link two-column has-arrow" href="javascript:void(0)" aria-expanded="false">
+                  <span class="rounded-3">
+                    <iconify-icon icon="solar:airbuds-case-minimalistic-line-duotone" class="ti"></iconify-icon>
+                  </span>
+                  <span class="hide-menu">User Report</span>
+                </a>
+                <ul aria-expanded="false" class="collapse first-level">
+                  <li class="sidebar-item">
+                    <a href="/UserSalesEntry" class="sidebar-link" data-tabname="#">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Sales Register</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/UserPurchaseEntry" class="sidebar-link" data-tabname="#">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Purchase Register</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/UserSalesReturnEntry" class="sidebar-link" data-tabname="#">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Sales Return<br>Register</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/UserPurchaseReturnEntry" class="sidebar-link" data-tabname="#">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Purchase Return<br>Register</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/UserLedgerReport" class="sidebar-link" data-tabname="#">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Ledger Report</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/UserOutstandingReport" class="sidebar-link" data-tabname="#">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Outstanding Report</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/UserExpanseEntryReport" class="sidebar-link" data-tabname="#">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Expense Report</span>
+                    </a>
+                  </li>
+                  <li class="sidebar-item">
+                    <a href="/UserStockReport" class="sidebar-link" data-tabname="#">
+                      <i class="ti ti-circle"></i>
+                      <span class="hide-menu">Stock Report</span>
+                    </a>
+                  </li>
+                </ul>
+              </li>
               <!-- <li class="nav-small-cap">
                 <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                 <span class="hide-menu">Home2</span>
@@ -875,7 +1015,8 @@
         <i class="icon ti ti-settings fs-7"></i>
       </button>-->
 
-      <div class="offcanvas customizer offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+      <div class="offcanvas customizer offcanvas-end" tabindex="-1" id="offcanvasExample"
+        aria-labelledby="offcanvasExampleLabel">
         <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
           <h4 class="offcanvas-title fw-semibold" id="offcanvasExampleLabel">
             Settings
@@ -914,42 +1055,54 @@
 
           <div class="d-flex flex-row flex-wrap gap-3 customizer-box color-pallete" role="group">
             <input type="radio" class="btn-check" name="color-theme-layout" id="Blue_Theme" autocomplete="off">
-            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Blue_Theme')" for="Blue_Theme" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="BLUE_THEME">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center"
+              onclick="handleColorTheme('Blue_Theme')" for="Blue_Theme" data-bs-toggle="tooltip" data-bs-placement="top"
+              data-bs-title="BLUE_THEME">
               <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-1">
                 <i class="ti ti-check text-white d-flex icon fs-5"></i>
               </div>
             </label>
 
             <input type="radio" class="btn-check" name="color-theme-layout" id="Aqua_Theme" autocomplete="off">
-            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Aqua_Theme')" for="Aqua_Theme" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="AQUA_THEME">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center"
+              onclick="handleColorTheme('Aqua_Theme')" for="Aqua_Theme" data-bs-toggle="tooltip" data-bs-placement="top"
+              data-bs-title="AQUA_THEME">
               <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-2">
                 <i class="ti ti-check text-white d-flex icon fs-5"></i>
               </div>
             </label>
 
             <input type="radio" class="btn-check" name="color-theme-layout" id="Purple_Theme" autocomplete="off">
-            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Purple_Theme')" for="Purple_Theme" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="PURPLE_THEME">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center"
+              onclick="handleColorTheme('Purple_Theme')" for="Purple_Theme" data-bs-toggle="tooltip"
+              data-bs-placement="top" data-bs-title="PURPLE_THEME">
               <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-3">
                 <i class="ti ti-check text-white d-flex icon fs-5"></i>
               </div>
             </label>
 
             <input type="radio" class="btn-check" name="color-theme-layout" id="green-theme-layout" autocomplete="off">
-            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Green_Theme')" for="green-theme-layout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="GREEN_THEME">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center"
+              onclick="handleColorTheme('Green_Theme')" for="green-theme-layout" data-bs-toggle="tooltip"
+              data-bs-placement="top" data-bs-title="GREEN_THEME">
               <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-4">
                 <i class="ti ti-check text-white d-flex icon fs-5"></i>
               </div>
             </label>
 
             <input type="radio" class="btn-check" name="color-theme-layout" id="cyan-theme-layout" autocomplete="off">
-            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Cyan_Theme')" for="cyan-theme-layout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="CYAN_THEME">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center"
+              onclick="handleColorTheme('Cyan_Theme')" for="cyan-theme-layout" data-bs-toggle="tooltip"
+              data-bs-placement="top" data-bs-title="CYAN_THEME">
               <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-5">
                 <i class="ti ti-check text-white d-flex icon fs-5"></i>
               </div>
             </label>
 
             <input type="radio" class="btn-check" name="color-theme-layout" id="orange-theme-layout" autocomplete="off">
-            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center" onclick="handleColorTheme('Orange_Theme')" for="orange-theme-layout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="ORANGE_THEME">
+            <label class="btn p-9 btn-outline-primary rounded-2 d-flex align-items-center justify-content-center"
+              onclick="handleColorTheme('Orange_Theme')" for="orange-theme-layout" data-bs-toggle="tooltip"
+              data-bs-placement="top" data-bs-title="ORANGE_THEME">
               <div class="color-box rounded-circle d-flex align-items-center justify-content-center skin-6">
                 <i class="ti ti-check text-white d-flex icon fs-5"></i>
               </div>
@@ -1016,76 +1169,85 @@
             </label>
           </div>
         </div>
-      </div> 
+      </div>
       <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2.1.0/dist/iconify-icon.min.js"></script>
       <script src="{% static 'assets/libs/iconify-icon/dist/iconify-icon.min.js' %}"></script>
       <script>
         let PathNameObj2 = {
-              "AddParty": 'Party2',
-              "PartyDetails": 'Party2',
-              "EditParty": 'Party2',
-            }
-            let patName2;
-            if (PathNameObj2[location.pathname.split("/")[1]]) {
-              patName2 = PathNameObj2[location.pathname.split("/")[1]]
-            } else {
-              patName2 = location.pathname.slice(1)
-            }
-            document.querySelector(`[data-tabname='${patName2}']`)?.classList.add("active");
+          "AddParty": 'Party2',
+          "PartyDetails": 'Party2',
+          "EditParty": 'Party2',
+        }
+        let patName2;
+        if (PathNameObj2[location.pathname.split("/")[1]]) {
+          patName2 = PathNameObj2[location.pathname.split("/")[1]]
+        } else {
+          patName2 = location.pathname.slice(1)
+        }
+        document.querySelector(`[data-tabname='${patName2}']`)?.classList.add("active");
+
+        $(document).ready(function () {
+          $(window).on("beforeunload", function (e) {
+            $.ajax({
+              url: 'logout',
+              method: 'GET',
+            })
+          });
+        });
       </script>
-<script>
-  let PathNameObj = {
-        "AddParty": 'Party',
-        "PartyDetails": 'Party',
-        "EditParty": 'Party',
-        "AddProduct": 'Product',
-        "EditProduct": 'Product',
-        "AddDeliveryBoy": 'DeliveryBoy',
-        "DeliveryBoyDetails": 'DeliveryBoy',
-        "EditDeliveryBoy": 'DeliveryBoy',
-        "AddUserAccount": 'UserAccount',
-        "EditUser": 'UserAccount',
-        "AddCategory": 'Category',
-        "EditCategory": 'Category',
-        "AddExpanse": 'Expanse',
-        "EditExpanse": 'Expanse',
-        "AddCharges": 'Charges',
-        "EditCharges": 'Charges',
-        "AddSalesEntry": 'Sales',
-        "SalesDetails": 'Sales',
-        "EditSales": 'Sales',
-        "AddSalesReturnEntry": 'SalesReturn',
-        "SRDetails": 'SalesReturn',
-        "EditSR": 'SalesReturn',
-        "AddPurchaseEntry": 'Purchase',
-        "PurchaseDetails": 'Purchase',
-        "EditPurchase": 'Purchase',
-        "AddPurchaseReturnEntry": 'PurchaseReturn',
-        "PRDetails": 'PurchaseReturn',
-        "AddExpensesEntry": 'ExpensesEntry',
-        "EXDetails": 'ExpensesEntry',
-        "EditEx": 'ExpensesEntry',
-        "DebitNote": 'DebitNote',
-        "CreditNote": 'CreditNote',
-        "ProductsDetails": 'StockReport',
-        "ProductsDetail": 'SalesStockReport',
-      }
+      <script>
+        let PathNameObj = {
+          "AddParty": 'Party',
+          "PartyDetails": 'Party',
+          "EditParty": 'Party',
+          "AddProduct": 'Product',
+          "EditProduct": 'Product',
+          "AddDeliveryBoy": 'DeliveryBoy',
+          "DeliveryBoyDetails": 'DeliveryBoy',
+          "EditDeliveryBoy": 'DeliveryBoy',
+          "AddUserAccount": 'UserAccount',
+          "EditUser": 'UserAccount',
+          "AddCategory": 'Category',
+          "EditCategory": 'Category',
+          "AddExpanse": 'Expanse',
+          "EditExpanse": 'Expanse',
+          "AddCharges": 'Charges',
+          "EditCharges": 'Charges',
+          "AddSalesEntry": 'Sales',
+          "SalesDetails": 'Sales',
+          "EditSales": 'Sales',
+          "AddSalesReturnEntry": 'SalesReturn',
+          "SRDetails": 'SalesReturn',
+          "EditSR": 'SalesReturn',
+          "AddPurchaseEntry": 'Purchase',
+          "PurchaseDetails": 'Purchase',
+          "EditPurchase": 'Purchase',
+          "AddPurchaseReturnEntry": 'PurchaseReturn',
+          "PRDetails": 'PurchaseReturn',
+          "AddExpensesEntry": 'ExpensesEntry',
+          "EXDetails": 'ExpensesEntry',
+          "EditEx": 'ExpensesEntry',
+          "DebitNote": 'DebitNote',
+          "CreditNote": 'CreditNote',
+          "ProductsDetails": 'StockReport',
+          "ProductsDetail": 'SalesStockReport',
+        }
 
-      let patName;
-      if (PathNameObj[location.pathname.split("/")[1]]) {
-        patName = PathNameObj[location.pathname.split("/")[1]]
-      } else {
-        patName = location.pathname.slice(1)
-      }
-      // alert(patName);
-      document.querySelector(`[data-tabname='${patName}']`)?.classList.add("active");
-</script>
+        let patName;
+        if (PathNameObj[location.pathname.split("/")[1]]) {
+          patName = PathNameObj[location.pathname.split("/")[1]]
+        } else {
+          patName = location.pathname.slice(1)
+        }
+        // alert(patName);
+        document.querySelector(`[data-tabname='${patName}']`)?.classList.add("active");
+      </script>
 
-<script>
-      function handleColorTheme(e) {
-        document.documentElement.setAttribute("data-color-theme", e);
-      }
-</script>
+      <script>
+        function handleColorTheme(e) {
+          document.documentElement.setAttribute("data-color-theme", e);
+        }
+      </script>
     </div>
   </div>
   <div class="dark-transparent sidebartoggler"></div>

@@ -86,9 +86,10 @@
                       <th class="p-2">Prodect <br> Name</th>
                       <th class="p-2">Quantity</th>
                       <th class="p-2">Purchase <br>Inc. <br> Tax Price</th>
-                      <th class="p-2">Profit <br> Margin <br>( % )</th>
+                      <th class="p-2">Profit <br> Margin</th>
+                      <th class="p-2">Loss <br> Margin</th>
                       <th class="p-2">Basic Sales <br> Price <br> ( Per. Unit )</th>
-                      <th class="p-2">Discount <br> ( % )</th>
+                      <th class="p-2">Discount</th>
                       <th class="p-2">Sales price <br> After Discount <br> ( Per. Unit )</th>
                       <th class="p-2">SGST</th>
                       <th class="p-2">CGST</th>
@@ -104,6 +105,7 @@
                         <td class="p-2">{{i.Quantity}}</td>
                         <td class="p-2">{{i.PurchaseIncTax}}</td>
                         <td class="p-2">{{i.ProfitMargin}}</td>
+                        <td class="p-2">{{i.LossMargin}}</td>
                         <td class="p-2">{{i.BasicSalesPrice}}</td>
                         <td class="p-2">{{i.Discount}}</td>
                         <td class="p-2">{{i.SalesPriceAfterDiscount}}</td>
@@ -138,6 +140,7 @@
                       <th colspan="">Total :</th>
                       <th>{{quantity}}</th>
                       <th>{{purchaseprice}}</th>
+                      <th></th>
                       <th></th>
                       <th>{{bsp}}</th>
                       <th></th>
@@ -236,10 +239,10 @@
                         <i class="ti ti-printer fs-5"></i>
                         Print
                       </a>
-                      <a href="/EditSales/{{data.id}}" class="btn btn-success ms-6">
+                      <!-- <a href="/EditSales/{{data.id}}" class="btn btn-success ms-6">
                         <i class="ti ti-edit fs-5"></i>
                         Edit
-                      </a>
+                      </a> -->
                       <a class="btn bg-danger text-white ms-6" onclick="window.history.go(-1);">
                         Cancel
                       </a>

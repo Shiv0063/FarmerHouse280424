@@ -14,7 +14,7 @@
             height: 50px;
         }
         .ddt{
-            height: 180px;
+            height: 220px;
         }
         tr {
             border-right: 2px solid black !important;
@@ -44,22 +44,23 @@
             <div class="col-11">
                 <div class="text-black mt-2 w-100">
                     <div class="text-center">
-                        <h5>Farmer House</h5>
+                        <h5>INVOICE</h5>
                     </div>
                     <div class="row ">
                         <div class="col-6 border border-black text-black">
                             <div class="row">
                                 <div class="col-12 border border-black ddt">
+                                    <br>
                                     <b>FARMER HOUSE</b><br>
                                     SF Shop No. 207, Applewood City Mall, Nr. Madhuram Bus Stop, Opp. Nagarik Bank, Junagadh.<br>
                                     Ta-Junagadh <br>
                                     Gir Dist-Gir <br>
                                     GSTIN/UIN: 24BLJPR6405D1Z8 <br>
                                     State Name : Gujarat, Code : 24 <br>
-                                    Email : support@farmerhouseapp.com
+                                    Email : <a href="mailto:support@farmerhouseapp.com"><u>support@farmerhouseapp.com</u></a>
                                 </div>
-                                <div class="col-12 border border-black ddt">
-                                    <b>{{data.PartyName}}</b><br>
+                                <div class="col-12 border border-black ddt"><br>
+                                    <b >{{data.PartyName}}</b><br>
                                     <div class="w-50">
                                         {{party.Address}}
                                     </div>
@@ -111,7 +112,7 @@
                                     <td class="text-end">{{i.TotalSales}}</td>
                                 </tr>
                                 {% endfor %}
-                                <tr>
+                                <tr style="border: 2px solid #000 !important;">
                                     <td></td>
                                     <td class="text-end"><b>{% if Charges %}Charges :{% endif %}</b></td>
                                     <td></td>
@@ -141,7 +142,7 @@
                                     <td></td>
                                     <td></td>
                                     <td>{{quantity}}</td>
-                                    <td>{{IncSalesPrice}}</td>
+                                    <td></td>
                                     <td></td>
                                     <td>{{tamonut}}</td>
                                 </tr>

@@ -1,0 +1,67 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="datatables">
+      <!-- start File export -->
+      <div class="card">
+        <div class="px-4 py-3 border-bottom">
+          <h4 class="card-title mb-0">Daily Report</h4>
+        </div>
+        <form class="card-body p-4 pb-0 mb-0" method="post">
+          {% csrf_token %}
+          <div class="row mb-0">
+            <div class="col-md-3">
+              <label for="exampleInputtype" class="form-label">Party Name</label>
+              <div class="mb-4">
+                <select class="select2 form-control  custom-select" name="PartyName">
+                  <option>Select</option>
+                  <optgroup label="">
+                    {% for i in Party %}
+                    <option value="{{i.PartyName}}" {% if PartyName == i.PartyName %} selected {% endif %}>{{i.PartyName}} ( {{i.Number}})</option>
+                    {% endfor %}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button class="btn btn-success" type="submit">Search</button>
+            </div>
+          </div>
+        </form>
+        <hr>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+              <thead>
+                <!-- start row -->
+                <tr>
+                  <th class="p-2">Bill</th>
+                  <th class="p-2">Party Name</th>
+                  <th class="p-2">Type</th>
+                  <th class="p-2">Debited</th>
+                  <th class="p-2">Cedited</th>
+                </tr>
+                <!-- end row -->
+              </thead>
+              <tbody id="tbody">
+                {% for i in Lr %}
+                <tr>
+                  <td class="p-2">{{i.BiilNo}}</td>
+                  <td class="p-2">{{i.PartyName}}</td>
+                  <td class="p-2">{{i.Type}}</td>
+                  <td class="p-2">{{i.Debited}}</td>
+                  <td class="p-2">{{i.Cedited}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- end File export -->
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -48,6 +48,7 @@
                   <th>Type Of <br> Business</th>
                   <th>Delivery <br> Time</th>
                   <th>Delivery Boy <br> Name</th>
+                  <th>Pending Amount</th>
                   <th>Amount</th>
                   <th></th>
                 </tr>
@@ -56,15 +57,16 @@
               <tbody>
                 {% for i in salesReturn %}
                 <tr>
-                  <td>{{i.date}}</td>
+                  <td>{{i.ndate}}</td>
                   <td>{{i.PartyName}}</td>
                   <td>{{i.InvoiceNo}}</td>
                   <td>{{i.TypeOfBusiness}}</td>
                   <td>{{i.DeliveryTime}}</td>
                   <td>{{i.DeliveryBoyName}}</td>
+                  <td>{{i.PendingAmount}}</td>
                   <td>{{i.Amount}}</td>
                   <td>
-                    <a class="btn btn-warning mr-3" href="/SRDetails/{{i.id}}" style="margin-left: 5px;">Details</a>
+                    <a class="btn btn-warning mr-3" href="/SRDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a>
 
                   </td>
                 </tr>

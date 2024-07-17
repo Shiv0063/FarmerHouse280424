@@ -232,14 +232,14 @@
             <div class="mb-4">
               <label for="exampleInputGSTNo" class="form-label">GST No.</label>
               <input type="text" class="form-control" id="exampleInputGSTNo" name="GSTNo" placeholder="GST No."
-                required>
+                value="">
             </div>
           </div>
           <div class="col-md-4">
             <div class="mb-4">
               <label for="exampleInputGmail" class="form-label">Email</label>
               <input type="email" class="form-control" id="exampleInputGmail" name="Email" placeholder="xyz@gmail.com"
-                required>
+                value="">
             </div>
           </div>
           <div class="col-md-4">
@@ -254,7 +254,7 @@
           <div class="col-md-6">
             <div class="mb-4">
               <label class="form-label">Address</label>
-              <textarea class="form-control p-7" name="Address" rows="1" placeholder="" required></textarea>
+              <textarea class="form-control p-7" name="Address" rows="1" placeholder=""></textarea>
             </div>
           </div>
         </div>
@@ -308,12 +308,8 @@
           x = resp.Ms
           output = ''
           for (i = 0; i < x.length; i++) {
-            output += "<option value=";
-            pn = x[i].ProductName;
-            pn = pn.replace(' ','%20');
-            output += pn;
-            output += "/";
-            output += x[i].OldProductId + "/" + x[i].id + '>' + "Price: " + x[i].PurchaseIncTax + "  Quantity :" + x[i].Quantity + '</option>';
+            output += "<option value="+ x[i].OldProductId + "/" + x[i].id ;
+            output +='>' + "Price: " + x[i].PurchaseIncTax + " --  --  Quantity :" + x[i].Quantity + '</option>';
           };
           $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
         },

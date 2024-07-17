@@ -45,7 +45,7 @@
                 <div class="text-black mt-2 w-100">
                     <div class="text-center mt-2 mb-2">
                         <center>
-							<img src="http://127.0.0.1:8000/static/assets/images/logos/logo.png" width="100px">
+							<img src="{% static 'assets/images/logos/saurashtra.png' %}" width="100px">
 						</center>
                     </div>
                     <div class="row ">
@@ -83,6 +83,7 @@
 									<th>Bill No.</th>
 									<th>Type of Payment</th>
 									<th>Cedited Amount</th>
+                                    {% if dt.PendingAmount %}<th>Pending Amount</th>{% endif %}
 									<th>Payable Amount</th>
                                 </tr>
                             </thead>
@@ -92,6 +93,7 @@
 									<td>{{dt.Number}}</td>
 									<td>{{dt.TypeofPayment}}</td>
 									<td>{{dt.CeditedAmount}}</td>
+									{% if dt.PendingAmount %}<td>{{dt.PendingAmount}}</td>{% endif %}
 									<td><b>{{dt.PayableAmount}}</b></td>
                                 </tr>
                             </tbody>

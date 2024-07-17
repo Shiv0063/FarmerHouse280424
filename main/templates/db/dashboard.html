@@ -1,0 +1,86 @@
+﻿{% extends 'db/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <!-- Start Simple Pie Chart -->
+    <div class="row align-items-stretch">
+      <!-- Start Dinut Pie Chart -->
+      <div class="card">
+        <div class="px-4 py-3 border-bottom">
+          <h4 class="card-title mb-0">To Day's Orders</h4>
+        </div>
+        <div class="table-responsive">
+          <table id="" class="table w-100 table-striped table-bordered display text-nowrap">
+            <thead>
+              <!-- start row -->
+              <tr>
+                <th class="p-2">Invoice No.</th>
+                <th class="p-2">Party Name</th>
+                <th class="p-2">Delivery Time</th>
+                <th class="p-2">Type of Payment</th>
+                <th class="p-2">Amount</th>
+                <th class="p-2"></th>
+              </tr>
+              <!-- end row -->
+            </thead>
+            <tbody id="tbody">
+              {% for i in sales %}
+              {% if i.TypeofPayment == 'Case' %}
+              <tr>
+                <td class="p-2">{{i.InvoiceNo}}</td>
+                <td class="p-2">{{i.PartyName}}</td>
+                <td class="p-2">{{i.DeliveryTime}}</td>
+                <td class="p-2">{{i.TypeofPayment}}</td>
+                <td class="p-2">{{i.Amount}}</td>
+                <td class="p-2"><a class="btn btn-danger mr-3" href="/CI/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+              {% for i in sales %}
+              {% if i.TypeofPayment != 'Credit'%}
+              {% if i.TypeofPayment != 'Case' %}
+              <tr>
+                <td class="p-2">{{i.InvoiceNo}}</td>
+                <td class="p-2">{{i.PartyName}}</td>
+                <td class="p-2">{{i.DeliveryTime}}</td>
+                <td class="p-2">{{i.TypeofPayment}}</td>
+                <td class="p-2">{{i.Amount}}</td>
+                <td class="p-2"><a class="btn btn-danger mr-3" href="/CI/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></td>
+              </tr>
+              {% endif %}
+              {% endif %}
+              {% endfor %}
+              {% for i in sales %}
+              {% if i.TypeofPayment == 'Credit' %}
+              <tr>
+                <td class="p-2">{{i.InvoiceNo}}</td>
+                <td class="p-2">{{i.PartyName}}</td>
+                <td class="p-2">{{i.DeliveryTime}}</td>
+                <td class="p-2">{{i.TypeofPayment}}</td>
+                <td class="p-2">{{i.Amount}}</td>
+                <td class="p-2"><a class="btn btn-danger mr-3" href="/CI/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+              <tr>
+                <td colspan="4"><b>Total Amount</b></td>
+                <td colspan="1"><b id="tam">{{ta}}</b></td>
+                <td colspan="1"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- End Dinut Pie Chart -->
+    </div>
+    <!-- End Simple Pie Chart -->
+  </div>
+</div>
+{% endblock content %}
+
+{% block script %}
+<script src="{% static 'assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+<script src="{% static 'assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+<script src="{% static 'assets/js/apex-chart/apex.pie.init.js' %}"></script>
+{% endblock script %}

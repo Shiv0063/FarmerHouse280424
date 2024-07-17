@@ -7,7 +7,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/logo.png' %}">
+  <link rel="shortcut icon" type="image/png" href="{% static 'assets/images/logos/saurashtra.png' %}">
   <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
   <title>Farmer House</title>
 </head>
@@ -15,7 +15,7 @@
 <body>
   <!-- Preloader -->
   <div class="preloader">
-    <img src="{% static 'assets/images/logos/logo.png' %}" alt="loader" class="lds-ripple img-fluid">
+    <img src="{% static 'assets/images/logos/saurashtra.png' %}" alt="loader" class="lds-ripple img-fluid">
   </div>
   <div id="main-wrapper">
     <div class="position-relative overflow-hidden auth-bg min-vh-100 w-100 d-flex align-items-center justify-content-center">
@@ -33,15 +33,15 @@
                       <div class="card-body">
                         <a href="/" class="text-nowrap logo-img d-block w-100">
                           <center>
-                            <img src="{% static 'assets/images/logos/logo.png' %}" width="120px" class="dark-logo" alt="Logo-Dark">
+                            <img src="{% static 'assets/images/logos/saurashtra.png' %}" width="120px" class="dark-logo" alt="Logo-Dark">
                           </center>
                            </a>
                         <h2 class="lh-base mb-4">Let's get you signed in</h2>
                         <form method="post">
                           {% csrf_token %}
                           <div class="mb-3">
-                            <label for="exampleInputEmail1" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="exampleInputEmail1" name="Username" placeholder="Enter your Username">
+                            <label for="exampleInputEmail1" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1" name="Email" placeholder="Enter your Email">
                           </div>
                           <div class="mb-4">
                             <div class="d-flex align-items-center justify-content-between">

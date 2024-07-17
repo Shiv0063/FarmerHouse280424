@@ -14,19 +14,19 @@
           <div class="row mb-0">
             <div class="col-md-2">
               <div class="mb-4">
-                <label for="exampleInputInvoiceNo" class="form-label">To</label>
+                <label for="exampleInputInvoiceNo" class="form-label">From</label>
                 <input type="date" class="form-control" name="StartDate" id="StartDate" value="{{StartDate}}" >
               </div>
             </div>
             <div class="col-md-2">
               <div class="mb-4">
-                <label for="exampleInputInvoiceNo" class="form-label">From</label>
+                <label for="exampleInputInvoiceNo" class="form-label">To</label>
                 <input type="date" class="form-control" name="EndDate" id="EndDate" value="{{EndDate}}">
               </div>
             </div>
             <div class="col-md-2 d-flex align-items-center">
-                <button class="btn btn-primary" formaction="/OutstandingReport/Payable">Payable</button>
-                <button class="btn btn-primary ms-2" formaction="/OutstandingReport/Receivable">Receivable</button>
+                <button class="btn btn-success" formaction="/OutstandingReport/Payable">Payable</button>
+                <button class="btn btn-success ms-2" formaction="/OutstandingReport/Receivable">Receivable</button>
             </div>
           </div>
         </form>

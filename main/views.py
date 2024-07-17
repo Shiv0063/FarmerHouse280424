@@ -12,10 +12,17 @@ from xhtml2pdf import pisa
 from django.template.loader import get_template
 from django.http import Http404
 import os
+from datetime import datetime
 
 def Login(request):
     if request.method=="POST":
-        username=request.POST.get('Username')
+        email=request.POST.get('Email')
+        try:
+            userd = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return redirect('/login')
+        # username=request.POST.get('Username')
+        username = userd.username
         password=request.POST.get('Password')
         user=authenticate(request,username=username,password=password)
         if user is not None:
@@ -28,7 +35,10 @@ def Logout(request):
     return redirect('/')
 
 def is_user(user):
-    return User.objects.filter(username=user).exists()
+    return user.groups.filter(name='USER').exists()
+
+def is_db(user):
+    return user.groups.filter(name='DeliveryBoy').exists()
 
 def useremail(email):
     return User.objects.filter(email=email).exists()
@@ -45,6 +55,17 @@ def dashboard(request):
         return render(request,'admin/dashboard.html')
     if is_user(request.user):
         return render(request,'dashboard.html')
+    if is_db(request.user):
+        ue = request.user.email
+        data=DeliveryBoyModel.objects.get(Email=ue)
+        today = datetime.now().date()
+        sales = SalesEntryModel.objects.filter(Type='Sales',DeliveryBoyName=request.user,DeliveryBoyNo=data.Number,user=data.user,Date=today,BillClear='0')
+        ta = 0
+        for i in sales:
+            ta += eval(i.Amount)
+        ta = "%.2f" % ta
+        data = {'sales':sales,'ta':ta}
+        return render(request,'db/dashboard.html',data)
 
 @login_required(login_url='Login')
 def Party(request):
@@ -99,7 +120,10 @@ def AddParty(request):
 @login_required(login_url='Login')
 def PartyDetails(request,id):
     data=PartyModel.objects.get(id=id)
-    return render(request,'admin/partydetails.html',{'data':data})
+    if is_admin(request.user):
+        return render(request,'admin/partydetails.html',{'data':data})
+    if is_user(request.user):
+        return render(request,'partydetails.html',{'data':data})
 
 @login_required(login_url='Login')
 def EditParty(request,id):
@@ -116,7 +140,10 @@ def EditParty(request,id):
         data.save()
         messages.success(request,'Party Edit Successfully.')
         return redirect('/Party')
-    return render(request,'admin/editparty.html',{'data':data})
+    if is_admin(request.user):
+        return render(request,'admin/editparty.html',{'data':data})
+    if is_user(request.user):
+        return render(request,'editparty.html',{'data':data})
 
 @login_required(login_url='Login')
 def DeleteParty(request,id):
@@ -141,21 +168,27 @@ def AddUserAccount(request):
             password=request.POST.get('Password')
             phone=request.POST.get('Number')
             Address=request.POST.get('Address')
-            if is_user(username):
-                messages.success(request,'UserName Is Allready Register.')
+            AdharCard=request.FILES.get('AdharCard')
+            PanCard=request.FILES.get('PanCard')
+            try:
+                dt=User.objects.get(username=username)
+                if dt.username:
+                    messages.success(request,'UserName Is Allready Register.')
+                    return redirect('/AddUserAccount')
+                dt=User.objects.get(email=emailaddress)
+                if dt.email == emailaddress:
+                    messages.success(request,'Email Is Allready Register.')
+                    return redirect('/AddUserAccount')
+            except User.DoesNotExist:
+                new_user= User.objects.create_user(username,emailaddress,password)
+                new_user.save()
+                dg=User.objects.get(username=username)
+                userd=UserDetails.objects.create(user_id=dg.id,type='USER',phone=phone,Address=Address,AdharCard=AdharCard,PanCard=PanCard)
+                userd.save()
+                my_customer_group = Group.objects.get_or_create(name='USER')
+                my_customer_group[0].user_set.add(new_user)
+                messages.success(request,'New User Create Successfully.')
                 return redirect('/AddUserAccount')
-            if useremail(emailaddress):
-                messages.success(request,'Email Is Allready Register.')
-                return redirect('/AddUserAccount')
-            new_user= User.objects.create_user(username,emailaddress,password)
-            new_user.save()
-            dg=User.objects.get(username=username)
-            userd=UserDetails.objects.create(user_id=dg.id,phone=phone,Address=Address)
-            userd.save()
-            my_customer_group = Group.objects.get_or_create(name='USER')
-            my_customer_group[0].user_set.add(new_user)
-            messages.success(request,'New User Create Successfully.')
-            return redirect('/AddUserAccount')
         return render(request,'admin/adduseraccount.html')
     return redirect('/')
 
@@ -175,6 +208,12 @@ def EditUserAccount(request,id):
             userd=UserDetails.objects.get(user_id=dg.id)
             userd.phone=phone
             userd.Address=Address
+            if request.FILES.get('AdharCard'):
+                os.remove(userd.AdharCard.path)
+                userd.AdharCard=request.FILES.get('AdharCard')
+            if request.FILES.get('PanCard'):
+                os.remove(userd.PanCard.path)
+                userd.PanCard=request.FILES.get('PanCard')
             new_user.save()
             userd.save()
             messages.success(request,'User Details Edit Successfully.')
@@ -217,7 +256,14 @@ def AddProduct(request):
         MRP=request.POST.get('MRP')
         MFGDate=request.POST.get('MFGDate')
         ExpiryDate=request.POST.get('ExpiryDate')
-        dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,HSNCode=HSNCode,MRP=MRP,MFGDate=MFGDate,ExpiryDate=ExpiryDate)
+        if MFGDate != '' and  ExpiryDate != '':
+            dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,HSNCode=HSNCode,MRP=MRP,MFGDate=MFGDate,ExpiryDate=ExpiryDate)
+        elif MFGDate != '' and  ExpiryDate == None:
+            dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,HSNCode=HSNCode,MRP=MRP,MFGDate=MFGDate)
+        elif MFGDate == None and  ExpiryDate != None:
+            dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,HSNCode=HSNCode,MRP=MRP,ExpiryDate=ExpiryDate)
+        else:
+            dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,HSNCode=HSNCode,MRP=MRP)
         dt.save()
         messages.success(request,'Product Add Successfully.')
         return redirect('/AddProduct')
@@ -228,37 +274,36 @@ def AddProduct(request):
 
 @login_required(login_url='Login')
 def EditProduct(request,id):
-    if is_admin(request.user):
-        Category = CategoryModel.objects.filter(user=request.user)
+    Category = CategoryModel.objects.filter(user=request.user)
+    data=ProductModel.objects.get(id=id)
+    if request.method=="POST":    
         data=ProductModel.objects.get(id=id)
-        if request.method=="POST":    
-            data=ProductModel.objects.get(id=id)
-            data.user=str(request.user)
-            data.ProductName=request.POST.get('ProductName')
-            data.Tax=request.POST.get('Tax')
-            data.Category=request.POST.get('Category')
-            data.Unit=request.POST.get('Unit')
-            data.MinQty=request.POST.get('MinQty')
-            data.MaxQty=request.POST.get('MaxQty')
-            data.HSNCode=request.POST.get('HSNCode')
-            data.MRP=request.POST.get('MRP')
-            data.MFGDate=request.POST.get('MFGDate')
-            data.ExpiryDate=request.POST.get('ExpiryDate')
-            data.save()
-            messages.success(request,'Product Edit Successfully.')
-            return redirect('/Product')
-        data={"Category":Category,'data':data}
+        data.user=str(request.user)
+        data.ProductName=request.POST.get('ProductName')
+        data.Tax=request.POST.get('Tax')
+        data.Category=request.POST.get('Category')
+        data.Unit=request.POST.get('Unit')
+        data.MinQty=request.POST.get('MinQty')
+        data.MaxQty=request.POST.get('MaxQty')
+        data.HSNCode=request.POST.get('HSNCode')
+        data.MRP=request.POST.get('MRP')
+        data.MFGDate=request.POST.get('MFGDate')
+        data.ExpiryDate=request.POST.get('ExpiryDate')
+        data.save()
+        messages.success(request,'Product Edit Successfully.')
+        return redirect('/Product')
+    data={"Category":Category,'data':data}
+    if is_admin(request.user):
         return render(request,'admin/editproduct.html',data)
-    return redirect('/')
+    if is_user(request.user):
+        return render(request,'editproduct.html',data)
 
 @login_required(login_url='Login')
 def DeleteProduct(request,id):
-    if is_admin(request.user):
-        data=ProductModel.objects.get(id=id)
-        data.delete()
-        messages.success(request,'Delete Product Successfully.')
-        return redirect('/Product')
-    return redirect('/')
+    data=ProductModel.objects.get(id=id)
+    data.delete()
+    messages.success(request,'Delete Product Successfully.')
+    return redirect('/Product')
 
 @login_required(login_url='Login')
 def Category(request):
@@ -285,24 +330,23 @@ def AddCategory(request):
     
 @login_required(login_url='Login')
 def EditCategory(request,id):
+    data=CategoryModel.objects.get(id=id)
+    if request.method=="POST":  
+        data.Category=request.POST.get('Category')
+        data.save()
+        messages.success(request,'Category Edit Successfully.')
+        return redirect('/Category')
     if is_admin(request.user):
-        data=CategoryModel.objects.get(id=id)
-        if request.method=="POST":  
-            data.Category=request.POST.get('Category')
-            data.save()
-            messages.success(request,'Category Edit Successfully.')
-            return redirect('/Category')
         return render(request,'admin/editcategory.html',{'data':data})
-    return redirect('/')
+    if is_user(request.user):
+        return render(request,'editcategory.html',{'data':data})
 
 @login_required(login_url='Login')
 def DeleteCategory(request,id):
-    if is_admin(request.user):
-        data=CategoryModel.objects.get(id=id)
-        data.delete()
-        messages.success(request,'Delete Category Successfully.')
-        return redirect('/Category')
-    return redirect('/')
+    data=CategoryModel.objects.get(id=id)
+    data.delete()
+    messages.success(request,'Delete Category Successfully.')
+    return redirect('/Category')
 
 @login_required(login_url='Login')
 def DeliveryBoy(request):
@@ -323,9 +367,12 @@ def AddDeliveryBoy(request):
         AdharCard=request.FILES.get('AdharCard')
         PanCard=request.FILES.get('PanCard')
         Email=request.POST.get('Email')
-        PassWord=request.POST.get('Password')
-        dt=DeliveryBoyModel.objects.create(user=user,Name=Name,Number=Number,Address=Address,Licence=Licence,AdharCard=AdharCard,PanCard=PanCard,Email=Email,PassWord=PassWord)
+        new_user= User.objects.create_user(Name,Email,Number)
+        new_user.save()
+        dt=DeliveryBoyModel.objects.create(user=user,Name=Name,Number=Number,Address=Address,Licence=Licence,AdharCard=AdharCard,PanCard=PanCard,Email=Email)
         dt.save()
+        my_customer_group = Group.objects.get_or_create(name='DeliveryBoy')
+        my_customer_group[0].user_set.add(new_user)
         messages.success(request,'DeliveryBoy Add Successfully.')
         return redirect('/AddDeliveryBoy')
     if is_admin(request.user):
@@ -343,37 +390,35 @@ def DeliveryBoyDetails(request,pk):
     
 @login_required(login_url='Login')
 def EditDeliveryBoy(request,pk):
+    data=DeliveryBoyModel.objects.get(id=pk)
+    if request.method=="POST":    
+        data.Name=request.POST.get('Name')
+        data.Number=request.POST.get('Number')
+        data.Address=request.POST.get('Address')
+        data.Email=request.POST.get('Email')
+        if request.FILES.get('Licence'):
+            os.remove(data.Licence.path)
+            data.Licence=request.FILES.get('Licence')
+        if request.FILES.get('AdharCard'):
+            os.remove(data.AdharCard.path)
+            data.AdharCard=request.FILES.get('AdharCard')
+        if request.FILES.get('PanCard'):
+            os.remove(data.PanCard.path)
+            data.PanCard=request.FILES.get('PanCard')
+        data.save()
+        messages.success(request,'Delivery Boy Edit Successfully.')
+        return redirect('/DeliveryBoy')
     if is_admin(request.user):
-        data=DeliveryBoyModel.objects.get(id=pk)
-        if request.method=="POST":    
-            data.Name=request.POST.get('Name')
-            data.Number=request.POST.get('Number')
-            data.Address=request.POST.get('Address')
-            data.Email=request.POST.get('Email')
-            data.PassWord=request.POST.get('Password')
-            if request.FILES.get('Licence'):
-                os.remove(data.Licence.path)
-                data.Licence=request.FILES.get('Licence')
-            if request.FILES.get('AdharCard'):
-                os.remove(data.AdharCard.path)
-                data.AdharCard=request.FILES.get('AdharCard')
-            if request.FILES.get('PanCard'):
-                os.remove(data.PanCard.path)
-                data.PanCard=request.FILES.get('PanCard')
-            data.save()
-            messages.success(request,'Delivery Boy Edit Successfully.')
-            return redirect('/DeliveryBoy')
         return render(request,'admin/editdeliveryboy.html',{'data':data})
-    return redirect('/')
+    if is_user(request.user):
+        return render(request,'editdeliveryboy.html',{'data':data})
 
 @login_required(login_url='Login')
 def DeleteDeliveryBoy(request,pk):
-    if is_admin(request.user):
-        data=DeliveryBoyModel.objects.get(id=pk)
-        data.delete()
-        messages.success(request,'Delete Delivery Boy Successfully.')
-        return redirect('/DeliveryBoy')
-    return redirect('/')
+    data=DeliveryBoyModel.objects.get(id=pk)
+    data.delete()
+    messages.success(request,'Delete Delivery Boy Successfully.')
+    return redirect('/DeliveryBoy')
 
 @login_required(login_url='Login')
 def Expanse(request):
@@ -387,7 +432,7 @@ def Expanse(request):
 @login_required(login_url='Login')
 def Amount(request):
     if is_admin(request.user):
-        user=User.objects.all()
+        user=UserDetails.objects.all()
         try:
             ca=UserAmountModel.objects.get(user=request.user)
             ca = ca.Amount
@@ -471,25 +516,24 @@ def AddExpanse(request):
 
 @login_required(login_url='Login')
 def EditExpanse(request,id):
+    data=ExpanseModel.objects.get(id=id)
+    if request.method=="POST":   
+        data.Expanse=request.POST.get('Expanse')
+        data.Type=request.POST.get('Type')
+        data.save()
+        messages.success(request,'Expanse Edit Successfully.')
+        return redirect('/Expanse')
     if is_admin(request.user):
-        data=ExpanseModel.objects.get(id=id)
-        if request.method=="POST":   
-            data.Expanse=request.POST.get('Expanse')
-            data.Type=request.POST.get('Type')
-            data.save()
-            messages.success(request,'Expanse Edit Successfully.')
-            return redirect('/Expanse')
         return render(request,'admin/editexpanse.html',{'data':data})
-    return redirect('/')
+    if is_user(request.user):
+        return render(request,'editexpanse.html',{'data':data})
 
 @login_required(login_url='Login')
 def DeleteExpanse(request,id):
-    if is_admin(request.user):
-        data=ExpanseModel.objects.get(id=id)
-        data.delete()
-        messages.success(request,'Delete Expanse Successfully.')
-        return redirect('/Expanse')
-    return redirect('/')
+    data=ExpanseModel.objects.get(id=id)
+    data.delete()
+    messages.success(request,'Delete Expanse Successfully.')
+    return redirect('/Expanse')
 
 @login_required(login_url='Login')
 def Charges(request):
@@ -516,24 +560,23 @@ def AddCharges(request):
     
 @login_required(login_url='Login')
 def EditCharges(request,id):
+    data=ChargesModel.objects.get(id=id)
+    if request.method=="POST":   
+        data.Charges=request.POST.get('Charges')
+        data.save()
+        messages.success(request,'Charges Edit Successfully.')
+        return redirect('/Charges')
     if is_admin(request.user):
-        data=ChargesModel.objects.get(id=id)
-        if request.method=="POST":   
-            data.Charges=request.POST.get('Charges')
-            data.save()
-            messages.success(request,'Charges Edit Successfully.')
-            return redirect('/Charges')
         return render(request,'admin/editcharges.html',{'data':data})
-    return redirect('/')
+    if is_user(request.user):
+        return render(request,'editcharges.html',{'data':data})
 
 @login_required(login_url='Login')
 def DeleteCharges(request,id):
-    if is_admin(request.user):
-        data=ChargesModel.objects.get(id=id)
-        data.delete()
-        messages.success(request,'Delete Charges Successfully.')
-        return redirect('/Charges')
-    return redirect('/')
+    data=ChargesModel.objects.get(id=id)
+    data.delete()
+    messages.success(request,'Delete Charges Successfully.')
+    return redirect('/Charges')
 
 def render_to_pdf(template, context):
    template = get_template(template)
@@ -677,7 +720,7 @@ def AddPurchaseEntry(request):
                 return redirect('/AddPurchaseEntry')
         else:
             PA = eval(tamonut)- eval(PayableAmount)
-            PendingAmount = PA
+            PendingAmount = "%.2f" % PA
             amount = eval(UAM.Amount) - eval(PayableAmount)
             UAM.Amount =  "%.2f" % amount
             UAM.save()
@@ -694,7 +737,10 @@ def AddPurchaseEntry(request):
             pt.Debited = str(pot)
             pt.save()
         PartyName = pt.PartyName
-        dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,Terms=Terms,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,DueDate=DueDate,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date,TChargesAmount=TCA,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
+        if DueDate == '':
+            dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,Terms=Terms,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date,TChargesAmount=TCA,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
+        else:
+            dt=PurchaseEntryModel.objects.create(user=user,TypeofPurchase=TypeofPurchase,BillNo=Bill,InvoiceNo=InvoiceNo,TypeofPayment=TypeofPayment,Terms=Terms,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=tamonut,DueDate=DueDate,TQuantity=quantity,TPurchasePrice=purchaseprice,TPurchaseIncTax=purchaseinctax,Date=Date,TChargesAmount=TCA,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
         dt.save()
         stock = StockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         for i in stock:
@@ -846,7 +892,7 @@ def PurchaseCancel(request,id):
 
 @login_required(login_url='Login')
 def PurchaseDetails(request,id):
-    data=PurchaseEntryModel.objects.get(id=id,Type='Purchase')
+    data=PurchaseEntryModel.objects.get(id=id)
     stock=StockModel.objects.filter(ProductId=data.ProductId,type='Purchase',user=request.user)
     tamonut = 0
     quantity = 0
@@ -1051,7 +1097,7 @@ def AddSalesEntry(request,A2=None):
             UAM.save()
         else:
             PA = eval(Amount)- eval(PayableAmount)
-            PendingAmount = PA
+            PendingAmount = "%.2f" % PA
             amount = eval(UAM.Amount) + eval(PayableAmount)
             UAM.Amount =  "%.2f" % amount 
             UAM.save()
@@ -1068,7 +1114,9 @@ def AddSalesEntry(request,A2=None):
         else:
             st = '1'
         PartyName = pt.PartyName
-        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,TChargesAmount=TCA,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount,OrderNo=OrderNo)
+        DB =  DeliveryBoyModel.objects.get(user=request.user,Name=DeliveryBoyName)
+        DeliveryBoyNo = DB.Number
+        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,DeliveryBoyNo=DeliveryBoyNo,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,TChargesAmount=TCA,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount,OrderNo=OrderNo)
         dt.save()
         UAM=UserAmountModel.objects.get(user=request.user)
         LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='Sales',BiilNo=InvoiceNo,Debited='0',Cedited=PayableAmount,Balance=UAM.Amount)
@@ -1102,32 +1150,30 @@ def AddSalesEntry(request,A2=None):
         else:
             pass
         messages.success(request,'Sales Successfully.')
-        return redirect('/AddSalesEntry')
+        return redirect('/Sales')
     if is_admin(request.user):
         return render(request,'admin/addsalesentry.html',data)
     if is_user(request.user):
         return render(request,'addsalesentry.html',data)
     
 def StockDetails(request,name):
+    name = name.replace("%20", " ")
     Ms = MainStockModel.objects.filter(user=request.user,ProductName=name,out='0').values()
     Ms = list(Ms)
     return JsonResponse({'Ms':Ms})
 
 @login_required(login_url='Login')
 @csrf_exempt
-def Stockswork(request,PN=None,id=None,id2=None,type=None,PID=None,Barcode=None):
+def Stockswork(request,id=None,type=None,Barcode=None):
     user = str(request.user.username)
     val= NMModel.objects.get(user=user,type=type)
     if Barcode == None:
-        ms = MainStockModel.objects.get(id=id2)
+        ms = MainStockModel.objects.get(id=id)
     else:
         ms = MainStockModel.objects.get(BarcodeNo=Barcode,user=user)
-    PRD = ProductModel.objects.get(ProductName=ms.ProductName)
+    # PRD = ProductModel.objects.get(ProductName=ms.ProductName)
     type = type
-    if PID == None:
-        ProductId = val.ProductId
-    else:
-        ProductId = PID
+    ProductId = val.ProductId
     TSP = eval(ms.Quantity) * eval(ms.PurchaseIncTax)
     if ms.Tax != 'TaxFree':
         tax = int(ms.Tax)
@@ -1138,7 +1184,7 @@ def Stockswork(request,PN=None,id=None,id2=None,type=None,PID=None,Barcode=None)
         ISP =  "%.2f" % ISP    
     TSP = eval(ms.Quantity) * eval(ISP)
     TSP =  "%.2f" % TSP
-    SalesStock=SalesStockModel.objects.create(ProductId=ProductId,user=user,type=type,ProductName=ms.ProductName,Category=ms.Category,Tax=ms.Tax,Unit=ms.Unit,PurchaseIncTax=ms.PurchaseIncTax,BarcodeNo=ms.BarcodeNo,Quantity=ms.Quantity,Amount=PRD.MRP,sid=ms.id,ProfitMargin='0',BasicSalesPrice=ms.PurchaseIncTax,Discount='0',SalesPriceAfterDiscount=ms.PurchaseIncTax,IncSalesPrice=ISP,TotalSales=str(TSP))
+    SalesStock=SalesStockModel.objects.create(ProductId=ProductId,user=user,type=type,ProductName=ms.ProductName,Category=ms.Category,Tax=ms.Tax,Unit=ms.Unit,PurchaseIncTax=ms.PurchaseIncTax,BarcodeNo=ms.BarcodeNo,Quantity=ms.Quantity,Amount='0',sid=ms.id,ProfitMargin='0',LossMargin='0',BasicSalesPrice=ms.PurchaseIncTax,Discount='0',SalesPriceAfterDiscount=ms.PurchaseIncTax,IncSalesPrice=ISP,TotalSales=str(TSP))
     SalesStock.save()
     get = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type).values()
     Sc = list(get)
@@ -1148,6 +1194,42 @@ def Stockswork(request,PN=None,id=None,id2=None,type=None,PID=None,Barcode=None)
         tamonut+=float(i.TotalSales)
     tamonut = str(tamonut)
     return JsonResponse({'Sc':Sc,'tamonut':tamonut})
+
+# @login_required(login_url='Login')
+# @csrf_exempt
+# def Stockswork(request,PN=None,id=None,id2=None,type=None,PID=None,Barcode=None):
+#     user = str(request.user.username)
+#     val= NMModel.objects.get(user=user,type=type)
+#     if Barcode == None:
+#         ms = MainStockModel.objects.get(id=id)
+#     else:
+#         ms = MainStockModel.objects.get(BarcodeNo=Barcode,user=user)
+#     PRD = ProductModel.objects.get(ProductName=ms.ProductName)
+#     type = type
+#     if PID == None:
+#         ProductId = val.ProductId
+#     else:
+#         ProductId = PID
+#     TSP = eval(ms.Quantity) * eval(ms.PurchaseIncTax)
+#     if ms.Tax != 'TaxFree':
+#         tax = int(ms.Tax)
+#         ISP = eval(ms.PurchaseIncTax) +(eval(ms.PurchaseIncTax) * tax /100)
+#         ISP =  "%.2f" % ISP
+#     else:
+#         ISP = eval(ms.PurchaseIncTax)
+#         ISP =  "%.2f" % ISP    
+#     TSP = eval(ms.Quantity) * eval(ISP)
+#     TSP =  "%.2f" % TSP
+#     SalesStock=SalesStockModel.objects.create(ProductId=ProductId,user=user,type=type,ProductName=ms.ProductName,Category=ms.Category,Tax=ms.Tax,Unit=ms.Unit,PurchaseIncTax=ms.PurchaseIncTax,BarcodeNo=ms.BarcodeNo,Quantity=ms.Quantity,Amount=PRD.MRP,sid=ms.id,ProfitMargin='0',BasicSalesPrice=ms.PurchaseIncTax,Discount='0',SalesPriceAfterDiscount=ms.PurchaseIncTax,IncSalesPrice=ISP,TotalSales=str(TSP))
+#     SalesStock.save()
+#     get = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type).values()
+#     Sc = list(get)
+#     stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
+#     tamonut = 0
+#     for i in stock:
+#         tamonut+=float(i.TotalSales)
+#     tamonut = str(tamonut)
+#     return JsonResponse({'Sc':Sc,'tamonut':tamonut})
 
 @login_required(login_url='Login')
 @csrf_exempt
@@ -1212,12 +1294,12 @@ def ProductE2(request):
             if val == 0: 
                 pt = eval(dt.PurchaseIncTax)
             else:
-                pt = eval(dt.PurchaseIncTax) + (val * eval(dt.PurchaseIncTax) /100)
+                pt = eval(dt.PurchaseIncTax) + val
             dt.BasicSalesPrice= "%.2f" % pt
             if dt.Discount == '0':
                 dt.SalesPriceAfterDiscount = "%.2f" % pt
             else:
-                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                gh = pt - eval(dt.Discount) 
                 dt.SalesPriceAfterDiscount = "%.2f" % gh
         else : 
             dt.ProfitMargin = '0'
@@ -1226,8 +1308,34 @@ def ProductE2(request):
             if dt.Discount == '0':
                 dt.SalesPriceAfterDiscount = "%.2f" % pt
             else:
-                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                gh = pt - eval(dt.Discount) 
                 dt.SalesPriceAfterDiscount = "%.2f" % gh
+        dt.LossMargin = '0'        
+        dt.save()
+    if name == 'LossMargin':
+        if val != '':
+            dt.LossMargin = val
+            val = eval(val)
+            if val == 0: 
+                pt = eval(dt.PurchaseIncTax)
+            else:
+                pt = eval(dt.PurchaseIncTax) - val
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh = pt - eval(dt.Discount) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
+        else : 
+            dt.LossMargin = '0'
+            pt = eval(dt.PurchaseIncTax)
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) /100) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
+        dt.ProfitMargin = '0'
         dt.save()
     if name == 'Discount':
         if val != '':
@@ -1236,7 +1344,7 @@ def ProductE2(request):
             if val == 0:
                 dt.SalesPriceAfterDiscount = dt.BasicSalesPrice
             else:
-                pt = eval(dt.BasicSalesPrice) - (eval(dt.BasicSalesPrice) * val / 100 )
+                pt = eval(dt.BasicSalesPrice) - val
                 dt.SalesPriceAfterDiscount = "%.2f" % pt
             dt.save()
         else:
@@ -1371,7 +1479,7 @@ def ProductE3(request):
 
 @login_required(login_url='Login')
 def SalesDetails(request,id):
-    data=SalesEntryModel.objects.get(id=id,Type='Sales')
+    data=SalesEntryModel.objects.get(id=id)
     stock=SalesStockModel.objects.filter(ProductId=data.ProductId,type='Sales',user=request.user)
     tamonut = 0
     quantity = 0
@@ -1415,7 +1523,7 @@ def SalesCancel(request,id):
 @login_required(login_url='Login')
 def DeleteSales(request,id):
     dt=SalesEntryModel.objects.get(id=id)
-    sl=SalesStockModel.objects.filter(ProductId=dt.ProductId)
+    sl=SalesStockModel.objects.filter(ProductId=dt.ProductId,user=dt.user)
     for i in sl:
         msl=MainStockModel.objects.get(id=i.sid)
         msl.Quantity =float(msl.Quantity) + float(i.Quantity)
@@ -1605,7 +1713,7 @@ def AddPurchaseReturnEntry(request):
             UAM.save()
         else:
             PA = eval(tamonut) - eval(PayableAmount)
-            PendingAmount = PA
+            PendingAmount = "%.2f" % PA
             amount = eval(UAM.Amount) + eval(PayableAmount)
             UAM.Amount =  "%.2f" % amount 
             UAM.save()
@@ -1655,7 +1763,7 @@ def AddPurchaseReturnEntry(request):
     
 @login_required(login_url='Login')
 @csrf_exempt
-def PRStock(request,PN,id,id2,type,PId=None):
+def PRStock(request,id,id2,type,PId=None):
     user = str(request.user.username)
     val= NMModel.objects.get(user=user,type=type)
     ms = MainStockModel.objects.get(id=id2)
@@ -1699,7 +1807,7 @@ def PRSDelete(request):
 
 @login_required(login_url='Login')
 def PRDetails(request,id):
-    data=PurchaseEntryModel.objects.get(id=id,Type='PurchaseReturn')
+    data=PurchaseEntryModel.objects.get(id=id)
     stock=StockModel.objects.filter(ProductId=data.ProductId,type='PurchaseReturn',user=request.user)
     tamonut = 0
     quantity = 0
@@ -1787,7 +1895,7 @@ def PREdit(request,id):
             UAM.save()
         else:
             PA = eval(tamonut) - eval(PayableAmount)
-            PendingAmount = PA
+            PendingAmount = "%.2f" % PA
             amount = eval(UAM.Amount) + eval(PayableAmount)
             UAM.Amount =  "%.2f" % amount 
             UAM.save()
@@ -1951,7 +2059,9 @@ def AddSalesReturnEntry(request):
         else:
             st = '1'
         PartyName = pt.PartyName
-        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
+        DB =  DeliveryBoyModel.objects.get(user=request.user,Name=DeliveryBoyName)
+        DeliveryBoyNo = DB.Number
+        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,DeliveryBoyNo=DeliveryBoyNo,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount)
         dt.save()
         LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='SalesReturn',BiilNo=InvoiceNo,Debited=PayableAmount,Cedited='0',Balance=UAM.Amount)
         LR.save()
@@ -1984,7 +2094,7 @@ def SRStocks(request,PN,id,type,PD=None):
         ProductId = val.ProductId
     else:
         ProductId = PD
-    SalesStock=SalesStockModel.objects.create(ProductId=ProductId,user=user,type=type,ProductName=pd.ProductName,Category=pd.Category,Tax=pd.Tax,Unit=pd.Unit,PurchaseIncTax='0',BarcodeNo=pd.BarcodeNo,Quantity='0',Amount='0',ProfitMargin='0',BasicSalesPrice='0',Discount='0',SalesPriceAfterDiscount='0',IncSalesPrice='0',TotalSales='0')
+    SalesStock=SalesStockModel.objects.create(ProductId=ProductId,user=user,type=type,ProductName=pd.ProductName,Category=pd.Category,Tax=pd.Tax,Unit=pd.Unit,PurchaseIncTax='0',BarcodeNo=pd.BarcodeNo,Quantity='0',Amount='0',ProfitMargin='0',LossMargin='0',BasicSalesPrice='0',Discount='0',SalesPriceAfterDiscount='0',IncSalesPrice='0',TotalSales='0')
     SalesStock.save()
     get = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type).values()
     Sc = list(get)
@@ -2002,7 +2112,7 @@ def SRDelete(request):
     if request.method == 'POST':
         id = request.POST.get('sid')
         type = request.POST.get('type')
-        data= SalesStockModel.objects.get(id=id,type=type)
+        data= SalesStockModel.objects.get(id=id)
         data.delete()
         val= NMModel.objects.get(user=request.user,type=type)
         get = SalesStockModel.objects.filter(ProductId=val.ProductId,user=request.user,type=type).values()
@@ -2042,12 +2152,12 @@ def SRSEdit(request):
             if val == 0: 
                 pt = eval(dt.PurchaseIncTax)
             else:
-                pt = eval(dt.PurchaseIncTax) + (val * eval(dt.PurchaseIncTax) /100)
+                pt = eval(dt.PurchaseIncTax) + val
             dt.BasicSalesPrice= "%.2f" % pt
             if dt.Discount == '0':
                 dt.SalesPriceAfterDiscount = "%.2f" % pt
             else:
-                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                gh = pt - eval(dt.Discount) 
                 dt.SalesPriceAfterDiscount = "%.2f" % gh
         else : 
             dt.ProfitMargin = '0'
@@ -2056,8 +2166,34 @@ def SRSEdit(request):
             if dt.Discount == '0':
                 dt.SalesPriceAfterDiscount = "%.2f" % pt
             else:
-                gh =  eval("%.2f" % pt) - (eval("%.2f" % pt) * 3 /100) 
+                gh = pt - eval(dt.Discount) 
                 dt.SalesPriceAfterDiscount = "%.2f" % gh
+        dt.LossMargin = '0'
+        dt.save()
+    if name == 'LossMargin':
+        if val != '':
+            dt.LossMargin = val
+            val = eval(val)
+            if val == 0: 
+                pt = eval(dt.PurchaseIncTax)
+            else:
+                pt = eval(dt.PurchaseIncTax) - val
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh = pt - eval(dt.Discount) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
+        else : 
+            dt.LossMargin = '0'
+            pt = eval(dt.PurchaseIncTax)
+            dt.BasicSalesPrice= "%.2f" % pt
+            if dt.Discount == '0':
+                dt.SalesPriceAfterDiscount = "%.2f" % pt
+            else:
+                gh = pt - eval(dt.Discount) 
+                dt.SalesPriceAfterDiscount = "%.2f" % gh
+        dt.ProfitMargin = '0'
         dt.save()
     if name == 'Discount':
         if val != '':
@@ -2066,7 +2202,7 @@ def SRSEdit(request):
             if val == 0:
                 dt.SalesPriceAfterDiscount = dt.BasicSalesPrice
             else:
-                pt = eval(dt.BasicSalesPrice) - (eval(dt.BasicSalesPrice) * val / 100 )
+                pt = eval(dt.BasicSalesPrice) -  val
                 dt.SalesPriceAfterDiscount = "%.2f" % pt
             dt.save()
         else:
@@ -2099,7 +2235,7 @@ def SRSEdit(request):
 
 @login_required(login_url='Login')
 def SRDetails(request,id):
-    data=SalesEntryModel.objects.get(id=id,Type='SalesReturn')
+    data=SalesEntryModel.objects.get(id=id)
     stock=SalesStockModel.objects.filter(ProductId=data.ProductId,type='SalesReturn',user=request.user)
     tamonut = 0
     quantity = 0
@@ -2575,6 +2711,7 @@ def StockReport(request):
     
 @login_required(login_url='Login')
 def ProductsDetails(request,name):
+    name = name.replace("%20", " ")
     stock = MainStockModel.objects.filter(user=request.user,ProductName=name)
     Quantity = 0
     Amount = 0
@@ -2624,7 +2761,7 @@ def InvoiceNoDetails(request,IN,type):
 @login_required(login_url='Login')
 def SalesStockReport(request):
     try:
-        ss=SalesStockModel.objects.filter(user=request.user.username,type='SalesReturn')
+        ss=SalesStockModel.objects.filter(user=request.user,type='SalesReturn')
         Productname = {i.ProductName for i in ss}
     except SalesStockModel.DoesNotExist:
         Productname = ''
@@ -2632,7 +2769,7 @@ def SalesStockReport(request):
     if is_admin(request.user):
         return render(request,'admin/salesstock.html',data)
     if is_user(request.user):
-        return render(request,'salesstock.html',data)
+        return render(request,'salesstock.html',data)   
     
 @login_required(login_url='Login')
 def DeliveryReport(request):
@@ -2801,12 +2938,18 @@ def Link(request,name):
             Unit=request.POST.get('Unit')
             MinQty=request.POST.get('MinQty')
             MaxQty=request.POST.get('MaxQty')
-            BarcodeNo=request.POST.get('Barcode')
             HSNCode=request.POST.get('HSNCode')
             MRP=request.POST.get('MRP')
             MFGDate=request.POST.get('MFGDate')
             ExpiryDate=request.POST.get('ExpiryDate')
-            dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,BarcodeNo=BarcodeNo,HSNCode=HSNCode,MRP=MRP,MFGDate=MFGDate,ExpiryDate=ExpiryDate)
+            if MFGDate != '' and  ExpiryDate != '':
+                dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,HSNCode=HSNCode,MRP=MRP,MFGDate=MFGDate,ExpiryDate=ExpiryDate)
+            elif MFGDate != '' and  ExpiryDate == None:
+                dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,HSNCode=HSNCode,MRP=MRP,MFGDate=MFGDate)
+            elif MFGDate == None and  ExpiryDate != None:
+                dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,HSNCode=HSNCode,MRP=MRP,ExpiryDate=ExpiryDate)
+            else:
+                dt=ProductModel.objects.create(user=user,ProductName=ProductName,Tax=Tax,Category=Category,Unit=Unit,MinQty=MinQty,MaxQty=MaxQty,HSNCode=HSNCode,MRP=MRP)
             dt.save()
             mgs = 'Add Products.'
             ld = ProductModel.objects.filter(user=user).values()
@@ -2831,11 +2974,12 @@ def Link(request,name):
                             ld = 0
                             df += 1
                             return JsonResponse({'ld':ld,'NUM':NUM})
-                        elif i.Email == Email:
-                            EM = 'This Email is Allready Available.'
-                            ld = 0
-                            df += 2
-                            return JsonResponse({'ld':ld,'EM':EM})
+                        elif Email != '':
+                            if i.Email == Email:
+                                EM = 'This Email is Allready Available.'
+                                ld = 0
+                                df += 2
+                                return JsonResponse({'ld':ld,'EM':EM})
                     if df == 0:
                         dt=PartyModel.objects.create(user=user,Type=Type,PartyName=PartyName,Number=Number,Address=Address,GSTNo=GSTNo,Email=Email,City=City)
                         dt.save()
@@ -2961,10 +3105,11 @@ def QuickPayment(request):
                 LR.save()
                 dt=PurchaseEntryModel.objects.get(id=Id)
                 Pa = eval(CeditedAmount) - eval(PayableAmount)
+                PendingAmount = "%.2f" % Pa
                 dt.PendingAmount = "%.2f" % Pa 
                 dt.status = '1'
                 dt.save()
-                main = PendingAmountModel.objects.create(user=request.user.username,Type='QuickPayment',Date=Date,PartyName=PartyName,Number=BillNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+                main = PendingAmountModel.objects.create(user=request.user.username,Type='QuickPayment',Date=Date,PartyName=PartyName,Number=BillNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description,PendingAmount=PendingAmount)
                 main.save()
                 messages.success(request,'Quick Payment Successfully.')
                 return redirect('/QuickPayment')
@@ -3048,10 +3193,11 @@ def QuickReceipt(request):
             LR.save()
             dt=SalesEntryModel.objects.get(id=Id)
             Pa = eval(CeditedAmount) - eval(PayableAmount)
+            PendingAmount = "%.2f" % Pa
             dt.PendingAmount = "%.2f" % Pa 
             dt.status = '1'
             dt.save()
-            main = PendingAmountModel.objects.create(user=request.user.username,Type='QuickReceipt',Date=Date,PartyName=PartyName,Number=InvoiceNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+            main = PendingAmountModel.objects.create(user=request.user.username,Type='QuickReceipt',Date=Date,PartyName=PartyName,Number=InvoiceNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description,PendingAmount=PendingAmount)
             main.save()
             messages.success(request,'Quick Receipt Successfully.')
             return redirect('/QuickReceipt')
@@ -3121,10 +3267,11 @@ def DebitNote(request):
             LR.save()
             dt=PurchaseEntryModel.objects.get(id=Id)
             Pa = eval(CeditedAmount) - eval(PayableAmount)
+            PendingAmount = "%.2f" % Pa
             dt.PendingAmount = "%.2f" % Pa 
             dt.status = '1'
             dt.save()
-            main = PendingAmountModel.objects.create(user=request.user.username,Type='DebitNote',Date=Date,PartyName=PartyName,Number=BillNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+            main = PendingAmountModel.objects.create(user=request.user.username,Type='DebitNote',Date=Date,PartyName=PartyName,Number=BillNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description,PendingAmount=PendingAmount)
             main.save()
             messages.success(request,'Debit Note Successfully.')
             return redirect('/DebitNote')
@@ -3199,10 +3346,11 @@ def CreditNote(request):
                 LR.save()
                 dt=SalesEntryModel.objects.get(id=Id)
                 Pa = eval(CeditedAmount) - eval(PayableAmount)
+                PendingAmount = "%.2f" % Pa
                 dt.PendingAmount = "%.2f" % Pa 
                 dt.status = '1'
                 dt.save()
-                main = PendingAmountModel.objects.create(user=request.user.username,Type='CreditNote',Date=Date,PartyName=PartyName,Number=InvoiceNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description)
+                main = PendingAmountModel.objects.create(user=request.user.username,Type='CreditNote',Date=Date,PartyName=PartyName,Number=InvoiceNo,CeditedAmount=CeditedAmount,PayableAmount=PayableAmount,TypeofPayment=TypeofPayment,TransactionID=TransactionID,Description=Description,PendingAmount=PendingAmount)
                 main.save()
                 messages.success(request,'Credit Note Successfully.')
                 return redirect('/CreditNote')
@@ -3240,7 +3388,7 @@ def Barcode(request,pid):
 
 @login_required(login_url='Login')
 def salesbill(request,id):
-    data=SalesEntryModel.objects.get(id=id,Type='Sales')
+    data=SalesEntryModel.objects.get(id=id)
     stock=SalesStockModel.objects.filter(ProductId=data.ProductId,type='Sales',user=request.user)
     party = PartyModel.objects.get(user=request.user,PartyName=data.PartyName)
     product = ProductModel.objects.filter(user=request.user)
@@ -3281,3 +3429,302 @@ def Bill(request,id):
     data = {'dt':dt,'PD':PD}
     return render(request,'admin/vbill.html',data)
 
+@login_required(login_url='Login')
+def UserSalesEntry(request):
+    user=User.objects.all()
+    sales = SalesEntryModel.objects.filter(Type='Sales')
+    data = {'sales':sales,'user':user}
+    if request.method=="POST": 
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        Username = request.POST.get('Username')
+        if (StartDate != '' and EndDate != '') and (Username == 'Select' ):
+            ss = SalesEntryModel.objects.filter(Type='Sales',Date__range=[StartDate, EndDate])
+        elif (StartDate == '' and EndDate == '') and (Username == 'Select'):
+            ss = SalesEntryModel.objects.filter(Type='Sales')
+        elif (StartDate == '' and EndDate == '') and (Username != 'Select'):
+            ss = SalesEntryModel.objects.filter(Type='Sales',user=Username)
+        elif (StartDate != '' and EndDate != '') and (Username != 'Select'):
+                ss = SalesEntryModel.objects.filter(Type='Sales',user=Username,Date__range=[StartDate, EndDate])
+        else:
+            ss = ''
+        data = {'sales':ss,'user':user,'StartDate':StartDate,'EndDate':EndDate,'Username':Username}
+    if is_admin(request.user):
+        return render(request,'admin/usersalesentry.html',data)
+
+@login_required(login_url='Login')
+def DeleteUserSales(request,id):
+    dt=SalesEntryModel.objects.get(id=id)
+    sl=SalesStockModel.objects.filter(ProductId=dt.ProductId,user=dt.user)
+    for i in sl:
+        msl=MainStockModel.objects.get(id=i.sid)
+        msl.Quantity =float(msl.Quantity) + float(i.Quantity)
+        msl.Amount = float(msl.PurchaseIncTax) * float(msl.Quantity)
+        msl.out = '0'
+        msl.save()
+    sl.delete()
+    dt.delete()
+    return redirect('/UserSalesEntry')
+
+@login_required(login_url='Login')
+def UserPurchaseEntry(request):
+    Purchase = PurchaseEntryModel.objects.filter(Type='Purchase')
+    user=User.objects.all()
+    data = {'Purchase':Purchase,'user':user}
+    if request.method=="POST":
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        Username = request.POST.get('Username')
+        if (StartDate != '' and EndDate != '') and (Username == 'Select' ):
+            Pl = PurchaseEntryModel.objects.filter(Type='Purchase',Date__range=[StartDate, EndDate])
+        elif (StartDate == '' and EndDate == '') and (Username == 'Select'):
+            Pl = PurchaseEntryModel.objects.filter(Type='Purchase')
+        elif (StartDate == '' and EndDate == '') and (Username != 'Select'):
+            Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=Username)
+        elif (StartDate != '' and EndDate != '') and (Username != 'Select'):
+                Pl = PurchaseEntryModel.objects.filter(Type='Purchase',user=Username,Date__range=[StartDate, EndDate])
+        else:
+            Pl = ''
+        data = {'Purchase':Pl,'user':user,'StartDate':StartDate,'EndDate':EndDate,'Username':Username}
+    if is_admin(request.user):
+        return render(request,'admin/userpurchaseentry.html',data)
+
+@login_required(login_url='Login')
+def UserSalesReturnEntry(request):
+    user=User.objects.all()
+    sales = SalesEntryModel.objects.filter(Type='SalesReturn')
+    data = {'sales':sales,'user':user}
+    if request.method=="POST": 
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        Username = request.POST.get('Username')
+        if (StartDate != '' and EndDate != '') and (Username == 'Select' ):
+            ss = SalesEntryModel.objects.filter(Type='SalesReturn',Date__range=[StartDate, EndDate])
+        elif (StartDate == '' and EndDate == '') and (Username == 'Select'):
+            ss = SalesEntryModel.objects.filter(Type='SalesReturn')
+        elif (StartDate == '' and EndDate == '') and (Username != 'Select'):
+            ss = SalesEntryModel.objects.filter(Type='SalesReturn',user=Username)
+        elif (StartDate != '' and EndDate != '') and (Username != 'Select'):
+                ss = SalesEntryModel.objects.filter(Type='SalesReturn',user=Username,Date__range=[StartDate, EndDate])
+        else:
+            ss = ''
+        data = {'sales':ss,'user':user,'StartDate':StartDate,'EndDate':EndDate,'Username':Username}
+    if is_admin(request.user):
+        return render(request,'admin/usersalesreturnentry.html',data)
+
+@login_required(login_url='Login')
+def UserPurchaseReturnEntry(request):
+    Purchase = PurchaseEntryModel.objects.filter(Type='PurchaseReturn')
+    user=User.objects.all()
+    data = {'Purchase':Purchase,'user':user}
+    if request.method=="POST":
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        Username = request.POST.get('Username')
+        if (StartDate != '' and EndDate != '') and (Username == 'Select' ):
+            Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',Date__range=[StartDate, EndDate])
+        elif (StartDate == '' and EndDate == '') and (Username == 'Select'):
+            Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn')
+        elif (StartDate == '' and EndDate == '') and (Username != 'Select'):
+            Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=Username)
+        elif (StartDate != '' and EndDate != '') and (Username != 'Select'):
+                Pl = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',user=Username,Date__range=[StartDate, EndDate])
+        else:
+            Pl = ''
+        data = {'Purchase':Pl,'user':user,'StartDate':StartDate,'EndDate':EndDate,'Username':Username}
+    if is_admin(request.user):
+        return render(request,'admin/userpurchasereturnentry.html',data)
+
+@login_required(login_url='Login')
+def UserLedgerReport(request):
+    # Lr = LedgerReportModel.objects.filter(user=request.user)
+    Lr = ''
+    user=User.objects.all()
+    data = {'Lr':Lr,'user':user}
+    if request.method=="POST": 
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        Username = request.POST.get('Username')
+        if (StartDate != '' and EndDate != '') and (Username == 'Select' ):
+            Lr = LedgerReportModel.objects.filter(LRDate__range=[StartDate, EndDate])
+        elif (StartDate == '' and EndDate == '') and (Username == 'Select'):
+            Lr = LedgerReportModel.objects.filter()
+        elif (StartDate == '' and EndDate == '') and (Username != 'Select'):
+            Lr = LedgerReportModel.objects.filter(user=Username)
+        elif (StartDate != '' and EndDate != '') and (Username != 'Select'):
+                Lr = LedgerReportModel.objects.filter(user=Username,LRDate__range=[StartDate, EndDate])
+        else:
+            Lr = ''
+        data = {'Lr':Lr,'StartDate':StartDate,'EndDate':EndDate,'Username':Username,'user':user}
+    if is_admin(request.user):
+        return render(request,'admin/userledgerreport.html',data)
+
+@login_required(login_url='Login')
+def UserOutstandingReport(request,name=None):
+    user=request.user
+    users=User.objects.all()
+    dt1 = ''
+    dt2 = ''
+    EndDate = ''
+    StartDate = ''
+    Username = ''
+    if request.method == 'POST':
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        Username = request.POST.get('Username')
+        if name == 'Payable':
+            if (StartDate != '' and  EndDate != '') and (Username == 'Select') :
+                dt1 = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],Type='Purchase',status='1')
+                dt2 = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],Type='SalesReturn',status='1')
+            elif (StartDate == '' and  EndDate == '') and (Username != 'Select'):
+                dt1 = PurchaseEntryModel.objects.filter(user=Username,Type='Purchase',status='1')
+                dt2 = SalesEntryModel.objects.filter(user=Username,Type='SalesReturn',status='1')
+            elif (StartDate != '' and  EndDate != '') and (Username != 'Select'):
+                dt1 = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=Username,Type='Purchase',status='1')
+                dt2 = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=Username,Type='SalesReturn',status='1')
+            else:
+                dt1 = PurchaseEntryModel.objects.filter(Type='Purchase',status='1')
+                dt2 = SalesEntryModel.objects.filter(Type='SalesReturn',status='1')
+        elif name == 'Receivable':
+            if (StartDate != '' and  EndDate != '') and (Username == 'Select') :
+                dt1 = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],Type='PurchaseReturn',status='1')
+                dt2 = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],Type='Sales',status='1')
+            elif (StartDate == '' and  EndDate == '') and (Username != 'Select'):
+                dt1 = PurchaseEntryModel.objects.filter(user=Username,Type='PurchaseReturn',status='1')
+                dt2 = SalesEntryModel.objects.filter(user=Username,Type='Sales',status='1')
+            elif (StartDate != '' and  EndDate != '') and (Username != 'Select'):
+                dt1 = PurchaseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=Username,Type='PurchaseReturn',status='1')
+                dt2 = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=Username,Type='Sales',status='1')
+            else:
+                dt1 = PurchaseEntryModel.objects.filter(Type='PurchaseReturn',status='1')
+                dt2 = SalesEntryModel.objects.filter(Type='Sales',status='1')
+    data={'dt1':dt1,'dt2':dt2,'user':users,'StartDate':StartDate,'EndDate':EndDate,'Username':Username}
+    if is_admin(request.user):
+        return render(request,'admin/useroutstandingreport.html',data)
+
+@login_required(login_url='Login')
+def ExpanseEntryReport(request):
+    Lr = ExpanseEntryModel.objects.filter(user=request.user)
+    Party = PartyModel.objects.filter(user=request.user,Type='Expanse')
+    data = {'Lr':Lr,'Party':Party}
+    if request.method=="POST": 
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        PartyName = request.POST.get('PartyName')
+        if (StartDate != '' and EndDate != ''):
+            if PartyName == 'Select':
+                Lr = ExpanseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user)
+            else:
+                Lr = ExpanseEntryModel.objects.filter(Date__range=[StartDate, EndDate],PartyName=PartyName,user=request.user)
+        elif(StartDate != '' or EndDate != ''):
+            if PartyName == 'Select':
+                Lr = ExpanseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user)
+            else:
+                Lr = ExpanseEntryModel.objects.filter(Date__range=[StartDate, EndDate],PartyName=PartyName,user=request.user)
+            Lr = ExpanseEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user)
+        elif(StartDate == '' and EndDate == ''):
+            if PartyName == 'Select':
+                Lr = ExpanseEntryModel.objects.filter(user=request.user)
+            else:
+                Lr = ExpanseEntryModel.objects.filter(user=request.user,PartyName=PartyName)
+        data = {'Lr':Lr,'StartDate':StartDate,'EndDate':EndDate,'PartyName':PartyName,'Party':Party}
+    if is_admin(request.user):
+        return render(request,'admin/expanseentryreport.html',data)
+    if is_user(request.user):
+        return render(request,'expanseentryreport.html',data)
+
+@login_required(login_url='Login')
+def UserExpanseEntryReport(request):
+    Lr = ''
+    user=User.objects.all()
+    data = {'Lr':Lr,'user':user}
+    if request.method=="POST": 
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        Username = request.POST.get('Username')
+        if (StartDate != '' and EndDate != '') and (Username == 'Select' ):
+            Lr = ExpanseEntryModel.objects.filter(Date__range=[StartDate, EndDate])
+        elif (StartDate == '' and EndDate == '') and (Username == 'Select'):
+            Lr = ExpanseEntryModel.objects.filter()
+        elif (StartDate == '' and EndDate == '') and (Username != 'Select'):
+            Lr = ExpanseEntryModel.objects.filter(user=Username)
+        elif (StartDate != '' and EndDate != '') and (Username != 'Select'):
+                Lr = ExpanseEntryModel.objects.filter(user=Username,Date__range=[StartDate, EndDate])
+        else:
+            Lr = ''
+        data = {'Lr':Lr,'StartDate':StartDate,'EndDate':EndDate,'Username':Username,'user':user}
+    if is_admin(request.user):
+        return render(request,'admin/userexpanseentryreport.html',data)
+
+
+@login_required(login_url='Login')
+def AllInvoice(request):
+    ue = request.user.email
+    data=DeliveryBoyModel.objects.get(Email=ue)
+    sales = SalesEntryModel.objects.filter(Type='Sales',DeliveryBoyName=request.user,DeliveryBoyNo=data.Number,user=data.user)
+    ta = 0
+    for i in sales:
+        ta += eval(i.Amount)
+    ta = "%.2f" % ta
+    data = {'sales':sales,'ta':ta}
+    return render(request,'db/allinvoice.html',data)
+
+
+@login_required(login_url='Login')
+def CI(request,id):
+    db = SalesEntryModel.objects.get(id=id)
+    db.BillClear = '1'
+    db.save()
+    return redirect('/')
+
+@login_required(login_url='Login')
+def CompletInvoice(request):
+    ue = request.user.email
+    data=DeliveryBoyModel.objects.get(Email=ue)
+    sales = SalesEntryModel.objects.filter(Type='Sales',DeliveryBoyName=request.user,DeliveryBoyNo=data.Number,user=data.user,BillClear='1')
+    ta = 0
+    for i in sales:
+        ta += eval(i.Amount)
+    ta = "%.2f" % ta
+    data = {'sales':sales,'ta':ta}
+    return render(request,'db/completinvoice.html',data)
+
+
+@login_required(login_url='Login')
+def DailyReport(request):
+    today = datetime.now().date()
+    Lr = LedgerReportModel.objects.filter(user=request.user,LRDate=today)
+    Party = PartyModel.objects.filter(user=request.user)
+    data = {'Lr':Lr,'Party':Party}
+    if request.method=="POST": 
+        PartyName = request.POST.get('PartyName')
+        if PartyName == 'Select':
+            Lr = LedgerReportModel.objects.filter(LRDate=today,user=request.user)
+        else:
+            Lr = LedgerReportModel.objects.filter(LRDate=today,PartyName=PartyName,user=request.user)
+        data = {'Lr':Lr,'PartyName':PartyName,'Party':Party}
+    if is_admin(request.user):
+        return render(request,'admin/dailyreport.html',data)
+    if is_user(request.user):
+        return render(request,'dailyreport.html',data)
+    
+@login_required(login_url='Login')
+def userStockReport(request):
+    user=request.user
+    users=User.objects.all()
+    Username = ''
+    stock = ''
+    data={'user':users,'Username':Username,'stock':stock}
+    if request.method == 'POST':
+        Username = request.POST.get('Username')
+        stock = MainStockModel.objects.filter(user=Username)
+        Quantity = 0
+        Amount = 0
+        for i in stock:
+            Quantity += eval(i.Quantity)
+            Amount += eval(i.Amount)
+        Quantity = "%.2f" % Quantity
+        Amount = "%.2f" % Amount
+        data = {'user':users,'Username':Username,'stock':stock,'Quantity':Quantity,'Amount':Amount}
+    if is_admin(request.user):
+        return render(request,'admin/userstockreport.html',data)

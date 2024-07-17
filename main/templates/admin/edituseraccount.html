@@ -19,7 +19,7 @@
           <div class="px-4 py-3 border-bottom">
             <h4 class="card-title mb-0">Edit User</h4>
           </div>
-          <form class="card-body p-4" method="post">
+          <form class="card-body p-4" enctype="multipart/form-data" method="post">
             {% csrf_token %}
             <div class="row">
               <div class="col-lg-4">
@@ -44,6 +44,30 @@
                 <div class="mb-4">
                   <label class="form-label">Address</label>
                   <textarea class="form-control p-7" name="Address" id="" cols="20" rows="1">{{data.Address}}</textarea>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">Old AdharCard Photo</label>
+                  <img src="/{{data.AdharCard}}" width="50%" class="img-fluid border border-black" alt="">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">AdharCard Photo</label>
+                  <input class="form-control" type="file" name="AdharCard" id="formFile">
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">Old PanCard Photo</label>
+                  <img src="/{{data.PanCard}}" width="50%" class="img-fluid border border-black" alt="">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">PanCard Photo</label>
+                  <input class="form-control" type="file" name="PanCard" id="formFile">
                 </div>
               </div>
               <div class="modal fade" id="vertical-center-modal" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">

@@ -66,7 +66,7 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <div class="row">
+                <div class="row" id="Partyselect2">
                   <div class="col-9">
                     <label for="exampleInputtype" class="form-label">Party Name</label>
                     <div class="mb-4">
@@ -97,8 +97,6 @@
                       {% endfor %}
                     </select>
                   </div>
-                  <div class="col-1 d-flex align-items-center"><a class="btn btn-success btn-lg mt-3" data-bs-toggle="modal"
-                    data-bs-target="#AddProduct"><i class='ti ti-plus'></i></a></div>
                   </div>
               </div>
               <div class="col-12 table-responsive p-1">
@@ -108,9 +106,10 @@
                       <th class="p-2">Prodect <br> Name</th>
                       <th class="p-2">Quantity</th>
                       <th class="p-2">Purchase <br>Inc. <br> Tax Price</th>
-                      <th class="p-2">Profit <br> Margin <br>( % )</th>
+                      <th class="p-2">Profit <br> Margin</th>
+                      <th class="p-2">Loss <br> Margin</th>
                       <th class="p-2">Basic Sales <br> Price <br> ( Per. Unit )</th>
-                      <th class="p-2">Discount <br> ( % )</th>
+                      <th class="p-2">Discount</th>
                       <th class="p-2">Sales price <br> After Discount <br> ( Per. Unit )</th>
                       <th class="p-2">Tax <br> ( % )</th>
                       <th class="p-2">Inc. Sales <br> Price</th>
@@ -134,6 +133,9 @@
                       <td class="p-2"><input type="text" class="form-control text-center" id="ProfitMargin{{i.id}}"
                           onkeydown="onstocks('ProfitMargin','{{i.id}}');"
                           onkeyup="onstocks('ProfitMargin','{{i.id}}');" value="{{i.ProfitMargin}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" id="LossMargin{{i.id}}"
+                            onkeydown="onstocks('LossMargin','{{i.id}}');"
+                            onkeyup="onstocks('LossMargin','{{i.id}}');" value="{{i.LossMargin}}"></td>
                       <td class="p-2"><input type="text" class="form-control text-center" name="BasicSalesPrice"
                           id="BasicSalesPrice{{i.id}}" value="{{i.BasicSalesPrice}}" disabled></td>
                       <td class="p-2"><input type="text" class="form-control text-center" name="Discount"
@@ -160,14 +162,14 @@
                   </tbody>
                   <tbody class="bg-white">
                     <tr class="bg-white">
-                      <td colspan="12" class="bg-white"><span>
+                      <td colspan="13" class="bg-white"><span>
                           <center><b id="mes" class="text-danger"></b></center>
                         </span></td>
                     </tr>
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th colspan="9">
+                      <th colspan="10">
                         Total Amount :
                       </th>
                       <th colspan="3">
@@ -259,14 +261,14 @@
             <div class="mb-4">
               <label for="exampleInputGSTNo" class="form-label">GST No.</label>
               <input type="text" class="form-control" id="exampleInputGSTNo" name="GSTNo" placeholder="GST No."
-                required>
+                value="">
             </div>
           </div>
           <div class="col-md-4">
             <div class="mb-4">
               <label for="exampleInputGmail" class="form-label">Email</label>
               <input type="email" class="form-control" id="exampleInputGmail" name="Email" placeholder="xyz@gmail.com"
-                required>
+                value="">
             </div>
           </div>
           <div class="col-md-4">
@@ -281,117 +283,7 @@
           <div class="col-md-6">
             <div class="mb-4">
               <label class="form-label">Address</label>
-              <textarea class="form-control p-7" name="Address" rows="1" placeholder="" required></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-success" type="submit">Submit</button>
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-          Close
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-<div class="modal fade" id="AddProduct" tabindex="-1" aria-labelledby="vertical-center-modal" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-    <form class="modal-content" id="AddProductF">
-      <div class="modal-header d-flex align-items-center">
-        <h5 class="modal-title" id="myLargeModalLabel">
-          Add Product
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-md-4">
-            <div class="mb-4">
-              <label for="exampleInputProductName" class="form-label">Product Name</label>
-              <input type="text" class="form-control" id="exampleInputProductName" name="ProductName"
-                placeholder="Party Name" required>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-4">
-              <label class="form-label">Product Tax</label>
-              <select class="form-select" name="Tax" aria-label="Default select example" required>
-                <option selected>--select--</option>
-                <option value="5">5%</option>
-                <option value="12">12%</option>
-                <option value="18">18%</option>
-                <option value="28">28%</option>
-                <option value="TaxFree">Tax Free</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-4">
-              <label class="form-label">Category</label>
-              <select class="form-select" name="Category" tabindex="1" required>
-                <option value="" selected>-- Selet --</option>
-                {% for i in Category %}
-                <option value="{{i.Category}}">{{i.Category}}</option>
-                {% endfor %}
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-4">
-              <label class="form-label">Product Unit</label>
-              <select class="form-select" name="Unit" aria-label="Default select example" required>
-                <option selected>--select--</option>
-                <option value="KG">KG</option>
-                <option value="GM">GM</option>
-                <option value="PC">PC</option>
-                <option value="LIT">LIT</option>
-                <option value="Box">Box</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-4">
-              <label for="exampleInputMinQty" class="form-label">Min Qty</label>
-              <input type="number" class="form-control" id="exampleInputMinQty" name="MinQty" required>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-4">
-              <label for="exampleInputMaxQty" class="form-label">Max Qty</label>
-              <input type="number" class="form-control" id="exampleInputMaxQty" name="MaxQty" required>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-4">
-              <label for="exampleInputBarcode" class="form-label">Barcode No.</label>
-              <input type="text" class="form-control" id="exampleInputBarcode" name="Barcode" placeholder="Barcode No."
-                required>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-4">
-              <label for="exampleInputBarcode" class="form-label">HSN Code</label>
-              <input type="text" class="form-control" id="exampleInputBarcode" name="HSNCode" placeholder="HSN Code"
-                required>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="mb-4">
-              <label for="exampleInputBarcode" class="form-label">MRP</label>
-              <input type="text" class="form-control" id="exampleInputBarcode" name="MRP" placeholder="MRP" required>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="">
-              <label class="form-label">Manufacturing Date</label>
-              <input type="date" class="form-control " name="MFGDate" required>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="">
-              <label class="form-label">Expiry Date</label>
-              <input type="date" class="form-control " name="ExpiryDate" required>
+              <textarea class="form-control p-7" name="Address" rows="1" placeholder=""></textarea>
             </div>
           </div>
         </div>
@@ -449,6 +341,7 @@
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='Quantity' id='Quantity" + x[i].id + "' onkeydown=onstocks('Quantity','" + x[i].id + "'); onkeyup=onstocks('Quantity','" + x[i].id + "'); value='" + x[i].Quantity + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='PurchaseIncTax' id='PurchaseIncTax" + x[i].id + "'onkeydown=onstocks('PurchaseIncTax','" + x[i].id + "'); onkeyup=onstocks('PurchaseIncTax','" + x[i].id + "'); value='" + x[i].PurchaseIncTax + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' id='ProfitMargin" + x[i].id + "' onkeydown=onstocks('ProfitMargin','" + x[i].id + "'); onkeyup=onstocks('ProfitMargin','" + x[i].id + "'); value='" + x[i].ProfitMargin + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' id='LossMargin" + x[i].id + "' onkeydown=onstocks('LossMargin','" + x[i].id + "'); onkeyup=onstocks('LossMargin','" + x[i].id + "'); value='" + x[i].LossMargin + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='BasicSalesPrice' id='BasicSalesPrice" + x[i].id + "'  value='" + x[i].BasicSalesPrice + "' disabled></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='Discount' id='Discount" + x[i].id + "' onkeydown=onstocks('Discount','" + x[i].id + "'); onkeyup=onstocks('Discount','" + x[i].id + "'); value='" + x[i].Discount + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='SalesPriceAfterDiscount' id='SalesPriceAfterDiscount" + x[i].id + "' value='" + x[i].SalesPriceAfterDiscount + "' disabled></td>";
@@ -530,28 +423,6 @@
         tamount2.innerText = data.tamonut;
         var tamount3 = document.getElementById("mes");
         tamount3.innerText = '';
-      }
-    });
-  });
-  $("#AddProductF").submit(function (e) {
-    e.preventDefault();
-    var form = $(this);
-    dt = form.serialize();
-    $("#Prodectselect2 select[name='Product2']").find('.after2').nextAll().remove();
-
-    $.ajax({
-      type: "POST",
-      url: '/Link/Products',
-      data: dt,
-      success: function (data) {
-        x = data.ld
-        output = ''
-        for (i = 0; i < x.length; i++) {
-          output += "<option value="+x[i].ProductName+'/'+ x[i].id + ">" + x[i].ProductName + "</option>";
-        };
-        $("#Prodectselect2 select[name='Product2']").find('.after2').after(output);
-        $('#AddProductF').trigger("reset");
-        $('#AddProduct').modal('hide');
       }
     });
   });

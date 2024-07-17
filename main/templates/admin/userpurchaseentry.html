@@ -1,0 +1,87 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="datatables">
+      <!-- start File export -->
+      <div class="card">
+        <div class="px-4 py-3 border-bottom">
+          <h4 class="card-title mb-0">User Purchase Register</h4>
+        </div>
+        <form class="card-body p-4 pb-0 mb-0" method="post">
+          {% csrf_token %}
+          <div class="row mb-0">
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInput" class="form-label">To</label>
+                <input type="date" class="form-control" name="StartDate" id="StartDate" value="{{StartDate}}" >
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInput" class="form-label">From</label>
+                <input type="date" class="form-control" name="EndDate" id="EndDate" value="{{EndDate}}">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label for="exampleInputtype" class="form-label">Username</label>
+              <div class="mb-4">
+                <select class="select2 form-control  custom-select" name="Username">
+                  <option>Select</option>
+                  <optgroup label="">
+                    {% for i in user %}
+                    <option value="{{i.username}}" {% if Username == i.username %} selected {% endif %}>{{i.username}}</option>
+                    {% endfor %}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button class="btn btn-success" type="submit">Search</button>
+            </div>
+          </div>
+        </form>
+        <hr>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+              <thead>
+                <!-- start row -->
+                <tr>
+                  <th>Date</th>
+                  <th>UserName</th>
+                  <th>Party Name</th>
+                  <th>Invoice No.</th>
+                  <th>Bill No.</th>
+                  <th>Type of Purchase</th>
+                  <th>Type of Payment</th>
+                  <th>Amount</th>
+                  <!-- <th></th> -->
+                </tr>
+                <!-- end row -->
+              </thead>
+              <tbody>
+                {% for i in Purchase %}
+                <tr>
+                  <td>{{i.Date}}</td>
+                  <td>{{i.user}}</td>
+                  <td>{{i.PartyName}}</td>
+                  <td>{{i.InvoiceNo}}</td>
+                  <td>{{i.BillNo}}</td>
+                  <td>{{i.TypeofPurchase}}</td>
+                  <td>{{i.TypeofPayment}}</td>
+                  <td>{{i.Amount}}</td>
+                  <!-- <td><a class="btn btn-warning mr-3" href="/PurchaseDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></div></td> -->
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- end File export -->
+    </div>
+  </div>
+</div>
+{% endblock content %}

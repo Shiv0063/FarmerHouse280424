@@ -19,37 +19,51 @@
           <div class="px-4 py-3 border-bottom">
             <h4 class="card-title mb-0">Add User</h4>
           </div>
-          <form class="card-body p-4" method="post">
+          <form class="card-body p-4" enctype="multipart/form-data" method="post" >
             {% csrf_token %}
             <div class="row">
-              <div class="col-lg-6">
+              <div class="col-md-4">
                 <div class="mb-4">
                   <label for="exampleInputName" class="form-label">Name</label>
                   <input type="text" class="form-control" id="exampleInputName" name="Username" placeholder="Name">
                 </div>
               </div>
-              <div class="col-lg-6">
+              <div class="col-md-4">
                 <div class="mb-4">
                   <label for="exampleInputnumber" class="form-label">Phone Number</label>
                   <input type="text" class="form-control" id="exampleInputnumber" name="Number" placeholder="1234567890">
                 </div>
               </div>
-              <div class="col-12">
-                <div class="mb-4">
-                  <label class="form-label">Address</label>
-                  <textarea class="form-control p-7" name="Address" id="" cols="20" rows="1" placeholder=""></textarea>
-                </div>
-              </div>
-              <div class="col-lg-6">
+              <div class="col-md-4">
                 <div class="mb-4">
                   <label for="exampleInputemail" class="form-label">Email</label>
                   <input type="email" class="form-control" id="exampleInputemail" name="emailaddress" placeholder="xyz@gmail.com">
                 </div>
               </div>
-              <div class="col-lg-6">
+              <div class="col-md-4">
                 <div class="mb-4">
                   <label for="exampleInputpassword" class="form-label">Password</label>
                   <input type="password" class="form-control" id="exampleInputpassword" name="Password" placeholder="">
+                  <!-- <br><label for="" class="form-label me-3">Show Password</label>
+                  <input type="checkbox" class="" name="" value="2" id="show"> -->
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">AdharCard Photo</label>
+                  <input class="form-control" type="file" name="AdharCard" id="" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="mb-4">
+                  <label for="formFile" class="form-label">PanCard Photo</label>
+                  <input class="form-control" type="file" name="PanCard" id="">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-4">
+                  <label class="form-label">Address</label>
+                  <textarea class="form-control p-7" name="Address" id="" cols="0" placeholder=""></textarea>
                 </div>
               </div>
               <div class="col-12">
@@ -66,3 +80,10 @@
   </div>
 </div>
 {% endblock content %}
+
+{% block script %}
+  <script>
+    const chak = document.getElementById("show");
+    alert(chak.val());
+  </script>
+{% endblock script %}

@@ -1,4 +1,4 @@
-﻿{% extends 'admin/main.html' %}
+{% extends 'admin/main.html' %}
 {% load static %}
 {% block content %}
 <div class="body-wrapper">
@@ -128,14 +128,14 @@
                       <th class="p-2">Prodect <br> Name</th>
                       <th class="p-2">Quantity</th>
                       <th class="p-2">Purchase <br>Inc. <br> Tax Price</th>
-                      <th class="p-2">Profit <br> Margin <br>( % )</th>
+                      <th class="p-2">Profit <br> Margin</th>
+                      <th class="p-2">Loss <br> Margin</th>
                       <th class="p-2">Basic Sales <br> Price <br> ( Per. Unit )</th>
-                      <th class="p-2">Discount <br> ( % )</th>
+                      <th class="p-2">Discount </th>
                       <th class="p-2">Sales price <br> After Discount <br> ( Per. Unit )</th>
                       <th class="p-2">Tax <br> ( % )</th>
-                      <th class="p-2">Inc. <br> Sales <br> Price</th>
+                      <th class="p-2">Inc. Sales <br> Price</th>
                       <th class="p-2">Total Sales</th>
-                      <th class="p-2">MRP</th>
                       <th class="p-2"></th>
                     </tr>
                   </thead>
@@ -153,6 +153,9 @@
                       <td class="p-2"><input type="text" class="form-control text-center" id="ProfitMargin{{i.id}}"
                           onkeydown="onstocks('ProfitMargin','{{i.id}}');"
                           onkeyup="onstocks('ProfitMargin','{{i.id}}');" value="{{i.ProfitMargin}}"></td>
+                      <td class="p-2"><input type="text" class="form-control text-center" id="LossMargin{{i.id}}"
+                            onkeydown="onstocks('LossMargin','{{i.id}}');"
+                            onkeyup="onstocks('LossMargin','{{i.id}}');" value="{{i.LossMargin}}"></td>
                       <td class="p-2"><input type="text" class="form-control text-center" name="BasicSalesPrice"
                           id="BasicSalesPrice{{i.id}}" value="{{i.BasicSalesPrice}}" disabled></td>
                       <td class="p-2"><input type="text" class="form-control text-center" name="Discount"
@@ -167,8 +170,8 @@
                           id="IncSalesPrice{{i.id}}" value="{{i.IncSalesPrice}}" disabled></td>
                       <td class="p-2"><input type="text" class="form-control text-center" name="TotalSales"
                           id="TotalSales{{i.id}}" value="{{i.TotalSales}}"></td>
-                      <td class="p-2"><input type="text" class="form-control text-center" name="Amount"
-                          id="Amount{{i.id}}" value="{{i.Amount}}" disabled></td>
+                      <!--<td class="p-2"><input type="text" class="form-control text-center" name="Amount"-->
+                      <!--    id="Amount{{i.id}}" value="{{i.Amount}}" disabled></td>-->
                       <td class="p-2">
                         <div class="mt-1"><a type='button' class='btn btn-danger bg-danger btn-del ms-2'
                             data-sid='{{i.id}}'><i class='ti ti-trash'></i></a></div>
@@ -185,10 +188,10 @@
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th class="p-2" colspan="9">
+                      <th class="p-2" colspan="10">
                         Total Amount :
                       </th>
-                      <th class="p-2" colspan="3">
+                      <th class="p-2" colspan="2">
                         <span id="tamount2">{{tamonut}}</span>
                       </th>
                     </tr>
@@ -303,7 +306,7 @@
               <div class="col-12">
                 <div class="gap-3">
                   <button class="btn btn-success" formaction="/AddSalesEntry" type="submit">Save</button>
-                  <button class="btn btn-success" formaction="/AddSalesEntry/A2" type="submit">Save & Print</button>
+                  <!--<button class="btn btn-success" formaction="/AddSalesEntry/A2" type="submit">Save & Print</button>-->
                   <a class="btn btn-danger" href="/SalesCancel/{{ProductId}}">Cancel</a>
                   <a class="btn btn-danger" href="/AddSalesEntry">Clean</a>
                 </div>
@@ -352,14 +355,14 @@
             <div class="mb-4">
               <label for="exampleInputGSTNo" class="form-label">GST No.</label>
               <input type="text" class="form-control" id="exampleInputGSTNo" name="GSTNo" placeholder="GST No."
-                required>
+                value="">
             </div>
           </div>
           <div class="col-md-4">
             <div class="mb-4">
               <label for="exampleInputGmail" class="form-label">Email</label>
               <input type="email" class="form-control" id="exampleInputGmail" name="Email" placeholder="xyz@gmail.com"
-                required>
+                value="">
             </div>
           </div>
           <div class="col-md-4">
@@ -374,7 +377,7 @@
           <div class="col-md-6">
             <div class="mb-4">
               <label class="form-label">Address</label>
-              <textarea class="form-control p-7" name="Address" rows="1" placeholder="" required></textarea>
+              <textarea class="form-control p-7" name="Address" rows="1" placeholder=""></textarea>
             </div>
           </div>
         </div>
@@ -435,13 +438,13 @@
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='Quantity' id='Quantity" + x[i].id + "' onkeydown=onstocks('Quantity','" + x[i].id + "'); onkeyup=onstocks('Quantity','" + x[i].id + "'); value='" + x[i].Quantity + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='PurchaseIncTax' id='PurchaseIncTax" + x[i].id + "' value='" + x[i].PurchaseIncTax + "' disabled></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' id='ProfitMargin" + x[i].id + "' onkeydown=onstocks('ProfitMargin','" + x[i].id + "'); onkeyup=onstocks('ProfitMargin','" + x[i].id + "'); value='" + x[i].ProfitMargin + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' id='LossMargin" + x[i].id + "' onkeydown=onstocks('LossMargin','" + x[i].id + "'); onkeyup=onstocks('LossMargin','" + x[i].id + "'); value='" + x[i].LossMargin + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='BasicSalesPrice' id='BasicSalesPrice" + x[i].id + "'  value='" + x[i].BasicSalesPrice + "' disabled></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='Discount' id='Discount" + x[i].id + "' onkeydown=onstocks('Discount','" + x[i].id + "'); onkeyup=onstocks('Discount','" + x[i].id + "'); value='" + x[i].Discount + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='SalesPriceAfterDiscount' id='SalesPriceAfterDiscount" + x[i].id + "' value='" + x[i].SalesPriceAfterDiscount + "' disabled></td>";
             output += "<td class='p-2'><div class='mt-2'>" + x[i].Tax + "</div></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='IncSalesPrice' id='IncSalesPrice" + x[i].id + "' value='" + x[i].IncSalesPrice + "' disabled></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='TotalSales' id='TotalSales" + x[i].id + "' value='" + x[i].TotalSales + "'></td>";
-            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' value='" + x[i].Amount + "' disabled></td>";
             output += "<td class='p-2'><div class='mt-1'><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></div></td></tr>";
           };
           $('#tbody').html(output);
@@ -506,12 +509,8 @@
           x = resp.Ms
           output = ''
           for (i = 0; i < x.length; i++) {
-            output += "<option value=";
-            pn = x[i].ProductName;
-            pn = pn.replace(' ','%20');
-            output += pn;
-            output += "/";
-            output += x[i].OldProductId + "/" + x[i].id + '>' + "Price: " + x[i].PurchaseIncTax + " --  --  Quantity :" + x[i].Quantity + '</option>';
+            output += "<option value="+ x[i].id ;
+            output +='>' + "Price: " + x[i].PurchaseIncTax + " --  --  Quantity :" + x[i].Quantity + '</option>';
           };
           $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
         },
@@ -538,13 +537,13 @@
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='Quantity' id='Quantity" + x[i].id + "' onkeydown=onstocks('Quantity','" + x[i].id + "'); onkeyup=onstocks('Quantity','" + x[i].id + "'); value='" + x[i].Quantity + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='PurchaseIncTax' id='PurchaseIncTax" + x[i].id + "' value='" + x[i].PurchaseIncTax + "' disabled></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' id='ProfitMargin" + x[i].id + "' onkeydown=onstocks('ProfitMargin','" + x[i].id + "'); onkeyup=onstocks('ProfitMargin','" + x[i].id + "'); value='" + x[i].ProfitMargin + "'></td>";
+            output += "<td class='p-2'><input type='text' class='form-control text-center' id='LossMargin" + x[i].id + "' onkeydown=onstocks('LossMargin','" + x[i].id + "'); onkeyup=onstocks('LossMargin','" + x[i].id + "'); value='" + x[i].LossMargin + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='BasicSalesPrice' id='BasicSalesPrice" + x[i].id + "'  value='" + x[i].BasicSalesPrice + "' disabled></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='Discount' id='Discount" + x[i].id + "' onkeydown=onstocks('Discount','" + x[i].id + "'); onkeyup=onstocks('Discount','" + x[i].id + "'); value='" + x[i].Discount + "'></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='SalesPriceAfterDiscount' id='SalesPriceAfterDiscount" + x[i].id + "' value='" + x[i].SalesPriceAfterDiscount + "' disabled></td>";
             output += "<td class='p-2'><div class='mt-2'>" + x[i].Tax + "</div></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='IncSalesPrice' id='IncSalesPrice" + x[i].id + "' value='" + x[i].IncSalesPrice + "' disabled></td>";
             output += "<td class='p-2'><input type='text' class='form-control text-center' name='TotalSales' id='TotalSales" + x[i].id + "' value='" + x[i].TotalSales + "'></td>";
-            output += "<td class='p-2'><input type='text' class='form-control text-center' name='Amount' id='Amount" + x[i].id + "' value='" + x[i].Amount + "' disabled></td>";
             output += "<td class='p-2'><div class='mt-1'><a type='button' class='btn btn-danger bg-danger btn-del ms-2' data-sid='" + x[i].id + "'><i class='ti ti-trash'></i></a></div></td></tr>";
           };
           $('#tbody').html(output);

@@ -21,37 +21,19 @@
     <div class="container-fluid mt-3">
         <div class="row justify-content-center">
             <table class="col-11">
-                <thead>
-                    <tr class="text-center">
-                        <th>
-                            Product Name
-                        </th>
-                        <th>
-                            Barcode Number
-                        </th>
-                        <th>
-                            Barcode Image
-                        </th>
-                    </tr>
-                </thead>
                 <tbody>
                     {% for i in data %}
-                    <tr>
+                    <tr class="mt-2 mb-2">
                         <td>
-                            {{i.ProductName}}
-                        </td>
-                        <td>
-                            {{i.BarcodeNo}}
-                        </td>
-                        <td>
-                            <img id="barcode{{i.id}}" width="340px" alt="" />
+                            <center> <p class="text-center mb-0"><b>{{i.ProductName}}</b></p><img id="barcode{{i.id}}" width="340px" alt="" /></center>
+                            
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        <div class="row justify-content-end mt-3" id="btn">
+        <div class="row justify-content-center mt-3" id="btn">
             <a class="col-3 btn btn-success me-2" onclick="window.print()">Barcode</a>
             <a class="col-3 btn btn-danger me-3" onclick="window.history.go(-1);">
                 Cancel

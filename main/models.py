@@ -5,8 +5,17 @@ from django.utils.timezone import now
 
 class UserDetails(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
+    type = models.CharField(max_length=100,null=True, blank=True)
     phone=models.CharField(max_length=100)
     Address = models.TextField()
+    AdharCard = models.FileField(upload_to='User',null=True, blank=True)
+    PanCard = models.FileField(upload_to='User',null=True, blank=True)
+
+    def delete(self, *args, **kwargs):
+        self.AdharCard.delete()
+        self.PanCard.delete()
+        super().delete(*args, **kwargs)
+
     @property
     def email(self):
         return self.user.email
@@ -52,7 +61,6 @@ class DeliveryBoyModel(models.Model):
     AdharCard = models.FileField(upload_to='DeliveryBoy',null=True, blank=True)
     PanCard = models.FileField(upload_to='DeliveryBoy',null=True, blank=True)
     Email = models.CharField(max_length=100, null=True, blank=True)
-    PassWord = models.CharField(max_length=100, null=True, blank=True)
 
     def delete(self, *args, **kwargs):
         self.Licence.delete()
@@ -137,6 +145,9 @@ class PurchaseEntryModel(models.Model):
     PendingAmount = models.CharField(max_length=100,null=True, blank=True)
     status = models.CharField(default='0',max_length=100,null=True, blank=True)
 
+    def ndate(self):
+        return self.Date.strftime('%d-%m-%Y')
+
     def DDate(self):
         return self.Date.strftime('%Y-%m-%d')
 
@@ -170,14 +181,15 @@ class SalesStockModel(models.Model):
     type = models.CharField(max_length=100,null=True, blank=True)
     ProductName = models.CharField(max_length=100,null=True, blank=True)
     Category = models.CharField(max_length=100,null=True, blank=True)
-    Tax = models.CharField(max_length=100,null=True, blank=True)
-    Unit = models.CharField(max_length=100,null=True, blank=True)
+    Tax = models.CharField(max_length=100,null=True,blank=True)
+    Unit = models.CharField(max_length=100,null=True,blank=True)
     PurchaseIncTax = models.CharField(max_length=100,null=True, blank=True)
     BarcodeNo = models.CharField(max_length=100,blank=True)
     Quantity = models.CharField(max_length=100,blank=True)
     Amount = models.CharField(max_length=100,null=True, blank=True)
     sid = models.CharField(max_length=100,null=True, blank=True)
     ProfitMargin = models.CharField(max_length=100,null=True, blank=True)
+    LossMargin = models.CharField(max_length=100,null=True, blank=True)
     BasicSalesPrice = models.CharField(max_length=100,null=True, blank=True)
     Discount = models.CharField(max_length=100,null=True, blank=True)
     SalesPriceAfterDiscount = models.CharField(max_length=100,null=True, blank=True)
@@ -208,6 +220,7 @@ class EditSalesStockModel(models.Model):
 class SalesEntryModel(models.Model):
     user = models.CharField(max_length=100,null=True, blank=True)
     DeliveryBoyName = models.CharField(max_length=100,null=True, blank=True)
+    DeliveryBoyNo = models.CharField(max_length=100,null=True, blank=True)
     TypeOfBusiness = models.CharField(max_length=100,null=True, blank=True)
     DeliveryTime = models.TimeField()
     InvoiceNo = models.CharField(max_length=100,null=True, blank=True)
@@ -224,6 +237,10 @@ class SalesEntryModel(models.Model):
     status = models.CharField(default='0',max_length=100,null=True, blank=True)
     PendingAmount = models.CharField(max_length=100,null=True, blank=True)
     OrderNo = models.CharField(max_length=100,null=True, blank=True)
+    BillClear = models.CharField(default='0',max_length=100,null=True, blank=True)
+
+    def ndate(self):
+        return self.Date.strftime('%d-%m-%Y')
 
     def DDate(self):
         return self.Date.strftime('%Y-%m-%d')
@@ -253,6 +270,9 @@ class ExpanseEntryModel(models.Model):
     PayableAmount = models.CharField(max_length=100,null=True, blank=True)
     status = models.CharField(default='0',max_length=100,null=True,blank=True)
     PendingAmount = models.CharField(max_length=100,null=True, blank=True)
+    
+    def ndate(self):
+        return self.Date.strftime('%d-%m-%Y')
 
     def DDate(self):
         return self.Date.strftime('%Y-%m-%d')
@@ -316,7 +336,11 @@ class PendingAmountModel(models.Model):
     PartyName = models.CharField(max_length=100,null=True, blank=True)
     Number = models.CharField(max_length=100,null=True, blank=True)
     CeditedAmount = models.CharField(max_length=100,null=True, blank=True)
+    PendingAmount = models.CharField(max_length=100,null=True, blank=True)
     PayableAmount = models.CharField(max_length=100,null=True, blank=True)
     TypeofPayment = models.CharField(max_length=100,null=True, blank=True)
     TransactionID = models.CharField(max_length=100,null=True, blank=True)
     Description = models.TextField(null=True, blank=True)
+
+    def ndate(self):
+        return self.Date.strftime('%d-%m-%Y')

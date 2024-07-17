@@ -69,14 +69,14 @@
               <tbody id="tbody">
                 {% for i in sales %}
                 <tr>
-                  <td class="p-2">{{i.Date}}</td>
+                  <td class="p-2">{{i.ndate}}</td>
                   <td class="p-2">{{i.PartyName}}</td>
                   <td class="p-2">{{i.InvoiceNo}}</td>
                   <td class="p-2">{{i.TypeOfBusiness}}</td>
                   <td class="p-2">{{i.DeliveryTime}}</td>
                   <td class="p-2">{{i.DeliveryBoyName}}</td>
                   <td class="p-2">{{i.Amount}}</td>
-                  <td class="p-2"><a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;">Details</a></td>
+                  <td class="p-2"><a class="btn btn-warning mr-3" href="/SalesDetails/{{i.id}}" style="margin-left: 5px;"><i class='ti ti-view-360'></i></a></td>
                 </tr>
                 {% endfor %}
               </tbody>

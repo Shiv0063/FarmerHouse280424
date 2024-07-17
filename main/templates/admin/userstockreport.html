@@ -1,0 +1,93 @@
+﻿{% extends 'admin/main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="datatables">
+      <!-- start File export -->
+      <div class="card">
+        <div class="px-4 py-3 border-bottom">
+          <h4 class="card-title mb-0">User Stock Report</h4>
+        </div>
+        <form class="card-body p-4 pb-0 mb-0" method="post">
+          {% csrf_token %}
+          <div class="row mb-0">
+            <div class="col-md-2">
+              <label for="exampleInputtype" class="form-label">Username</label>
+              <div class="mb-4">
+                <select class="select2 form-control  custom-select" name="Username">
+                  <option>Select</option>
+                  <optgroup label="">
+                    {% for i in user %}
+                    <option value="{{i.username}}" {% if Username == i.username %} selected {% endif %}>{{i.username}}</option>
+                    {% endfor %}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button class="btn btn-success">Search</button>
+            </div>
+          </div>
+        </form>
+        <hr>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+              <thead>
+                <!-- start row -->
+                <tr>
+                  <th>No</th>
+                  <th>Product Name</th>
+                  <th>Category</th>
+                  <th>Tax</th>
+                  <th>Unit</th>
+                  <th>Quantity</th>
+                  <th>Purchase price</th>
+                  <th>Amount</th>
+                </tr>
+                <!-- end row -->
+              </thead>
+              <tbody id="tbody">
+                {% for i in stock %}
+                {% if i.out == 0 %}
+                <tr>
+                  <td>{{forloop.counter}}</td>
+                  <td>{{i.ProductName}}</td>
+                  <td>{{i.Category}}</td>
+                  <td>{{i.Tax}}</td>
+                  <td>{{i.Unit}}</td>
+                  <td>{{i.Quantity}}</td>
+                  <td>{{i.PurchaseIncTax}}</td>
+                  <td>{{i.Amount}}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th>{{Quantity}}</th>
+                  <th></th>
+                  <th>{{Amount}}</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- end File export -->
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script src="{% static 'assets/js/jquery-3.7.1.js' %}"></script>
+<script>
+
+</script>
+{% endblock script %}
