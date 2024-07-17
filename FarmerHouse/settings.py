@@ -78,12 +78,12 @@ WSGI_APPLICATION = 'FarmerHouse.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
@@ -96,19 +96,19 @@ DATABASES = {
 #     }
 # }
 
-# import dj_database_url
+import dj_database_url
 
-# RENDER_EXTERNAL_HOSTNAME = "postgres://farmerhouse01_user:p5caAscI5Lt1HcjvNcsF1kCIiv4TQXps@dpg-cpg7mc6ct0pc73d8uovg-a.singapore-postgres.render.com/farmerhouse01"
-# if RENDER_EXTERNAL_HOSTNAME:
-#     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+RENDER_EXTERNAL_HOSTNAME = "postgresql://farmerhousewk_user:5gpPTH5QKSCuWxo1Y16iKTYAn6W9QgeT@dpg-cqbm570gph6c73c2g9ug-a.oregon-postgres.render.com/farmerhousewk"
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         # Feel free to alter this value to suit your needs.
-#         default='postgres://farmerhouse01_user:p5caAscI5Lt1HcjvNcsF1kCIiv4TQXps@dpg-cpg7mc6ct0pc73d8uovg-a.singapore-postgres.render.com/farmerhouse01',
-#         conn_max_age=600
-#     )
-# }
+DATABASES = {
+    'default': dj_database_url.config(
+        # Feel free to alter this value to suit your needs.
+        default='postgresql://farmerhousewk_user:5gpPTH5QKSCuWxo1Y16iKTYAn6W9QgeT@dpg-cqbm570gph6c73c2g9ug-a.oregon-postgres.render.com/farmerhousewk',
+        conn_max_age=600
+    )
+}
 
 
 # Password validation
