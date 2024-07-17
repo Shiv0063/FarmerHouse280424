@@ -432,7 +432,7 @@ def Expanse(request):
 @login_required(login_url='Login')
 def Amount(request):
     if is_admin(request.user):
-        user=UserDetails.objects.all()
+        user=User.objects.all()
         try:
             ca=UserAmountModel.objects.get(user=request.user)
             ca = ca.Amount
