@@ -505,7 +505,7 @@
           output = ''
           for (i = 0; i < x.length; i++) {
             output += "<option value="+ x[i].id ;
-            output +='>' + "Price: " + x[i].PurchaseIncTax + " --  --  Quantity :" + x[i].Quantity + '</option>';
+            output +='>' + "Price: " + x[i].PurchaseIncTax + " -- Unit :"+x[i].Unit+" --  Quantity :" + x[i].Quantity + '</option>';
           };
           $("#Prodectselect2 select[name='Product2']").find('.after').after(output);
         },
