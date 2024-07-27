@@ -87,7 +87,7 @@
                     <select class="select form-control" name="Product2">
                       <option class="after2">Product Name</option>
                       {% for i in Product %}
-                      <option value="{{i.ProductName}}/{{i.id}}">{{i.ProductName}}</option>
+                      <option value="{{i.ProductName}}/{{i.id}}">{{i.ProductName}}  --- {{i.Unit}}</option>
                       {% endfor %}
                     </select>
                   </div>
