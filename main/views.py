@@ -1026,6 +1026,9 @@ def Sales(request):
         return render(request,'admin/sales.html',data)
     if is_user(request.user):
         sales = SalesEntryModel.objects.filter(Type='Sales',user=request.user)
+        ss = SalesEntryModel.objects.get(id=3)
+        ss.Amount='4233.96'
+        ss.save()
         data = {'sales':sales}
         return render(request,'sales.html',data)
     
@@ -3468,7 +3471,7 @@ def Bill(request,id):
 
 @login_required(login_url='Login')
 def UserSalesEntry(request):
-    user=User.objects.all()
+    user=User.objects.filter(groups__name='USER')
     sales = SalesEntryModel.objects.filter(Type='Sales')
     data = {'sales':sales,'user':user}
     if request.method=="POST": 
@@ -3506,7 +3509,7 @@ def DeleteUserSales(request,id):
 @login_required(login_url='Login')
 def UserPurchaseEntry(request):
     Purchase = PurchaseEntryModel.objects.filter(Type='Purchase')
-    user=User.objects.all()
+    user=User.objects.filter(groups__name='USER')
     data = {'Purchase':Purchase,'user':user}
     if request.method=="POST":
         StartDate = request.POST.get('StartDate')
@@ -3528,7 +3531,7 @@ def UserPurchaseEntry(request):
 
 @login_required(login_url='Login')
 def UserSalesReturnEntry(request):
-    user=User.objects.all()
+    user=User.objects.filter(groups__name='USER')
     sales = SalesEntryModel.objects.filter(Type='SalesReturn')
     data = {'sales':sales,'user':user}
     if request.method=="POST": 
@@ -3552,7 +3555,7 @@ def UserSalesReturnEntry(request):
 @login_required(login_url='Login')
 def UserPurchaseReturnEntry(request):
     Purchase = PurchaseEntryModel.objects.filter(Type='PurchaseReturn')
-    user=User.objects.all()
+    user=User.objects.filter(groups__name='USER')
     data = {'Purchase':Purchase,'user':user}
     if request.method=="POST":
         StartDate = request.POST.get('StartDate')
@@ -3576,7 +3579,7 @@ def UserPurchaseReturnEntry(request):
 def UserLedgerReport(request):
     # Lr = LedgerReportModel.objects.filter(user=request.user)
     Lr = ''
-    user=User.objects.all()
+    user=User.objects.filter(groups__name='USER')
     data = {'Lr':Lr,'user':user}
     if request.method=="POST": 
         StartDate = request.POST.get('StartDate')
@@ -3599,7 +3602,7 @@ def UserLedgerReport(request):
 @login_required(login_url='Login')
 def UserOutstandingReport(request,name=None):
     user=request.user
-    users=User.objects.all()
+    users=User.objects.filter(groups__name='USER')
     dt1 = ''
     dt2 = ''
     EndDate = ''
@@ -3673,7 +3676,7 @@ def ExpanseEntryReport(request):
 @login_required(login_url='Login')
 def UserExpanseEntryReport(request):
     Lr = ''
-    user=User.objects.all()
+    user=User.objects.filter(groups__name='USER')
     data = {'Lr':Lr,'user':user}
     if request.method=="POST": 
         StartDate = request.POST.get('StartDate')
