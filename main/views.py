@@ -432,7 +432,7 @@ def Expanse(request):
 @login_required(login_url='Login')
 def Amount(request):
     if is_admin(request.user):
-        user=User.objects.all()
+        user=User.objects.filter(groups__name='USER')
         try:
             ca=UserAmountModel.objects.get(user=request.user)
             ca = ca.Amount
@@ -2697,13 +2697,19 @@ def AllDelete(request):
 
 @login_required(login_url='Login')
 def StockReport(request):
+    CS = 0
+    CP = 0
     stock = MainStockModel.objects.filter(user=request.user)
     Productname = []
     for i in stock:
+        CS +=eval(i.Quantity)
+        CP +=eval(i.Amount)
         if int(i.out) != 1:
             Productname.append(i.ProductName)
+    CS = "%.2f" % CS
+    CP = "%.2f" % CP
     Productname = set(Productname)
-    data = {'stock':Productname}
+    data = {'stock':Productname,'CS':CS,'CP':CP}
     if is_admin(request.user):
         return render(request,'admin/stock.html',data)
     if is_user(request.user):
@@ -3421,6 +3427,37 @@ def salesbill(request,id):
     main = {'data':data,'stock':stock,'tamonut':tamonut,'Gst':Gst,'quantity':quantity,'product':product,'IncSalesPrice':IncSalesPrice,'party':party,'Charges':Charges,'CA':CA,'TCA':TCA}
     return render(request,'admin/salesbill.html',main)
 
+@login_required(login_url='Login')
+def purchasebill(request,id):
+    data=PurchaseEntryModel.objects.get(id=id)
+    stock=StockModel.objects.filter(ProductId=data.ProductId,type='Purchase',user=request.user)
+    party = PartyModel.objects.get(user=request.user,PartyName=data.PartyName)
+    product = ProductModel.objects.filter(user=request.user)
+    tamonut = 0
+    quantity = 0
+    Gst = 0
+    for i in stock:
+        tamonut+=eval(i.Amount)
+        quantity+=eval(i.Quantity)
+        if i.Tax != 'TaxFree':
+            cl =  eval(i.Amount) * eval(i.Tax) /100
+        else:
+            cl = 0
+        Gst += cl
+    Gst = Gst / 2
+    tamonut = tamonut
+    quantity= "%.2f" % quantity
+    Charges=ChargesListModel.objects.filter(ProductId=data.ProductId,type='Purchase',user=request.user)
+    CA,TCA = 0,0
+    for i in Charges:
+        CA +=eval(i.Amount)
+        TCA +=eval(i.TotalAmount)
+    tamonut= TCA + tamonut
+    tamonut= "%.2f" % tamonut
+    CA = "%.2f" % CA
+    TCA= "%.2f" % TCA
+    main = {'data':data,'stock':stock,'tamonut':tamonut,'Gst':Gst,'quantity':quantity,'product':product,'party':party,'Charges':Charges,'CA':CA,'TCA':TCA}
+    return render(request,'admin/purchasebill.html',main)
 
 @login_required(login_url='Login')
 def Bill(request,id):
@@ -3711,7 +3748,8 @@ def DailyReport(request):
 @login_required(login_url='Login')
 def userStockReport(request):
     user=request.user
-    users=User.objects.all()
+    users=User.objects.filter(groups__name='USER')
+    print(users.query )
     Username = ''
     stock = ''
     data={'user':users,'Username':Username,'stock':stock}

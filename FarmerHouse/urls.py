@@ -141,6 +141,7 @@ urlpatterns = [
     path('t',views.thtml,name=""),
     path('Link/<str:name>',views.Link,name=""),
     path('SalesBill/<int:id>',views.salesbill),
+    path('PurchaseBill/<int:id>',views.purchasebill),
     path('Bill/<int:id>',views.Bill),
     path('UserSalesEntry',views.UserSalesEntry,name="User Sales Entry"),
     path('DeleteUserSales/<int:id>',views.DeleteUserSales,name='Delete User Sales'),

@@ -172,10 +172,10 @@
                         <div class="d-flex align-items-center mb-3 pb-3 border-bottom gap-6">
                           <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="56" height="56" alt="matdash-img">
                           <div>
-                            <h5 class="mb-0 fs-12">DB
+                            <h5 class="mb-0 fs-12">{{request.user}}
                             </h5>
                             <p class="mb-0 text-dark">
-                              Email
+                              {{request.user.email}}
                             </p>
                           </div>
                         </div>
@@ -264,10 +264,10 @@
                         <div class="d-flex align-items-center mb-3 pb-3 border-bottom gap-6">
                           <img src="{% static 'assets/images/profile/user-1.jpg' %}" class="rounded-circle" width="56" height="56" alt="matdash-img">
                           <div>
-                            <h5 class="mb-0 fs-12">DB
+                            <h5 class="mb-0 fs-12">{{request.user}}
                             </h5>
                             <p class="mb-0 text-dark">
-                             Email
+                             {{request.user.email}}
                             </p>
                           </div>
                         </div>
