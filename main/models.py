@@ -238,6 +238,8 @@ class SalesEntryModel(models.Model):
     PendingAmount = models.CharField(max_length=100,null=True, blank=True)
     OrderNo = models.CharField(max_length=100,null=True, blank=True)
     BillClear = models.CharField(default='0',max_length=100,null=True, blank=True)
+    ProfitMargin = models.CharField(default='0',max_length=100,null=True, blank=True)
+    LossMargin = models.CharField(default='0',max_length=100,null=True, blank=True)
 
     def ndate(self):
         return self.Date.strftime('%d-%m-%Y')

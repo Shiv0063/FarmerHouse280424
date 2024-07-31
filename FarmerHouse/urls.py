@@ -158,6 +158,8 @@ urlpatterns = [
     path('DailyReport',views.DailyReport,name="Daily Report"),
     path('CI/<int:id>',views.CI,name="db CI"),
     path('UserStockReport',views.userStockReport,name='UserStockReport'),
+    path('UserProfitReport',views.UserProfitReport,name='UserProfitReport'),
+    path('ProfitReport',views.ProfitReport,name='ProfitReport'),
 
 
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

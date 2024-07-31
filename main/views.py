@@ -1119,7 +1119,17 @@ def AddSalesEntry(request,A2=None):
         PartyName = pt.PartyName
         DB =  DeliveryBoyModel.objects.get(user=request.user,Name=DeliveryBoyName)
         DeliveryBoyNo = DB.Number
-        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,DeliveryBoyNo=DeliveryBoyNo,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,TChargesAmount=TCA,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount,OrderNo=OrderNo)
+        stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
+        ProfitMargin = 0
+        LossMargin = 0
+        for i in stock:
+            if eval(i.ProfitMargin)>0:
+                ProfitMargin +=eval(i.ProfitMargin)
+            else:
+                LossMargin +=eval(i.ProfitMargin)*-1
+        ProfitMargin = "%.2f" % ProfitMargin 
+        LossMargin = "%.2f" % LossMargin
+        dt=SalesEntryModel.objects.create(user=user,DeliveryBoyName=DeliveryBoyName,DeliveryBoyNo=DeliveryBoyNo,TypeOfBusiness=TypeOfBusiness,Terms=Terms,TypeofPayment=TypeofPayment,InvoiceNo=InvoiceNo,DeliveryTime=DeliveryTime,PartyName=PartyName,ProductId=ProductId,Type=Type,Amount=Amount,Date=Date,TChargesAmount=TCA,PayableAmount=PayableAmount,status=st,PendingAmount=PendingAmount,OrderNo=OrderNo,ProfitMargin=ProfitMargin,LossMargin=LossMargin)
         dt.save()
         UAM=UserAmountModel.objects.get(user=request.user)
         LR=LedgerReportModel.objects.create(user=user,PartyName=PartyName,Type='Sales',BiilNo=InvoiceNo,Debited='0',Cedited=PayableAmount,Balance=UAM.Amount)
@@ -1127,6 +1137,7 @@ def AddSalesEntry(request,A2=None):
         stock = SalesStockModel.objects.filter(ProductId=ProductId,user=user,type=type)
         wtAmount=0
         for i in stock:
+            
             dt=MainStockModel.objects.get(id=i.sid)
             newQuantity = float(dt.Quantity) - float(i.Quantity)
             if newQuantity == 0:
@@ -3151,7 +3162,7 @@ def QuickPaymentBill(request):
 @login_required(login_url='Login')
 def QPDetails(request,id):
     dt = PendingAmountModel.objects.get(id=id)
-    PD = PartyModel.objects.get(PartyName=dt.PartyName)
+    PD = PartyModel.objects.get(PartyName=dt.PartyName,user=request.user)
     data = {'dt':dt,'PD':PD}
     if is_admin(request.user):
         return render(request,'admin/qpdetails.html',data)
@@ -3752,7 +3763,6 @@ def DailyReport(request):
 def userStockReport(request):
     user=request.user
     users=User.objects.filter(groups__name='USER')
-    print(users.query )
     Username = ''
     stock = ''
     data={'user':users,'Username':Username,'stock':stock}
@@ -3769,3 +3779,69 @@ def userStockReport(request):
         data = {'user':users,'Username':Username,'stock':stock,'Quantity':Quantity,'Amount':Amount}
     if is_admin(request.user):
         return render(request,'admin/userstockreport.html',data)
+
+@login_required(login_url='Login')
+def ProfitReport(request):
+    Lr = SalesEntryModel.objects.filter(user=request.user)
+    # p=0
+    # l=0
+    # for i in Lr:
+    #     p += eval(i.ProfitMargin)
+    #     l += eval(i.LossMargin)
+    # tpl = p-l
+    # p = "%.2f" % p
+    # l = "%.2f" % l
+    # tpl = "%.2f" % tpl
+    # data = {'Lr':Lr,'p':p,'l':l,'tpl':tpl}
+    data = {'Lr':Lr}
+    if request.method=="POST": 
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        Lr = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=request.user,Type='Sales')
+        p=0
+        l=0
+        for i in Lr:
+            p += eval(i.ProfitMargin)
+            l += eval(i.LossMargin)
+        tpl = p-l 
+        p = "%.2f" % p
+        l = "%.2f" % l
+        tpl = "%.2f" % tpl
+        data = {'Lr':Lr,'StartDate':StartDate,'EndDate':EndDate,'p':p,'l':l,'tpl':tpl}
+    if is_admin(request.user):
+        return render(request,'admin/profitreport.html',data)
+    if is_user(request.user):
+        return render(request,'profitreport.html',data)
+
+@login_required(login_url='Login')
+def UserProfitReport(request):
+    Lr = SalesEntryModel.objects.filter(user=request.user)
+    user=User.objects.filter(groups__name='USER')
+    # p=0
+    # l=0
+    # for i in Lr:
+    #     p += eval(i.ProfitMargin)
+    #     l += eval(i.LossMargin)
+    # tpl = p-l
+    # p = "%.2f" % p
+    # l = "%.2f" % l
+    # tpl = "%.2f" % tpl
+    # data = {'Lr':Lr,'p':p,'l':l,'tpl':tpl}
+    data = {'Lr':Lr,'user':user}
+    if request.method=="POST": 
+        StartDate = request.POST.get('StartDate')
+        EndDate = request.POST.get('EndDate')
+        Username = request.POST.get('Username')
+        Lr = SalesEntryModel.objects.filter(Date__range=[StartDate, EndDate],user=Username,Type='Sales')
+        p=0
+        l=0
+        for i in Lr:
+            p += eval(i.ProfitMargin)
+            l += eval(i.LossMargin)
+        tpl = p-l 
+        p = "%.2f" % p
+        l = "%.2f" % l
+        tpl = "%.2f" % tpl
+        data = {'Lr':Lr,'StartDate':StartDate,'EndDate':EndDate,'Username':Username,'p':p,'l':l,'tpl':tpl,'user':user}
+    if is_admin(request.user):
+        return render(request,'admin/userprofitreport.html',data)

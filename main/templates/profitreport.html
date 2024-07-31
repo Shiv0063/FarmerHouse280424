@@ -1,0 +1,88 @@
+﻿{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div class="body-wrapper">
+  <div class="container-fluid">
+    <div class="datatables">
+      <!-- start File export -->
+      <div class="card">
+        <div class="px-4 py-3 border-bottom">
+          <h4 class="card-title mb-0">Ledger Report</h4>
+        </div>
+        <form class="card-body p-4 pb-0 mb-0" method="post">
+          {% csrf_token %}
+          <div class="row mb-0">
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInputInvoiceNo" class="form-label">To</label>
+                <input type="date" class="form-control" name="StartDate" id="StartDate" value="{{StartDate}}" >
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="mb-4">
+                <label for="exampleInputInvoiceNo" class="form-label">From</label>
+                <input type="date" class="form-control" name="EndDate" id="EndDate" value="{{EndDate}}">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="exampleInputtype" class="form-label">Party Name</label>
+              <div class="mb-4">
+                <select class="select2 form-control  custom-select" name="PartyName">
+                  <option>Select</option>
+                  <optgroup label="">
+                    {% for i in Party %}
+                    <option value="{{i.PartyName}}" {% if PartyName == i.PartyName %} selected {% endif %}>{{i.PartyName}} ( {{i.Number}})</option>
+                    {% endfor %}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+          </div>
+        </form>
+        <hr>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table id="file_export" class="table w-100 table-striped table-bordered display text-nowrap">
+              <thead>
+                <!-- start row -->
+                <tr>
+                  <th>Date</th>
+                  <th>Party Name</th>
+                  <th>Bill</th>
+                  <th>Amount</th>
+                  <th>Profit</th>
+                  <th>Loss</th>
+                </tr>
+                <!-- end row -->
+              </thead>
+              <tbody id="tbody">
+                {% for i in Lr %}
+                <tr>
+                  <td>{{i.ndate}}</td>
+                  <td>{{i.PartyName}}</td>
+                  <td>{{i.InvoiceNo}}</td>
+                  <td>{{i.Amount}}</td>
+                  <td>{% if i.ProfitMargin == None %} 0{% else %}{{i.ProfitMargin}}{% endif %}</td>
+                  <td>{% if i.LossMargin == None %} 0{% else %}{{i.LossMargin}}{% endif %}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+              <tbody class="bg-white">
+                <tr class="bg-white">
+                  <td colspan="6" class="bg-white"><span>
+                      <center><b id="mes" class="text-black">Profit : {{p}} , Loss : {{l}} , Total Profit : {{tpl}}</b></center>
+                    </span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- end File export -->
+    </div>
+  </div>
+</div>
+{% endblock content %}
